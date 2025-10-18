@@ -34,11 +34,11 @@ Sua resposta deve ser um JSON com esta estrutura EXATA:
   "careerName": "Nome do cargo/carreira",
   "justification": "Explicação CURTA de 1 parágrafo (máximo 100 palavras) de por que esta carreira combina",
   "salary": "Faixa salarial detalhada (inicial e com progressão)",
-  "examDate": "Próxima data aproximada de concurso ou 'Em breve' ou 'Aberto até DD/MM/AAAA'",
+  "examDate": "Data da prova - use um dos formatos: Se houver edital aberto: 'Prova em DD/MM/AAAA (inscrições até DD/MM/AAAA)' | Se houver previsão confirmada: 'Previsto para mês/ano conforme [fonte]' | Se não houver edital: 'Sem edital aberto. Últimos concursos: ano1, ano2, ano3. Previsão: [análise baseada no histórico e intervalo médio]'",
   "workplaces": ["Local 1 com estado/município", "Local 2 com estado/município", "Local 3 com estado/município"],
   "workRoutine": "Descrição breve da rotina de trabalho (2-3 frases)",
   "subjects": ["Lista de 5-8 principais matérias para estudar"],
-  "examFrequency": "Quando costumam abrir concursos (frequência e últimos editais)"
+  "examFrequency": "Análise detalhada: Liste os últimos 3-5 concursos com anos | Calcule o intervalo médio entre editais | Indique se há previsão oficial ou rumores de novo edital. Exemplo: 'Últimos concursos: 2019 (Cespe), 2021 (FCC), 2023 (Vunesp). Intervalo médio: 2 anos. Governo anunciou novo edital para 2025 no planejamento orçamentário.'"
 }
 
 IMPORTANTE: 
@@ -47,8 +47,16 @@ IMPORTANTE:
 - Matérias devem ser específicas do cargo
 - Justificativa deve ser CURTA mas persuasiva (máximo 100 palavras)
 - workplaces deve conter 3 locais específicos com estado/município
-- examDate deve ser uma data real ou aproximada
-- workRoutine deve descrever como é o dia a dia no trabalho`;
+- workRoutine deve descrever como é o dia a dia no trabalho
+
+CRÍTICO - examDate DEVE SER DETALHADO E FUNDAMENTADO:
+  ✅ BOM: "Sem edital aberto. Últimos concursos: 2018, 2021, 2024. Padrão trienal. Próximo esperado para 2027 segundo PPA do governo."
+  ✅ BOM: "Prova em 15/03/2025 (inscrições até 20/01/2025)"
+  ❌ RUIM: "Em breve"
+  ❌ RUIM: "Previsão para 2025"
+  
+- examFrequency DEVE incluir análise histórica real com anos, bancas e intervalos calculados
+- NUNCA use termos genéricos como "Em breve" ou "Frequência moderada" sem dados concretos`;
 
     const userPrompt = `Perfil do candidato:
 Nome: ${name}
