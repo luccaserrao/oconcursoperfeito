@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { CareerRecommendation } from "@/types/quiz";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { MercadoPagoButton } from "./MercadoPagoButton";
 import { 
   Trophy, 
   DollarSign, 
@@ -205,6 +206,14 @@ export const Results = ({ recommendation, userName, userEmail, quizResponseId }:
             <Lock className="mr-2 w-5 h-5" />
             Quero o Pacote Completo por R$ 48,00
           </Button>
+
+          <div className="flex items-center gap-4 my-4">
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-sm text-muted-foreground">ou</span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
+
+          <MercadoPagoButton userName={userName} userEmail={userEmail} />
         </Card>
 
 

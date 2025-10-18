@@ -11,3 +11,9 @@ verify_jwt = false
 
 [functions.verify-payment]
 verify_jwt = false
+
+[functions.createPreference]
+verify_jwt = false
+
+[functions.mp-webhook]
+verify_jwt = false
