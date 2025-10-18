@@ -5,46 +5,39 @@ import { CareerRecommendation } from "@/types/quiz";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MercadoPagoButton } from "./MercadoPagoButton";
-import { 
-  Trophy, 
-  DollarSign, 
-  MapPin, 
-  BookOpen, 
-  Calendar,
-  CheckCircle2,
-  Sparkles,
-  Lock,
-  Briefcase,
-  Clock
-} from "lucide-react";
-
+import { Trophy, DollarSign, MapPin, BookOpen, Calendar, CheckCircle2, Sparkles, Lock, Briefcase, Clock } from "lucide-react";
 interface ResultsProps {
   recommendation: CareerRecommendation;
   userName: string;
   userEmail: string;
   quizResponseId?: string;
 }
-
-export const Results = ({ recommendation, userName, userEmail, quizResponseId }: ResultsProps) => {
-  const { toast } = useToast();
-
+export const Results = ({
+  recommendation,
+  userName,
+  userEmail,
+  quizResponseId
+}: ResultsProps) => {
+  const {
+    toast
+  } = useToast();
   const handlePaymentClick = async () => {
     try {
       toast({
         title: "Processando...",
-        description: "Redirecionando para pagamento",
+        description: "Redirecionando para pagamento"
       });
-
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('create-checkout', {
         body: {
           userEmail,
           userName,
-          quizResponseId,
-        },
+          quizResponseId
+        }
       });
-
       if (error) throw error;
-
       if (data?.url) {
         window.open(data.url, '_blank');
       }
@@ -53,13 +46,11 @@ export const Results = ({ recommendation, userName, userEmail, quizResponseId }:
       toast({
         variant: "destructive",
         title: "Erro",
-        description: "Não foi possível processar o pagamento. Tente novamente.",
+        description: "Não foi possível processar o pagamento. Tente novamente."
       });
     }
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 py-12">
+  return <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 py-12">
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
@@ -110,12 +101,10 @@ export const Results = ({ recommendation, userName, userEmail, quizResponseId }:
               <h3 className="font-semibold">Locais de Trabalho</h3>
             </div>
             <div className="space-y-2">
-              {recommendation.workplaces.map((place, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+              {recommendation.workplaces.map((place, i) => <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
                   <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                   <span>{place}</span>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
 
@@ -147,11 +136,9 @@ export const Results = ({ recommendation, userName, userEmail, quizResponseId }:
               Principais Matérias
             </h3>
             <div className="flex flex-wrap gap-2">
-              {recommendation.subjects.map((subject, i) => (
-                <Badge key={i} variant="secondary" className="text-sm py-1.5">
+              {recommendation.subjects.map((subject, i) => <Badge key={i} variant="secondary" className="text-sm py-1.5">
                   {subject}
-                </Badge>
-              ))}
+                </Badge>)}
             </div>
           </Card>
 
@@ -183,29 +170,13 @@ export const Results = ({ recommendation, userName, userEmail, quizResponseId }:
           </div>
 
           <div className="space-y-4 mb-6">
-            {[
-              "📅 Cronograma de estudos personalizado de 30 dias",
-              "🎯 5 carreiras alternativas que combinam com você",
-              "📚 Roteiro de estudo completo",
-              "📖 Lista de materiais gratuitos para sua carreira",
-              "👥 Acesso ao grupo de concurseiros",
-              "💬 Suporte via WhatsApp para tirar dúvidas"
-            ].map((benefit, i) => (
-              <div key={i} className="flex items-center gap-3">
+            {["📅 Cronograma de estudos personalizado de 30 dias", "🎯 5 carreiras alternativas que combinam com você", "📚 Roteiro de estudo completo", "📖 Lista de materiais gratuitos para sua carreira", "👥 Acesso ao grupo de concurseiros", "💬 Suporte via WhatsApp para tirar dúvidas"].map((benefit, i) => <div key={i} className="flex items-center gap-3">
                 <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
                 <span>{benefit}</span>
-              </div>
-            ))}
+              </div>)}
           </div>
 
-          <Button
-            onClick={handlePaymentClick}
-            size="lg"
-            className="w-full bg-gradient-to-r from-primary to-accent text-lg py-6"
-          >
-            <Lock className="mr-2 w-5 h-5" />
-            Quero o Pacote Completo por R$ 48,00
-          </Button>
+          
 
           <div className="flex items-center gap-4 my-4">
             <div className="flex-1 h-px bg-border" />
@@ -227,6 +198,5 @@ export const Results = ({ recommendation, userName, userEmail, quizResponseId }:
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
