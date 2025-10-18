@@ -1,0 +1,7 @@
+project_id = "gtmsjqqqzsfganppcdxe"
+
+[functions.generate-career-recommendation]
+verify_jwt = false
+
+[functions.track-upsell-click]
+verify_jwt = false
