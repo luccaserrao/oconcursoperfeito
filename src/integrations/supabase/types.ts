@@ -20,10 +20,13 @@ export type Database = {
           created_at: string
           id: string
           mercado_pago_payment_id: string | null
+          mp_preference_id: string | null
           paid_at: string | null
           payment_status: string
+          product_id: string | null
           quiz_response_id: string | null
           stripe_session_id: string | null
+          updated_at: string | null
           user_email: string
           user_name: string
         }
@@ -32,10 +35,13 @@ export type Database = {
           created_at?: string
           id?: string
           mercado_pago_payment_id?: string | null
+          mp_preference_id?: string | null
           paid_at?: string | null
           payment_status?: string
+          product_id?: string | null
           quiz_response_id?: string | null
           stripe_session_id?: string | null
+          updated_at?: string | null
           user_email: string
           user_name: string
         }
@@ -44,14 +50,24 @@ export type Database = {
           created_at?: string
           id?: string
           mercado_pago_payment_id?: string | null
+          mp_preference_id?: string | null
           paid_at?: string | null
           payment_status?: string
+          product_id?: string | null
           quiz_response_id?: string | null
           stripe_session_id?: string | null
+          updated_at?: string | null
           user_email?: string
           user_name?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "orders_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "orders_quiz_response_id_fkey"
             columns: ["quiz_response_id"]
@@ -60,6 +76,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      products: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          price_cents: number
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          price_cents: number
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          price_cents?: number
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       quiz_responses: {
         Row: {
@@ -91,6 +137,33 @@ export type Database = {
           id?: string
           name?: string
           upsell_clicked_at?: string | null
+        }
+        Relationships: []
+      }
+      webhook_logs: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          event_type: string
+          id: string
+          payload: Json
+          processed: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          event_type: string
+          id?: string
+          payload: Json
+          processed?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json
+          processed?: boolean | null
         }
         Relationships: []
       }
