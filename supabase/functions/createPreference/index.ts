@@ -11,13 +11,42 @@ serve(async (req) => {
   }
 
   try {
-    const { userEmail, userName } = await req.json();
+    const { userEmail, userName, quizResponseId } = await req.json();
     console.log("Creating preference for:", { userEmail, userName });
     
     const accessToken = Deno.env.get("MERCADO_PAGO_ACCESS_TOKEN");
     if (!accessToken) {
       throw new Error("MERCADO_PAGO_ACCESS_TOKEN not configured");
     }
+
+    // Importar createClient
+    const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2.57.2");
+
+    // Criar cliente Supabase para criar ordem no banco
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    // Criar ordem pendente no banco ANTES de criar a preferência
+    const { data: order, error: orderError } = await supabaseClient
+      .from("orders")
+      .insert({
+        user_email: userEmail,
+        user_name: userName,
+        quiz_response_id: quizResponseId || null,
+        amount: 5000, // R$ 50,00 em centavos
+        payment_status: "pending"
+      })
+      .select()
+      .single();
+
+    if (orderError) {
+      console.error('Error creating order:', orderError);
+      throw new Error('Failed to create order');
+    }
+
+    console.log('Order created:', order.id);
 
     const preferenceData = {
       items: [
@@ -38,6 +67,7 @@ serve(async (req) => {
         pending: `${req.headers.get("origin")}/?pending=true`,
       },
       auto_return: "approved",
+      external_reference: order.id, // Vincular ordem para rastreamento
       notification_url: `${Deno.env.get("SUPABASE_URL")}/functions/v1/mp-webhook`,
     };
 

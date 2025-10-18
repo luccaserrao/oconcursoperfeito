@@ -18,59 +18,39 @@ export const PaidContent = () => {
 
   useEffect(() => {
     const verifyPayment = async () => {
-      const sessionId = searchParams.get("session_id");
+      const paymentId = searchParams.get("payment_id");
       
-      if (!sessionId) {
-        setError("Link inválido");
+      if (!paymentId) {
+        setError("ID do pagamento não encontrado");
         setLoading(false);
         return;
       }
 
+      console.log("Verificando pagamento Mercado Pago:", paymentId);
+
       try {
-        const { data, error } = await supabase.functions.invoke('verify-payment', {
-          body: { sessionId },
+        const { data, error } = await supabase.functions.invoke('verify-mp-payment', {
+          body: { paymentId },
         });
 
-        if (error) throw error;
-
-        if (!data.paid) {
-          toast.error("Pagamento não confirmado");
-          navigate("/");
+        if (error) {
+          console.error("Erro ao verificar pagamento:", error);
+          setError("Não foi possível verificar o pagamento");
+          setLoading(false);
           return;
         }
 
-        // Mock paid content for now - this should come from the recommendation
-        setPaidContent({
-          studyPlan: {
-            days: Array.from({ length: 30 }, (_, i) => 
-              `Dia ${i + 1}: Estudar ${i % 2 === 0 ? 'matéria principal' : 'revisão'}`
-            ),
-            hoursPerDay: "4-5 horas",
-            focus: "Preparação focada nas principais matérias do edital"
-          },
-          alternativeCareers: [
-            { name: "Carreira 1", reason: "Motivo 1", salary: "R$ 10.000" },
-            { name: "Carreira 2", reason: "Motivo 2", salary: "R$ 12.000" },
-            { name: "Carreira 3", reason: "Motivo 3", salary: "R$ 15.000" },
-            { name: "Carreira 4", reason: "Motivo 4", salary: "R$ 18.000" },
-            { name: "Carreira 5", reason: "Motivo 5", salary: "R$ 20.000" }
-          ],
-          studyRoadmap: "Roteiro detalhado de 30 dias com foco nas principais matérias...",
-          freeMaterials: [
-            "Material gratuito 1",
-            "Material gratuito 2",
-            "Material gratuito 3"
-          ],
-          whatsappGroupInfo: "Entre em contato pelo número abaixo para ser adicionado ao grupo",
-          whatsappSupportNumber: "91984233672"
-        });
-        
-        setUserName(data.userName || "Concurseiro");
-        
-        toast.success("Pagamento confirmado! Bem-vindo ao Pacote Completo");
+        if (data && data.success) {
+          console.log("Pagamento verificado:", data);
+          setUserName(data.userName || "Usuário");
+          setPaidContent(data.paidContent);
+          toast.success("Pagamento confirmado! Bem-vindo ao Pacote Completo");
+        } else {
+          setError("Pagamento não foi aprovado");
+        }
       } catch (error) {
-        console.error("Error verifying payment:", error);
-        setError("Erro ao verificar pagamento");
+        console.error("Erro ao verificar pagamento:", error);
+        setError("Erro ao processar sua solicitação");
       } finally {
         setLoading(false);
       }

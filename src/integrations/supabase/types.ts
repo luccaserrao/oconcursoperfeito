@@ -19,6 +19,7 @@ export type Database = {
           amount: number
           created_at: string
           id: string
+          mercado_pago_payment_id: string | null
           paid_at: string | null
           payment_status: string
           quiz_response_id: string | null
@@ -30,6 +31,7 @@ export type Database = {
           amount: number
           created_at?: string
           id?: string
+          mercado_pago_payment_id?: string | null
           paid_at?: string | null
           payment_status?: string
           quiz_response_id?: string | null
@@ -41,6 +43,7 @@ export type Database = {
           amount?: number
           created_at?: string
           id?: string
+          mercado_pago_payment_id?: string | null
           paid_at?: string | null
           payment_status?: string
           quiz_response_id?: string | null

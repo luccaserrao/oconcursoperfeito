@@ -18,38 +18,6 @@ export const Results = ({
   userEmail,
   quizResponseId
 }: ResultsProps) => {
-  const {
-    toast
-  } = useToast();
-  const handlePaymentClick = async () => {
-    try {
-      toast({
-        title: "Processando...",
-        description: "Redirecionando para pagamento"
-      });
-      const {
-        data,
-        error
-      } = await supabase.functions.invoke('create-checkout', {
-        body: {
-          userEmail,
-          userName,
-          quizResponseId
-        }
-      });
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
-    } catch (error) {
-      console.error('Error creating checkout:', error);
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Não foi possível processar o pagamento. Tente novamente."
-      });
-    }
-  };
   return <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 py-12">
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
@@ -176,15 +144,11 @@ export const Results = ({
               </div>)}
           </div>
 
-          
-
-          <div className="flex items-center gap-4 my-4">
-            <div className="flex-1 h-px bg-border" />
-            <span className="text-sm text-muted-foreground">ou</span>
-            <div className="flex-1 h-px bg-border" />
-          </div>
-
-          <MercadoPagoButton userName={userName} userEmail={userEmail} />
+          <MercadoPagoButton 
+            userName={userName} 
+            userEmail={userEmail}
+            quizResponseId={quizResponseId}
+          />
         </Card>
 
 

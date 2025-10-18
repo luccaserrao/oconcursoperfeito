@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.mp-webhook]
 verify_jwt = false
+
+[functions.verify-mp-payment]
+verify_jwt = false

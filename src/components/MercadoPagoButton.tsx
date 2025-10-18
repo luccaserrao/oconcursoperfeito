@@ -6,9 +6,10 @@ import { CreditCard } from "lucide-react";
 interface MercadoPagoButtonProps {
   userName: string;
   userEmail: string;
+  quizResponseId?: string;
 }
 
-export const MercadoPagoButton = ({ userName, userEmail }: MercadoPagoButtonProps) => {
+export const MercadoPagoButton = ({ userName, userEmail, quizResponseId }: MercadoPagoButtonProps) => {
   const { toast } = useToast();
 
   const handleClick = async () => {
@@ -19,7 +20,7 @@ export const MercadoPagoButton = ({ userName, userEmail }: MercadoPagoButtonProp
       });
 
       const { data, error } = await supabase.functions.invoke('createPreference', {
-        body: { userName, userEmail },
+        body: { userName, userEmail, quizResponseId },
       });
 
       if (error) throw error;
