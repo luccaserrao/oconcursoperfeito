@@ -5,3 +5,9 @@ verify_jwt = false
 
 [functions.track-upsell-click]
 verify_jwt = false
+
+[functions.create-checkout]
+verify_jwt = false
+
+[functions.verify-payment]
+verify_jwt = false

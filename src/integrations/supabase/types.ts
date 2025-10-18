@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      orders: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          paid_at: string | null
+          payment_status: string
+          quiz_response_id: string | null
+          stripe_session_id: string | null
+          user_email: string
+          user_name: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          payment_status?: string
+          quiz_response_id?: string | null
+          stripe_session_id?: string | null
+          user_email: string
+          user_name: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          payment_status?: string
+          quiz_response_id?: string | null
+          stripe_session_id?: string | null
+          user_email?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_quiz_response_id_fkey"
+            columns: ["quiz_response_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_responses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quiz_responses: {
         Row: {
           ai_recommendation: Json

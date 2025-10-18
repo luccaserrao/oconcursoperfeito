@@ -1,8 +1,9 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CareerRecommendation } from "@/types/quiz";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Trophy, 
   DollarSign, 
@@ -12,22 +13,48 @@ import {
   CheckCircle2,
   Sparkles,
   Lock,
-  Target
+  Briefcase,
+  Clock
 } from "lucide-react";
 
 interface ResultsProps {
   recommendation: CareerRecommendation;
   userName: string;
   userEmail: string;
-  onUpsellClick: () => void;
+  quizResponseId?: string;
 }
 
-export const Results = ({ recommendation, userName, userEmail, onUpsellClick }: ResultsProps) => {
-  const [showFullContent, setShowFullContent] = useState(false);
+export const Results = ({ recommendation, userName, userEmail, quizResponseId }: ResultsProps) => {
+  const { toast } = useToast();
 
-  const handleUpsellClick = () => {
-    setShowFullContent(true);
-    onUpsellClick();
+  const handlePaymentClick = async () => {
+    try {
+      toast({
+        title: "Processando...",
+        description: "Redirecionando para pagamento",
+      });
+
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: {
+          userEmail,
+          userName,
+          quizResponseId,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Não foi possível processar o pagamento. Tente novamente.",
+      });
+    }
   };
 
   return (
@@ -57,8 +84,8 @@ export const Results = ({ recommendation, userName, userEmail, onUpsellClick }: 
             </h2>
           </div>
 
-          {/* Quick Info - Only salary and workplace */}
-          <div className="grid md:grid-cols-2 gap-4">
+          {/* Quick Info */}
+          <div className="grid md:grid-cols-2 gap-4 mb-6">
             <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5">
               <DollarSign className="w-5 h-5 text-primary mt-0.5" />
               <div>
@@ -67,149 +94,119 @@ export const Results = ({ recommendation, userName, userEmail, onUpsellClick }: 
               </div>
             </div>
             <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5">
-              <MapPin className="w-5 h-5 text-primary mt-0.5" />
+              <Calendar className="w-5 h-5 text-primary mt-0.5" />
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Local de Trabalho</p>
-                <p className="font-semibold">{recommendation.workplace}</p>
+                <p className="text-sm text-muted-foreground mb-1">Próxima Prova</p>
+                <p className="font-semibold">{recommendation.examDate}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Workplaces */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <MapPin className="w-5 h-5 text-primary" />
+              <h3 className="font-semibold">Locais de Trabalho</h3>
+            </div>
+            <div className="space-y-2">
+              {recommendation.workplaces.map((place, i) => (
+                <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                  <span>{place}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Work Routine */}
+          <div className="p-4 rounded-xl bg-accent/10 border border-accent/20">
+            <div className="flex items-start gap-3">
+              <Briefcase className="w-5 h-5 text-accent mt-0.5" />
+              <div>
+                <p className="font-semibold mb-1">Rotina de Trabalho</p>
+                <p className="text-sm text-muted-foreground">{recommendation.workRoutine}</p>
               </div>
             </div>
           </div>
         </Card>
 
-        {/* Upsell Card */}
-        {!showFullContent && (
-          <Card className="p-8 mb-8 shadow-[var(--shadow-elevated)] bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-primary/20 animate-fade-in">
-            <div className="text-center mb-6">
-              <Sparkles className="w-12 h-12 text-primary mx-auto mb-4" />
-              <h3 className="text-2xl font-bold mb-2">
-                Desbloqueie Seu Plano Completo
-              </h3>
-              <p className="text-muted-foreground">
-                Descubra por que essa é a carreira ideal para você + 5 outras opções + cronograma de estudos personalizado
-              </p>
+        {/* Free Content Sections */}
+        <div className="space-y-6 mb-8">
+          {/* Justification */}
+          <Card className="p-6 shadow-[var(--shadow-elevated)]">
+            <div className="prose prose-sm max-w-none text-muted-foreground">
+              <p>{recommendation.justification}</p>
             </div>
+          </Card>
 
-            <div className="space-y-4 mb-6">
-              {[
-                "Por que essa carreira é perfeita para você",
-                "Principais matérias para estudar",
-                "Quando abrem concursos (frequência e editais)",
-                "5 carreiras alternativas que também combinam com você",
-                "Cronograma de estudos personalizado de 4 semanas"
-              ].map((benefit, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                  <span>{benefit}</span>
-                </div>
+          {/* Subjects */}
+          <Card className="p-6 shadow-[var(--shadow-elevated)]">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-primary" />
+              Principais Matérias
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {recommendation.subjects.map((subject, i) => (
+                <Badge key={i} variant="secondary" className="text-sm py-1.5">
+                  {subject}
+                </Badge>
               ))}
             </div>
-
-            <Button
-              onClick={handleUpsellClick}
-              size="lg"
-              className="w-full bg-gradient-to-r from-primary to-accent text-lg py-6"
-            >
-              <Lock className="mr-2 w-5 h-5" />
-              Quero Ver Tudo Agora
-            </Button>
           </Card>
-        )}
 
-        {/* Full Content - Revealed After Upsell Click */}
-        {showFullContent && (
-          <div className="space-y-8 animate-fade-in">
-            {/* Justification */}
-            <Card className="p-8 shadow-[var(--shadow-elevated)]">
-              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <Target className="w-5 h-5 text-primary" />
-                Por que esta carreira é perfeita para você
-              </h3>
-              <div className="prose prose-sm max-w-none text-muted-foreground space-y-3">
-                {recommendation.justification.split('\n').map((paragraph, i) => (
-                  paragraph.trim() && <p key={i}>{paragraph}</p>
-                ))}
+          {/* Exam Frequency */}
+          <Card className="p-6 shadow-[var(--shadow-elevated)]">
+            <div className="flex items-start gap-3">
+              <Clock className="w-5 h-5 text-accent mt-0.5" />
+              <div>
+                <p className="font-semibold mb-2">Frequência de Concursos</p>
+                <p className="text-sm text-muted-foreground">{recommendation.examFrequency}</p>
               </div>
-            </Card>
+            </div>
+          </Card>
+        </div>
 
-            {/* Subjects */}
-            <Card className="p-8 shadow-[var(--shadow-elevated)]">
-              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-primary" />
-                Principais matérias para estudar
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {recommendation.subjects.map((subject, i) => (
-                  <Badge key={i} variant="secondary" className="text-sm py-1.5">
-                    {subject}
-                  </Badge>
-                ))}
-              </div>
-            </Card>
-
-            {/* Exam Frequency */}
-            <Card className="p-8 shadow-[var(--shadow-elevated)]">
-              <div className="flex items-start gap-3">
-                <Calendar className="w-5 h-5 text-accent mt-0.5" />
-                <div>
-                  <p className="font-semibold mb-2">Frequência de Concursos</p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{recommendation.examFrequency}</p>
-                </div>
-              </div>
-            </Card>
-
-            {/* Alternative Careers */}
-            <Card className="p-8 shadow-[var(--shadow-elevated)]">
-              <h3 className="text-2xl font-bold mb-6">
-                5 Carreiras Alternativas Para Você
-              </h3>
-              <div className="space-y-4">
-                {recommendation.alternativeCareers.map((career, i) => (
-                  <div
-                    key={i}
-                    className="p-5 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <h4 className="font-semibold text-lg">{career.name}</h4>
-                      <Badge variant="secondary">{career.salary}</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{career.reason}</p>
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            {/* Study Plan */}
-            <Card className="p-8 shadow-[var(--shadow-elevated)]">
-              <h3 className="text-2xl font-bold mb-6">
-                Seu Cronograma de Estudos Inicial
-              </h3>
-
-              <div className="mb-6 p-4 rounded-xl bg-primary/10 border border-primary/20">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Dedicação Semanal</p>
-                    <p className="font-semibold">{recommendation.studyPlan.hoursPerWeek}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Foco Principal</p>
-                    <p className="font-semibold">{recommendation.studyPlan.focus}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                {recommendation.studyPlan.weeks.map((week, i) => (
-                  <div
-                    key={i}
-                    className="p-5 rounded-xl border border-border"
-                  >
-                    <p className="text-muted-foreground">{week}</p>
-                  </div>
-                ))}
-              </div>
-            </Card>
+        {/* Payment Card */}
+        <Card className="p-8 mb-8 shadow-[var(--shadow-elevated)] bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-primary/20 animate-fade-in">
+          <div className="text-center mb-6">
+            <Sparkles className="w-12 h-12 text-primary mx-auto mb-4" />
+            <h3 className="text-2xl font-bold mb-2">
+              Pacote Completo - Carreira dos Sonhos
+            </h3>
+            <div className="text-3xl font-bold text-primary mb-2">
+              R$ 48,00
+            </div>
+            <p className="text-muted-foreground">
+              Tenha acesso a tudo que você precisa para sua aprovação
+            </p>
           </div>
-        )}
+
+          <div className="space-y-4 mb-6">
+            {[
+              "📅 Cronograma de estudos personalizado de 30 dias",
+              "🎯 5 carreiras alternativas que combinam com você",
+              "📚 Roteiro de estudo completo",
+              "📖 Lista de materiais gratuitos para sua carreira",
+              "👥 Acesso ao grupo de concurseiros",
+              "💬 Suporte via WhatsApp para tirar dúvidas"
+            ].map((benefit, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                <span>{benefit}</span>
+              </div>
+            ))}
+          </div>
+
+          <Button
+            onClick={handlePaymentClick}
+            size="lg"
+            className="w-full bg-gradient-to-r from-primary to-accent text-lg py-6"
+          >
+            <Lock className="mr-2 w-5 h-5" />
+            Quero o Pacote Completo por R$ 48,00
+          </Button>
+        </Card>
+
 
         {/* CTA Footer */}
         <div className="text-center mt-12 p-6 rounded-2xl bg-card">

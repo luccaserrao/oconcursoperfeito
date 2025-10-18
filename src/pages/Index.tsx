@@ -14,6 +14,7 @@ const Index = () => {
   const [recommendation, setRecommendation] = useState<CareerRecommendation | null>(null);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [quizResponseId, setQuizResponseId] = useState<string | undefined>();
 
   const handleStartQuiz = () => {
     setCurrentStep("quiz");
@@ -50,6 +51,7 @@ const Index = () => {
 
       const data = await response.json();
       setRecommendation(data.recommendation);
+      setQuizResponseId(data.quizResponseId);
       setCurrentStep("results");
       
       toast.success("Resultado gerado com sucesso!");
@@ -95,7 +97,7 @@ const Index = () => {
           recommendation={recommendation}
           userName={userName}
           userEmail={userEmail}
-          onUpsellClick={handleUpsellClick}
+          quizResponseId={quizResponseId}
         />
       )}
     </>

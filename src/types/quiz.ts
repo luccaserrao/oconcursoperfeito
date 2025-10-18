@@ -13,12 +13,17 @@ export interface CareerRecommendation {
   careerName: string;
   justification: string;
   salary: string;
-  workplace: string;
+  examDate: string;
+  workplaces: string[];
+  workRoutine: string;
   subjects: string[];
   examFrequency: string;
+}
+
+export interface PaidContent {
   studyPlan: {
-    weeks: string[];
-    hoursPerWeek: string;
+    days: string[];
+    hoursPerDay: string;
     focus: string;
   };
   alternativeCareers: Array<{
@@ -26,4 +31,8 @@ export interface CareerRecommendation {
     reason: string;
     salary: string;
   }>;
+  studyRoadmap: string;
+  freeMaterials: string[];
+  whatsappGroupInfo: string;
+  whatsappSupportNumber: string;
 }
