@@ -34,7 +34,7 @@ Sua resposta deve ser um JSON com esta estrutura EXATA:
   "careerName": "Nome do cargo/carreira",
   "justification": "Explicação de 2-3 parágrafos de por que esta carreira é perfeita para o perfil (use persuasão e mostre valor)",
   "salary": "Faixa salarial detalhada (inicial e com progressão)",
-  "workplace": "Onde trabalha (órgão, ambiente, rotina)",
+  "workplace": "Onde trabalha - DEVE INCLUIR estado/município específico (ex: 'Tribunais de Justiça em São Paulo, SP' ou 'Secretaria de Fazenda do Estado de Minas Gerais')",
   "subjects": ["Lista de 5-8 principais matérias para estudar"],
   "examFrequency": "Quando costumam abrir concursos (frequência e últimos editais)",
   "studyPlan": {
@@ -76,7 +76,8 @@ IMPORTANTE:
 - Salários devem ser realistas (R$)
 - Matérias devem ser específicas do cargo
 - Cronograma deve ser prático e motivador
-- Justificativa deve ser personalizada e persuasiva`;
+- Justificativa deve ser personalizada e persuasiva
+- NO CAMPO WORKPLACE, SEMPRE inclua o estado ou município específico onde o cargo é exercido`;
 
     const userPrompt = `Perfil do candidato:
 Nome: ${name}

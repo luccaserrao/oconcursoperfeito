@@ -109,7 +109,7 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
             </Button>
 
             <p className="text-xs text-center text-muted-foreground">
-              🔒 Seus dados estão seguros. Usaremos apenas para enviar seu resultado.
+              🔒 Seu e-mail está 100% seguro. Não enviaremos spam nem enchemos sua caixa de entrada.
             </p>
           </form>
         </Card>
