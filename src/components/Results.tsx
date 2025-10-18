@@ -130,7 +130,7 @@ export const Results = ({
               Pacote Completo - Carreira dos Sonhos
             </h3>
             <div className="text-3xl font-bold text-primary mb-2">
-              R$ 48,00
+              R$ 50,00
             </div>
             <p className="text-muted-foreground">
               Tenha acesso a tudo que você precisa para sua aprovação
