@@ -7,9 +7,11 @@ interface MercadoPagoButtonProps {
   userName: string;
   userEmail: string;
   quizResponseId?: string;
+  productId?: string;
+  amount?: number;
 }
 
-export const MercadoPagoButton = ({ userName, userEmail, quizResponseId }: MercadoPagoButtonProps) => {
+export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, productId, amount }: MercadoPagoButtonProps) => {
   const { toast } = useToast();
 
   const handleClick = async () => {
@@ -19,8 +21,12 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId }: Merca
         description: "Preparando seu checkout",
       });
 
+      const body: any = { userName, userEmail, quizResponseId };
+      if (productId) body.product_id = productId;
+      if (amount) body.amount = amount;
+
       const { data, error } = await supabase.functions.invoke('createPreference', {
-        body: { userName, userEmail, quizResponseId },
+        body
       });
 
       if (error) throw error;

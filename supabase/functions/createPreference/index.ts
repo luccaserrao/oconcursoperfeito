@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,31 +12,80 @@ serve(async (req) => {
   }
 
   try {
-    const { userEmail, userName, quizResponseId } = await req.json();
-    console.log("Creating preference for:", { userEmail, userName });
+    const { 
+      userEmail, 
+      userName, 
+      quizResponseId,
+      product_id,
+      amount
+    } = await req.json();
+
+    console.log("Creating preference for:", { userEmail, userName, product_id, amount });
     
     const accessToken = Deno.env.get("MERCADO_PAGO_ACCESS_TOKEN");
     if (!accessToken) {
       throw new Error("MERCADO_PAGO_ACCESS_TOKEN not configured");
     }
 
-    // Importar createClient
-    const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2.57.2");
-
-    // Criar cliente Supabase para criar ordem no banco
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Criar ordem pendente no banco ANTES de criar a preferência
+    // Determinar produto e valor
+    let productData: any = null;
+    let finalAmount: number;
+    let finalProductId: string | null = null;
+
+    if (product_id) {
+      const { data: product, error: productError } = await supabaseClient
+        .from("products")
+        .select("*")
+        .eq("id", product_id)
+        .eq("active", true)
+        .single();
+
+      if (productError || !product) {
+        throw new Error("Product not found or inactive");
+      }
+
+      productData = product;
+      finalAmount = product.price_cents / 100;
+      finalProductId = product.id;
+      
+    } else if (amount) {
+      finalAmount = amount;
+      productData = {
+        name: "Pagamento Teste",
+        description: "Pagamento de teste"
+      };
+    } else {
+      const { data: product, error: productError } = await supabaseClient
+        .from("products")
+        .select("*")
+        .eq("active", true)
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .single();
+
+      if (productError || !product) {
+        throw new Error("No product available");
+      }
+
+      productData = product;
+      finalAmount = product.price_cents / 100;
+      finalProductId = product.id;
+    }
+
+    // Create pending order
     const { data: order, error: orderError } = await supabaseClient
       .from("orders")
       .insert({
         user_email: userEmail,
         user_name: userName,
         quiz_response_id: quizResponseId || null,
-        amount: 5000, // R$ 50,00 em centavos
+        product_id: finalProductId,
+        amount: Math.round(finalAmount * 100),
         payment_status: "pending"
       })
       .select()
@@ -51,9 +101,10 @@ serve(async (req) => {
     const preferenceData = {
       items: [
         {
-          title: "Pacote Completo - Carreira dos Sonhos",
+          title: productData.name,
+          description: productData.description || "",
           quantity: 1,
-          unit_price: 50.00,
+          unit_price: finalAmount,
           currency_id: "BRL",
         }
       ],
@@ -67,7 +118,7 @@ serve(async (req) => {
         pending: `${req.headers.get("origin")}/?pending=true`,
       },
       auto_return: "approved",
-      external_reference: order.id, // Vincular ordem para rastreamento
+      external_reference: order.id,
       notification_url: `${Deno.env.get("SUPABASE_URL")}/functions/v1/mp-webhook`,
     };
 
@@ -89,10 +140,18 @@ serve(async (req) => {
     const preference = await response.json();
     console.log("Preference created:", preference.id);
 
+    // Atualizar ordem com preference_id
+    await supabaseClient
+      .from("orders")
+      .update({ mp_preference_id: preference.id })
+      .eq("id", order.id);
+
     return new Response(
       JSON.stringify({ 
         init_point: preference.init_point,
-        preference_id: preference.id 
+        sandbox_init_point: preference.sandbox_init_point,
+        preference_id: preference.id,
+        order_id: order.id
       }), 
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
