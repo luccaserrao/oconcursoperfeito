@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,13 +13,40 @@ serve(async (req) => {
   }
 
   try {
+    // Schema de validação
+    const requestSchema = z.object({
+      userEmail: z.string().trim().email("Email inválido").max(255),
+      userName: z.string().trim().min(2, "Nome muito curto").max(100, "Nome muito longo"),
+      quizResponseId: z.string().uuid().optional().nullable(),
+      product_id: z.string().uuid().optional().nullable(),
+      amount: z.number().positive("Valor deve ser positivo").max(1000000, "Valor muito alto").optional().nullable()
+    });
+
+    const body = await req.json();
+    
+    // Validar entrada
+    const validationResult = requestSchema.safeParse(body);
+    if (!validationResult.success) {
+      console.error("Validation error:", validationResult.error);
+      return new Response(
+        JSON.stringify({ 
+          error: "Dados inválidos", 
+          details: validationResult.error.errors 
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+        }
+      );
+    }
+
     const { 
       userEmail, 
       userName, 
       quizResponseId,
       product_id,
       amount
-    } = await req.json();
+    } = validationResult.data;
 
     console.log("Creating preference for:", { userEmail, userName, product_id, amount });
     

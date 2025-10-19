@@ -22,7 +22,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.check-mp-credentials]
-verify_jwt = false
+verify_jwt = true
 
 [functions.list-orders]
-verify_jwt = false
+verify_jwt = true

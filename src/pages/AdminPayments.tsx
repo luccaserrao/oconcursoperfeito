@@ -134,6 +134,22 @@ const AdminPayments = () => {
         return;
       }
       
+      // Verificar se o usuário tem role de admin
+      const { data: isAdmin, error } = await supabase.rpc('has_role', {
+        _user_id: session.user.id,
+        _role: 'admin'
+      });
+
+      if (error || !isAdmin) {
+        toast({
+          variant: "destructive",
+          title: "Acesso negado",
+          description: "Você não tem permissão de administrador",
+        });
+        navigate('/');
+        return;
+      }
+      
       setIsAuthenticated(true);
       setIsCheckingAuth(false);
     };

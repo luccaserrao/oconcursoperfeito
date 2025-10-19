@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,11 +13,30 @@ serve(async (req) => {
   }
 
   try {
-    const { paymentId } = await req.json();
+    // Schema de validação
+    const requestSchema = z.object({
+      paymentId: z.string().min(1, "Payment ID obrigatório").max(255)
+    });
+
+    const body = await req.json();
     
-    if (!paymentId) {
-      throw new Error("Payment ID is required");
+    // Validar entrada
+    const validationResult = requestSchema.safeParse(body);
+    if (!validationResult.success) {
+      console.error("Validation error:", validationResult.error);
+      return new Response(
+        JSON.stringify({ 
+          error: "Dados inválidos", 
+          details: validationResult.error.errors 
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+        }
+      );
     }
+
+    const { paymentId } = validationResult.data;
 
     console.log("Verifying Mercado Pago payment:", paymentId);
 

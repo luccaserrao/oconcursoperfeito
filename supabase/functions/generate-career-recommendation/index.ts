@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -12,7 +13,35 @@ serve(async (req) => {
   }
 
   try {
-    const { answers, name, email } = await req.json();
+    // Schema de validação
+    const requestSchema = z.object({
+      name: z.string().trim().min(2, "Nome muito curto").max(100, "Nome muito longo"),
+      email: z.string().trim().email("Email inválido").max(255, "Email muito longo"),
+      answers: z.array(z.object({
+        question: z.string().max(500),
+        answer: z.string().max(1000)
+      })).min(1, "Pelo menos uma resposta necessária").max(20, "Muitas respostas")
+    });
+
+    const body = await req.json();
+    
+    // Validar entrada
+    const validationResult = requestSchema.safeParse(body);
+    if (!validationResult.success) {
+      console.error("Validation error:", validationResult.error);
+      return new Response(
+        JSON.stringify({ 
+          error: "Dados inválidos", 
+          details: validationResult.error.errors 
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+        }
+      );
+    }
+
+    const { name, email, answers } = validationResult.data;
     
     console.log('Generating career recommendation for:', email);
 
