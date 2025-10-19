@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +22,9 @@ interface Order {
 
 const AdminPayments = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [credentialsOk, setCredentialsOk] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -122,9 +126,37 @@ const AdminPayments = () => {
   };
 
   useEffect(() => {
-    checkCredentials();
-    loadOrders();
-  }, []);
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        navigate('/admin/login');
+        return;
+      }
+      
+      setIsAuthenticated(true);
+      setIsCheckingAuth(false);
+    };
+
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        navigate('/admin/login');
+      } else {
+        setIsAuthenticated(true);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      checkCredentials();
+      loadOrders();
+    }
+  }, [isAuthenticated]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -138,6 +170,17 @@ const AdminPayments = () => {
         return <Badge>{status}</Badge>;
     }
   };
+
+  if (isCheckingAuth) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Verificando acesso...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-10 space-y-6">
