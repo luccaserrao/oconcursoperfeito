@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle2, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { PaidContent as PaidContentType } from "@/types/quiz";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, trackPurchase } from "@/lib/analytics";
 
 export const PaidContent = () => {
   const [searchParams] = useSearchParams();
@@ -44,6 +44,10 @@ export const PaidContent = () => {
           console.log("Pagamento verificado:", data);
           setUserName(data.userName || "Usuário");
           setPaidContent(data.paidContent);
+          
+          // Track Google Ads Purchase
+          trackPurchase(paymentId, 50.0);
+          console.log("📊 Google Ads: Purchase tracked");
           
           // Track Facebook Pixel - Purchase
           if (typeof window !== 'undefined' && (window as any).fbq) {

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { CreditCard } from "lucide-react";
+import { trackBeginCheckout } from "@/lib/analytics";
 
 interface MercadoPagoButtonProps {
   userName: string;
@@ -26,6 +27,10 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
     try {
       setIsLoading(true);
       console.log("🚀 Starting payment process");
+      
+      // Track begin_checkout for Google Ads
+      trackBeginCheckout(50.0);
+      console.log("📊 Google Ads: begin_checkout tracked");
       
       // Track Facebook Pixel - InitiateCheckout
       if (typeof window !== 'undefined' && (window as any).fbq) {
