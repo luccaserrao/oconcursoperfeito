@@ -175,8 +175,8 @@ serve(async (req) => {
             "Videoaulas selecionadas",
             "Mapas mentais"
           ],
-          whatsappGroupInfo: "Grupo exclusivo de estudos",
-          whatsappSupportNumber: "5511999999999"
+          whatsappGroupInfo: "Entre em contato pelo WhatsApp para receber seu Pacote Completo de Preparação",
+          whatsappSupportNumber: "5591984233672"
         }
       }),
       {

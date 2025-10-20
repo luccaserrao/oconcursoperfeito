@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, CheckCircle2, Calendar, BookOpen, Target, MessageCircle } from "lucide-react";
+import { Loader2, CheckCircle2, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { PaidContent as PaidContentType } from "@/types/quiz";
+import { trackEvent } from "@/lib/analytics";
 
 export const PaidContent = () => {
   const [searchParams] = useSearchParams();
@@ -95,111 +95,100 @@ export const PaidContent = () => {
 
   if (!paidContent) return null;
 
+  const handleWhatsAppClick = () => {
+    trackEvent('whatsapp_contact_clicked', { 
+      source: 'paid_content_page'
+    });
+    
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('track', 'Contact', {
+        content_name: 'WhatsApp Support - Post Purchase'
+      });
+    }
+  };
+
+  const formatPhoneNumber = (phone: string) => {
+    const cleaned = phone.replace('55', '');
+    return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+  };
+
+  const whatsappMessage = encodeURIComponent('Olá! Acabei de fazer o pagamento do Pacote Completo de Preparação e gostaria de receber meu acesso.');
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 py-12">
-      <div className="container mx-auto px-4 max-w-4xl">
-        {/* Header */}
-        <div className="text-center mb-12 animate-fade-in">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-primary to-accent mb-6">
-            <CheckCircle2 className="w-10 h-10 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center py-12 px-4">
+      <div className="container mx-auto max-w-2xl">
+        
+        {/* Success Header */}
+        <div className="text-center mb-8 animate-fade-in">
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-r from-green-400 to-green-600 mb-6 shadow-lg animate-bounce-slow">
+            <CheckCircle2 className="w-12 h-12 text-white" />
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-4">
-            Parabéns, {userName.split(' ')[0]}! 🎉
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+            Pagamento Confirmado! 🎉
           </h1>
-          <p className="text-xl text-muted-foreground">
-            Seu conteúdo completo está liberado
+          <p className="text-xl text-gray-600 dark:text-gray-400">
+            Olá, <strong>{userName.split(' ')[0]}</strong>! Seu investimento foi processado com sucesso.
           </p>
         </div>
 
-        {/* Study Plan */}
-        <Card className="p-8 mb-8 shadow-[var(--shadow-elevated)]">
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <Calendar className="w-6 h-6 text-primary" />
-            Cronograma de 30 Dias
-          </h2>
-          <div className="mb-6 p-4 rounded-xl bg-primary/10 border border-primary/20">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Dedicação Diária</p>
-                <p className="font-semibold">{paidContent.studyPlan.hoursPerDay}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Foco</p>
-                <p className="font-semibold">{paidContent.studyPlan.focus}</p>
-              </div>
-            </div>
-          </div>
-          <div className="grid md:grid-cols-2 gap-3 max-h-96 overflow-y-auto">
-            {paidContent.studyPlan.days.map((day, i) => (
-              <div key={i} className="p-3 rounded-lg border border-border text-sm">
-                {day}
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Alternative Careers */}
-        <Card className="p-8 mb-8 shadow-[var(--shadow-elevated)]">
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <Target className="w-6 h-6 text-primary" />
-            5 Carreiras Alternativas
-          </h2>
-          <div className="space-y-4">
-            {paidContent.alternativeCareers.map((career, i) => (
-              <div
-                key={i}
-                className="p-5 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="font-semibold text-lg">{career.name}</h3>
-                  <Badge variant="secondary">{career.salary}</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground">{career.reason}</p>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Study Roadmap */}
-        <Card className="p-8 mb-8 shadow-[var(--shadow-elevated)]">
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <BookOpen className="w-6 h-6 text-primary" />
-            Roteiro de Estudo
-          </h2>
-          <p className="text-muted-foreground">{paidContent.studyRoadmap}</p>
-        </Card>
-
-        {/* Free Materials */}
-        <Card className="p-8 mb-8 shadow-[var(--shadow-elevated)]">
-          <h2 className="text-2xl font-bold mb-6">📚 Materiais Gratuitos</h2>
-          <div className="space-y-3">
-            {paidContent.freeMaterials.map((material, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                <span>{material}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* WhatsApp Support */}
-        <Card className="p-8 shadow-[var(--shadow-elevated)] bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-primary/20">
+        {/* WhatsApp Contact Card */}
+        <Card className="p-8 shadow-2xl bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-2 border-green-500">
           <div className="text-center">
-            <MessageCircle className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-4">Acesso ao Grupo e Suporte</h2>
-            <p className="text-muted-foreground mb-6">{paidContent.whatsappGroupInfo}</p>
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500 mb-4 animate-pulse">
+              <MessageCircle className="w-8 h-8 text-white" />
+            </div>
+            
+            <h2 className="text-2xl font-bold mb-2 text-green-900 dark:text-green-100">
+              Próximo Passo: Receba Seu Material
+            </h2>
+            
+            <p className="text-lg font-semibold mb-6 text-green-800 dark:text-green-200">
+              Entre em contato agora para liberar seu acesso
+            </p>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-6 border-2 border-green-300 dark:border-green-700">
+              <p className="text-base text-gray-700 dark:text-gray-300 mb-3">
+                📱 <strong>IMPORTANTE:</strong> Clique no botão abaixo e me envie uma mensagem no WhatsApp dizendo:
+              </p>
+              <div className="bg-green-50 dark:bg-green-900/30 rounded-lg p-4 my-4 border-l-4 border-green-500">
+                <p className="text-sm italic text-gray-600 dark:text-gray-400">
+                  "Olá! Acabei de fazer o pagamento do Pacote Completo de Preparação e gostaria de receber meu acesso."
+                </p>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Vou te enviar todo o material em até <strong className="text-green-600 dark:text-green-400">10 minutos</strong>! ⚡
+              </p>
+            </div>
+            
             <a
-              href={`https://wa.me/55${paidContent.whatsappSupportNumber}`}
+              href={`https://wa.me/${paidContent.whatsappSupportNumber}?text=${whatsappMessage}`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={handleWhatsAppClick}
+              className="block"
             >
-              <Button size="lg" className="bg-gradient-to-r from-primary to-accent">
-                <MessageCircle className="mr-2 w-5 h-5" />
-                Entrar em Contato: {paidContent.whatsappSupportNumber}
+              <Button 
+                size="lg" 
+                className="w-full bg-green-500 hover:bg-green-600 text-white text-lg py-6 shadow-lg hover:shadow-xl transition-all hover:scale-105"
+              >
+                <MessageCircle className="mr-2 w-6 h-6" />
+                Falar Comigo Agora: {formatPhoneNumber(paidContent.whatsappSupportNumber)}
               </Button>
             </a>
+            
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-4">
+              ✅ Atendimento imediato • 📦 Entrega em até 10 minutos
+            </p>
           </div>
         </Card>
+
+        {/* Additional Info */}
+        <div className="mt-8 text-center">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            📧 Confirmação enviada para: <strong>{userName}</strong>
+          </p>
+        </div>
+
       </div>
     </div>
   );
