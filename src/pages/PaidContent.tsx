@@ -44,6 +44,18 @@ export const PaidContent = () => {
           console.log("Pagamento verificado:", data);
           setUserName(data.userName || "Usuário");
           setPaidContent(data.paidContent);
+          
+          // Track Facebook Pixel - Purchase
+          if (typeof window !== 'undefined' && (window as any).fbq) {
+            (window as any).fbq('track', 'Purchase', {
+              value: 50.00,
+              currency: 'BRL',
+              content_name: 'Pacote Completo de Preparação',
+              content_category: 'Concursos Públicos'
+            });
+            console.log("📊 Facebook Pixel: Purchase tracked");
+          }
+          
           toast.success("Pagamento confirmado! Bem-vindo ao Pacote Completo");
         } else {
           setError("Pagamento não foi aprovado");
