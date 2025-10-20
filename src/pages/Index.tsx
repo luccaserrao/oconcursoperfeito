@@ -3,10 +3,12 @@ import { Landing } from "@/components/Landing";
 import { Quiz } from "@/components/Quiz";
 import { EmailCapture } from "@/components/EmailCapture";
 import { Results } from "@/components/Results";
+import ErrorPage from "./ErrorPage";
 import { QuizAnswer, CareerRecommendation } from "@/types/quiz";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/analytics";
 
-type Step = "landing" | "quiz" | "email" | "results";
+type Step = "landing" | "quiz" | "email" | "results" | "error";
 
 const Index = () => {
   const [currentStep, setCurrentStep] = useState<Step>("landing");
@@ -17,17 +19,20 @@ const Index = () => {
   const [quizResponseId, setQuizResponseId] = useState<string | undefined>();
 
   const handleStartQuiz = () => {
+    trackEvent('quiz_start_clicked');
     setCurrentStep("quiz");
   };
 
   const handleQuizComplete = (answers: QuizAnswer[]) => {
     setQuizAnswers(answers);
+    trackEvent('email_form_viewed');
     setCurrentStep("email");
   };
 
-  const handleEmailSubmit = async (name: string, email: string) => {
+  const handleEmailSubmit = async (name: string, email: string, whatsapp?: string) => {
     setUserName(name);
     setUserEmail(email);
+    trackEvent('email_captured', { hasWhatsapp: !!whatsapp });
 
     try {
       const response = await fetch(
@@ -57,8 +62,7 @@ const Index = () => {
       toast.success("Resultado gerado com sucesso!");
     } catch (error) {
       console.error("Error generating recommendation:", error);
-      toast.error("Erro ao gerar sua recomendação. Por favor, tente novamente.");
-      throw error;
+      setCurrentStep("error");
     }
   };
 
@@ -85,6 +89,14 @@ const Index = () => {
     setCurrentStep("landing");
   };
 
+  const handleRetry = async () => {
+    setCurrentStep("email");
+    // Try submitting again
+    if (userName && userEmail) {
+      await handleEmailSubmit(userName, userEmail);
+    }
+  };
+
   return (
     <>
       {currentStep === "landing" && <Landing onStart={handleStartQuiz} />}
@@ -92,6 +104,7 @@ const Index = () => {
         <Quiz onComplete={handleQuizComplete} onBack={handleBackToLanding} />
       )}
       {currentStep === "email" && <EmailCapture onSubmit={handleEmailSubmit} />}
+      {currentStep === "error" && <ErrorPage onRetry={handleRetry} />}
       {currentStep === "results" && recommendation && (
         <Results
           recommendation={recommendation}

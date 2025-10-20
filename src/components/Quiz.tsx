@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { quizQuestions } from "@/data/quizQuestions";
 import { QuizAnswer } from "@/types/quiz";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle, Trophy } from "lucide-react";
+import { toast } from "sonner";
+import { trackEvent } from "@/lib/analytics";
 
 interface QuizProps {
   onComplete: (answers: QuizAnswer[]) => void;
@@ -18,6 +20,48 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
 
   const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;
   const question = quizQuestions[currentQuestion];
+
+  // Load saved progress on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('quiz_progress');
+    if (saved) {
+      try {
+        const { currentQuestion: savedQ, answers: savedA } = JSON.parse(saved);
+        if (savedQ > 0) {
+          setCurrentQuestion(savedQ);
+          setAnswers(savedA);
+          toast.info("👋 Bem-vindo de volta! Continue de onde parou");
+        }
+      } catch (e) {
+        console.error("Failed to load saved progress:", e);
+      }
+    }
+    trackEvent('quiz_started');
+  }, []);
+
+  // Save progress to localStorage
+  useEffect(() => {
+    if (currentQuestion > 0 || answers.length > 0) {
+      localStorage.setItem('quiz_progress', JSON.stringify({ currentQuestion, answers }));
+    }
+  }, [currentQuestion, answers]);
+
+  // Motivational toasts at milestones
+  useEffect(() => {
+    if (currentQuestion === 5) {
+      toast.success("🎉 Ótimo! Você está indo muito bem!");
+    } else if (currentQuestion === 10) {
+      toast.success("💪 Já passou da metade! Sua carreira ideal está próxima");
+    } else if (currentQuestion === 15) {
+      toast.success("🏁 Quase lá! Apenas 2 perguntas");
+    }
+    
+    // Track progress milestones
+    const progressPercent = Math.round(progress);
+    if ([25, 50, 75].includes(progressPercent)) {
+      trackEvent('quiz_progress', { progress: progressPercent });
+    }
+  }, [currentQuestion, progress]);
 
   const handleNext = () => {
     if (!selectedOption) return;
@@ -34,6 +78,8 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
     setSelectedOption(null);
 
     if (currentQuestion === quizQuestions.length - 1) {
+      localStorage.removeItem('quiz_progress');
+      trackEvent('quiz_completed');
       onComplete(newAnswers);
     } else {
       setCurrentQuestion(currentQuestion + 1);
@@ -57,12 +103,16 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 py-8">
       <div className="container mx-auto px-4 max-w-3xl">
         {/* Progress */}
-        <div className="mb-8 space-y-2">
-          <div className="flex justify-between text-sm text-muted-foreground">
-            <span>Pergunta {currentQuestion + 1} de {quizQuestions.length}</span>
-            <span>{Math.round(progress)}% concluído</span>
+        <div className="mb-8 space-y-3">
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-muted-foreground">
+              Pergunta {currentQuestion + 1} de {quizQuestions.length}
+            </span>
+            <span className="font-semibold text-primary">
+              {Math.round(progress)}% • ~{Math.ceil((quizQuestions.length - currentQuestion) * 0.3)} min restantes
+            </span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-3" />
         </div>
 
         {/* Question Card */}
@@ -76,13 +126,18 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
               <button
                 key={index}
                 onClick={() => setSelectedOption(option)}
-                className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 ${
+                className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 relative group ${
                   selectedOption === option
-                    ? "border-primary bg-primary/10 shadow-md"
-                    : "border-border hover:border-primary/50 hover:bg-primary/5"
+                    ? "border-primary bg-primary/10 shadow-md scale-[1.02]"
+                    : "border-border hover:border-primary/50 hover:bg-primary/5 hover:scale-[1.01]"
                 }`}
               >
-                <span className="text-base">{option}</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-base flex-1">{option}</span>
+                  {selectedOption === option && (
+                    <CheckCircle className="w-5 h-5 text-primary animate-scale-in" />
+                  )}
+                </div>
               </button>
             ))}
           </div>

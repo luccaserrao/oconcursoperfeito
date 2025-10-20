@@ -6,17 +6,26 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Sparkles } from "lucide-react";
 
 interface EmailCaptureProps {
-  onSubmit: (name: string, email: string) => Promise<void>;
+  onSubmit: (name: string, email: string, whatsapp?: string) => Promise<void>;
 }
 
 export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string; email?: string; whatsapp?: string }>({});
+
+  const formatWhatsApp = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    if (numbers.length <= 2) return numbers;
+    if (numbers.length <= 7) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    if (numbers.length <= 11) return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+  };
 
   const validateForm = () => {
-    const newErrors: { name?: string; email?: string } = {};
+    const newErrors: { name?: string; email?: string; whatsapp?: string } = {};
 
     if (!name.trim()) {
       newErrors.name = "Por favor, informe seu nome";
@@ -26,6 +35,10 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
       newErrors.email = "Por favor, informe seu e-mail";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       newErrors.email = "Por favor, informe um e-mail válido";
+    }
+
+    if (whatsapp && whatsapp.replace(/\D/g, '').length < 11) {
+      newErrors.whatsapp = "WhatsApp deve ter 11 dígitos (DDD + número)";
     }
 
     setErrors(newErrors);
@@ -39,7 +52,11 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
 
     setLoading(true);
     try {
-      await onSubmit(name.trim(), email.trim().toLowerCase());
+      await onSubmit(
+        name.trim(), 
+        email.trim().toLowerCase(), 
+        whatsapp ? whatsapp.replace(/\D/g, '') : undefined
+      );
     } catch (error) {
       setLoading(false);
     }
@@ -54,11 +71,16 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
               <Sparkles className="w-8 h-8 text-white" />
             </div>
             <h2 className="text-2xl md:text-3xl font-bold mb-2">
-              Sua Carreira Ideal Está Pronta!
+              🎁 Último Passo para Sua Recomendação!
             </h2>
             <p className="text-muted-foreground">
-              Informe seus dados para receber o resultado personalizado
+              Enviaremos seu resultado por email + WhatsApp para você não perder
             </p>
+            <div className="flex flex-wrap justify-center gap-2 mt-3 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">✅ 100% gratuito</span>
+              <span className="flex items-center gap-1">✅ Protegido pela LGPD</span>
+              <span className="flex items-center gap-1">✅ Pode cancelar quando quiser</span>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -92,6 +114,27 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
               )}
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="whatsapp">
+                WhatsApp <span className="text-muted-foreground text-xs">(opcional)</span>
+              </Label>
+              <Input
+                id="whatsapp"
+                type="tel"
+                placeholder="(91) 98423-3672"
+                value={whatsapp}
+                onChange={(e) => setWhatsapp(formatWhatsApp(e.target.value))}
+                className={errors.whatsapp ? "border-destructive" : ""}
+                maxLength={15}
+              />
+              {errors.whatsapp && (
+                <p className="text-sm text-destructive">{errors.whatsapp}</p>
+              )}
+              <p className="text-xs text-muted-foreground">
+                📱 Quer receber no WhatsApp também? (opcional mas recomendado)
+              </p>
+            </div>
+
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-primary to-accent"
@@ -109,7 +152,7 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
             </Button>
 
             <p className="text-xs text-center text-muted-foreground">
-              🔒 Seu e-mail está 100% seguro. Não enviaremos spam nem enchemos sua caixa de entrada.
+              🔒 Seus dados estão 100% seguros. Não compartilhamos com ninguém.
             </p>
           </form>
         </Card>
