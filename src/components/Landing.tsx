@@ -45,20 +45,15 @@ export const Landing = ({ onStart }: LandingProps) => {
               com alto salário e maior chance de aprovação
             </p>
 
-            {/* Mini testimonial */}
-            <Card className="p-4 max-w-md mx-auto bg-card/50 backdrop-blur border-primary/20">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center text-white font-bold">
-                  LH
-                </div>
-                <div className="flex-1 text-left">
-                  <p className="text-sm italic text-muted-foreground">
-                    "Nunca imaginei que Auditor Fiscal era perfeito pra mim. Hoje estou estudando focado!"
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">— L.H., aprovado em 2024</p>
-                </div>
-              </div>
-            </Card>
+            {/* CTA Button */}
+            <Button 
+              onClick={onStart}
+              size="lg"
+              className="text-lg px-8 py-6 rounded-full shadow-[var(--shadow-elevated)] hover:scale-105 transition-transform duration-200 bg-gradient-to-r from-primary to-accent"
+            >
+              Iniciar Quiz Agora
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
 
             {/* How it works */}
             <div className="pt-8">
