@@ -46,6 +46,7 @@ const Index = () => {
             answers: quizAnswers,
             name,
             email,
+            whatsapp,
           }),
         }
       );

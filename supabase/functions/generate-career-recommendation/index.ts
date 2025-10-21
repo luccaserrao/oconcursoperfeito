@@ -17,6 +17,7 @@ serve(async (req) => {
     const requestSchema = z.object({
       name: z.string().trim().min(2, "Nome muito curto").max(100, "Nome muito longo"),
       email: z.string().trim().email("Email inválido").max(255, "Email muito longo"),
+      whatsapp: z.string().optional(),
       answers: z.array(z.object({
         question: z.string().max(500),
         answer: z.string().max(1000)
@@ -41,7 +42,7 @@ serve(async (req) => {
       );
     }
 
-    const { name, email, answers } = validationResult.data;
+    const { name, email, whatsapp, answers } = validationResult.data;
     
     console.log('Generating career recommendation for:', email);
 
@@ -145,6 +146,7 @@ Retorne APENAS o JSON conforme o formato especificado.`;
       .insert({
         name,
         email,
+        whatsapp,
         answers,
         ai_recommendation: recommendation,
       })

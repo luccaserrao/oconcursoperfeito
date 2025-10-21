@@ -117,6 +117,7 @@ export type Database = {
           id: string
           name: string
           upsell_clicked_at: string | null
+          whatsapp: string | null
         }
         Insert: {
           ai_recommendation: Json
@@ -127,6 +128,7 @@ export type Database = {
           id?: string
           name: string
           upsell_clicked_at?: string | null
+          whatsapp?: string | null
         }
         Update: {
           ai_recommendation?: Json
@@ -137,6 +139,7 @@ export type Database = {
           id?: string
           name?: string
           upsell_clicked_at?: string | null
+          whatsapp?: string | null
         }
         Relationships: []
       }
