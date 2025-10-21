@@ -18,7 +18,7 @@ export const trackConversion = (conversionLabel: string, value?: number) => {
 // Track purchase specifically for Google Ads
 export const trackPurchase = (transactionId: string, value: number = 50.0) => {
   if (typeof window !== 'undefined' && (window as any).gtag) {
-    // Enhanced ecommerce event
+    // Enhanced ecommerce event for Google Analytics
     (window as any).gtag('event', 'purchase', {
       transaction_id: transactionId,
       value: value,
@@ -30,6 +30,14 @@ export const trackPurchase = (transactionId: string, value: number = 50.0) => {
         price: value,
         quantity: 1
       }]
+    });
+    
+    // Google Ads conversion event
+    (window as any).gtag('event', 'conversion', {
+      'send_to': 'AW-400922729/Oe_YCMbbs_cYEOmwlr8B',
+      'transaction_id': transactionId,
+      'value': value,
+      'currency': 'BRL'
     });
   }
 };
