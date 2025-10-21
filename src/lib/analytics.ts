@@ -34,11 +34,12 @@ export const trackPurchase = (transactionId: string, value: number = 50.0) => {
     
     // Google Ads conversion event
     (window as any).gtag('event', 'conversion', {
-      'send_to': 'AW-400922729/Oe_YCMbbs_cYEOmwlr8B',
-      'transaction_id': transactionId,
-      'value': value,
-      'currency': 'BRL'
+      send_to: "AW-400922729/Oe_YCMbbs_cYEOmwlr8B",
+      transaction_id: transactionId,
+      value: value,
+      currency: "BRL"
     });
+    console.log('🎯 Google Ads conversion tracked:', transactionId, value);
   }
 };
 
