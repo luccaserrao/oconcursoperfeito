@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Sparkles } from "lucide-react";
 
 interface EmailCaptureProps {
-  onSubmit: (name: string, email: string, whatsapp?: string) => Promise<void>;
+  onSubmit: (name: string, email: string, whatsapp: string) => Promise<void>;
 }
 
 export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
@@ -37,7 +37,9 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
       newErrors.email = "Por favor, informe um e-mail válido";
     }
 
-    if (whatsapp && whatsapp.replace(/\D/g, '').length < 11) {
+    if (!whatsapp.trim()) {
+      newErrors.whatsapp = "Por favor, informe seu WhatsApp";
+    } else if (whatsapp.replace(/\D/g, '').length < 11) {
       newErrors.whatsapp = "WhatsApp deve ter 11 dígitos (DDD + número)";
     }
 
@@ -55,7 +57,7 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
       await onSubmit(
         name.trim(), 
         email.trim().toLowerCase(), 
-        whatsapp ? whatsapp.replace(/\D/g, '') : undefined
+        whatsapp.replace(/\D/g, '')
       );
     } catch (error) {
       setLoading(false);
@@ -116,7 +118,7 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
 
             <div className="space-y-2">
               <Label htmlFor="whatsapp">
-                WhatsApp <span className="text-muted-foreground text-xs">(opcional)</span>
+                WhatsApp
               </Label>
               <Input
                 id="whatsapp"
@@ -126,12 +128,13 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
                 onChange={(e) => setWhatsapp(formatWhatsApp(e.target.value))}
                 className={errors.whatsapp ? "border-destructive" : ""}
                 maxLength={15}
+                required
               />
               {errors.whatsapp && (
                 <p className="text-sm text-destructive">{errors.whatsapp}</p>
               )}
               <p className="text-xs text-muted-foreground">
-                📱 Quer receber no WhatsApp também? (opcional mas recomendado)
+                📱 Enviaremos sua recomendação por WhatsApp para você não perder!
               </p>
             </div>
 
