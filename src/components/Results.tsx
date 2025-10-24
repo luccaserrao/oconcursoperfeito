@@ -33,155 +33,319 @@ export const Results = ({
             <Trophy className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-3xl md:text-5xl font-bold mb-4">
-            Parabéns, {userName.split(' ')[0]}! 🎉
+            🎉 Parabéns, {userName.split(' ')[0]}! Você descobriu sua carreira ideal no serviço público.
           </h1>
           <p className="text-xl text-muted-foreground">
-            Descobrimos a carreira perfeita para você
+            Agora transforme essa descoberta em uma aprovação real.
           </p>
         </div>
 
-        {/* Main Career Card - Simplified Initial View */}
+        {/* Main Career Card - Free Result */}
         <Card className="p-8 mb-8 shadow-[var(--shadow-elevated)] animate-fade-in">
-          <div className="mb-6">
+          <div className="text-center mb-6">
             <Badge className="mb-4 bg-gradient-to-r from-primary to-accent">
-              Carreira Recomendada
+              🎁 SEU RESULTADO GRATUITO
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               {recommendation.careerName}
             </h2>
-          </div>
-
-          {/* Quick Info */}
-          <div className="grid md:grid-cols-2 gap-4 mb-6">
-            <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5">
-              <DollarSign className="w-5 h-5 text-primary mt-0.5" />
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Remuneração</p>
-                <p className="font-semibold">{recommendation.salary}</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5">
-              <Calendar className="w-5 h-5 text-primary mt-0.5" />
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Próxima Prova</p>
-                <p className="font-semibold">{recommendation.examDate}</p>
-              </div>
+            <div className="flex items-center justify-center gap-2 text-2xl md:text-3xl font-semibold text-primary">
+              <DollarSign className="w-7 h-7" />
+              {recommendation.salary}
             </div>
           </div>
 
-          {/* Workplaces */}
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-3">
-              <MapPin className="w-5 h-5 text-primary" />
-              <h3 className="font-semibold">Locais de Trabalho</h3>
+          {/* Locked Information Grid */}
+          <div className="grid md:grid-cols-2 gap-4 mt-8">
+            {/* Próxima Prova - BLOQUEADA */}
+            <div className="relative p-4 rounded-xl bg-primary/5 border border-primary/20 min-h-[100px]">
+              <div className="blur-sm select-none pointer-events-none">
+                <Calendar className="w-5 h-5 text-primary mb-1" />
+                <p className="text-sm text-muted-foreground">Próxima Prova</p>
+                <p className="font-semibold">XX/XX/XXXX</p>
+              </div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-sm rounded-xl">
+                <Lock className="w-6 h-6 text-primary mb-2" />
+                <p className="text-xs font-semibold text-primary">🔒 Desbloqueie</p>
+              </div>
             </div>
-            <div className="space-y-2">
-              {recommendation.workplaces.map((place, i) => <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                  <span>{place}</span>
-                </div>)}
+
+            {/* Locais de Trabalho - BLOQUEADO */}
+            <div className="relative p-4 rounded-xl bg-primary/5 border border-primary/20 min-h-[100px]">
+              <div className="blur-sm select-none pointer-events-none">
+                <MapPin className="w-5 h-5 text-primary mb-1" />
+                <p className="text-sm text-muted-foreground">Locais de Trabalho</p>
+                <p className="font-semibold">Tribunais, Órgãos...</p>
+              </div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-sm rounded-xl">
+                <Lock className="w-6 h-6 text-primary mb-2" />
+                <p className="text-xs font-semibold text-primary">🔒 Desbloqueie</p>
+              </div>
+            </div>
+
+            {/* Rotina de Trabalho - BLOQUEADA */}
+            <div className="relative p-4 rounded-xl bg-primary/5 border border-primary/20 md:col-span-2 min-h-[100px]">
+              <div className="blur-sm select-none pointer-events-none">
+                <Briefcase className="w-5 h-5 text-primary mb-1" />
+                <p className="text-sm text-muted-foreground">Rotina de Trabalho</p>
+                <p className="font-semibold">Horários, ambiente, benefícios...</p>
+              </div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-sm rounded-xl">
+                <Lock className="w-6 h-6 text-primary mb-2" />
+                <p className="text-xs font-semibold text-primary">🔒 Desbloqueie no Pacote</p>
+              </div>
             </div>
           </div>
 
-          {/* Work Routine */}
-          <div className="p-4 rounded-xl bg-accent/10 border border-accent/20">
-            <div className="flex items-start gap-3">
-              <Briefcase className="w-5 h-5 text-accent mt-0.5" />
-              <div>
-                <p className="font-semibold mb-1">Rotina de Trabalho</p>
-                <p className="text-sm text-muted-foreground">{recommendation.workRoutine}</p>
-              </div>
-            </div>
+          {/* Mini-CTA */}
+          <div className="mt-8 text-center">
+            <Button 
+              variant="ghost" 
+              className="text-primary hover:text-primary/80 hover:bg-primary/5"
+              onClick={() => document.getElementById('offer-section')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              💡 Veja como desbloquear + receber seu plano completo
+            </Button>
           </div>
         </Card>
 
-        {/* Free Content Sections */}
-        <div className="space-y-6 mb-8">
-          {/* Justification */}
-          <Card className="p-6 shadow-[var(--shadow-elevated)]">
-            <div className="prose prose-sm max-w-none text-muted-foreground">
-              <p>{recommendation.justification}</p>
-            </div>
-          </Card>
-
-          {/* Subjects */}
-          <Card className="p-6 shadow-[var(--shadow-elevated)]">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-primary" />
-              Principais Matérias
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {recommendation.subjects.map((subject, i) => <Badge key={i} variant="secondary" className="text-sm py-1.5">
-                  {subject}
-                </Badge>)}
-            </div>
-          </Card>
-
-          {/* Exam Frequency */}
-          <Card className="p-6 shadow-[var(--shadow-elevated)]">
-            <div className="flex items-start gap-3">
-              <Clock className="w-5 h-5 text-accent mt-0.5" />
-              <div>
-                <p className="font-semibold mb-2">Frequência de Concursos</p>
-                <p className="text-sm text-muted-foreground">{recommendation.examFrequency}</p>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Urgency Timer */}
-        <div className="text-center mb-8 animate-fade-in">
-          <p className="text-sm text-muted-foreground mb-3">⏰ OFERTA EXCLUSIVA - EXPIRA EM:</p>
-          <CountdownTimer initialMinutes={120} />
-          <p className="text-xs text-muted-foreground mt-2">
-            Por ter completado o quiz hoje, você tem acesso especial ao<br />
-            <strong>Pacote Completo de Preparação com 60% de desconto</strong>
+        {/* Emotional Transition */}
+        <Card className="p-6 mb-8 bg-gradient-to-r from-accent/10 to-primary/10 border-2 border-primary/20 text-center animate-fade-in">
+          <Sparkles className="w-8 h-8 text-primary mx-auto mb-3" />
+          <h3 className="text-xl md:text-2xl font-bold mb-2">
+            🎓 Descobrir sua carreira é o primeiro passo.
+          </h3>
+          <p className="text-muted-foreground">
+            Agora, veja como começar sua preparação de forma inteligente,<br className="hidden md:block" />
+            focando no que <strong>realmente importa para passar</strong>.
           </p>
-        </div>
+        </Card>
 
-        {/* Payment Card */}
-        <Card className="p-8 mb-8 shadow-[var(--shadow-elevated)] bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-primary/20 animate-fade-in relative overflow-hidden">
-          {/* Decorative badge */}
-          <div className="absolute top-4 right-4 bg-destructive text-destructive-foreground text-xs font-bold px-3 py-1 rounded-full animate-pulse">
-            60% OFF
-          </div>
-          
-          <div className="text-center mb-6">
-            <Sparkles className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h3 className="text-2xl font-bold mb-2">
-              🎁 PACOTE COMPLETO DE PREPARAÇÃO
-            </h3>
-            <div className="flex items-center justify-center gap-3 mb-2">
-              <span className="text-lg text-muted-foreground line-through">De R$ 127,00</span>
-              <span className="text-3xl font-bold text-primary">por apenas R$ 50,00</span>
-            </div>
-            <p className="text-muted-foreground">
-              Tudo que você precisa para começar sua jornada rumo à aprovação
+        {/* Offer Section */}
+        <div id="offer-section" className="scroll-mt-8">
+          <div className="text-center mb-8 animate-fade-in">
+            <h2 className="text-3xl md:text-4xl font-bold mb-3">
+              🎁 Seu Plano Personalizado para Conquistar Essa Vaga
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Feito com base nas suas respostas do quiz e nos editais mais recentes
             </p>
           </div>
 
-          <div className="space-y-3 mb-6">
-            <p className="font-semibold text-lg mb-3">✨ O QUE VOCÊ RECEBE:</p>
-            {[
-              "📅 Cronograma personalizado de estudos (12 semanas)",
-              "🎯 3 carreiras alternativas compatíveis com você",
-              "📚 Roteiro de estudo validado por aprovados",
-              "📖 Materiais de estudo gratuitos selecionados",
-              "👥 Acesso ao grupo exclusivo no WhatsApp",
-              "💬 Suporte direto comigo por 30 dias",
-              "🎁 BÔNUS: Técnicas de memorização para concursos"
-            ].map((benefit, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-background/50">
-                <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                <span className="text-sm">{benefit}</span>
+          {/* 6 Products Grid */}
+          <div className="grid md:grid-cols-2 gap-4 mb-8">
+            {/* Produto 1 */}
+            <Card className="p-6 border-2 border-primary/20 hover:border-primary/40 transition-colors">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <BookOpen className="w-6 h-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <Badge variant="outline" className="mb-2">Valor: R$15</Badge>
+                  <h4 className="font-bold text-lg">📘 Guia das Matérias-Chave</h4>
+                </div>
               </div>
-            ))}
+              <p className="text-sm text-muted-foreground mb-3">
+                Lista exata das matérias que <strong>mais caem</strong> no seu concurso.
+              </p>
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Economiza <strong>meses</strong> de estudo desnecessário</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Foque apenas no que <strong>realmente importa</strong></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Baseado em <strong>editais reais</strong> dos últimos 5 anos</span>
+                </div>
+              </div>
+            </Card>
+
+            {/* Produto 2 */}
+            <Card className="p-6 border-2 border-primary/20 hover:border-primary/40 transition-colors">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Calendar className="w-6 h-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <Badge variant="outline" className="mb-2">Valor: R$25</Badge>
+                  <h4 className="font-bold text-lg">📅 Plano de Estudo 12 Semanas</h4>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground mb-3">
+                Cronograma personalizado com <strong>revisões programadas</strong> e tempo ideal por matéria.
+              </p>
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Elimina <strong>indecisão</strong> sobre o que estudar hoje</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Cria <strong>disciplina diária</strong> automática</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Revisões espaçadas para <strong>não esquecer</strong></span>
+                </div>
+              </div>
+            </Card>
+
+            {/* Produto 3 */}
+            <Card className="p-6 border-2 border-primary/20 hover:border-primary/40 transition-colors">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-6 h-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <Badge variant="outline" className="mb-2">Valor: R$10</Badge>
+                  <h4 className="font-bold text-lg">🧠 Estilo de Aprendizado Ideal</h4>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground mb-3">
+                Descubra como <strong>você aprende mais rápido</strong>: vídeos, leitura, questões ou presencial.
+              </p>
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Acelera seu aprendizado em <strong>até 2x</strong></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Evita perder tempo com métodos <strong>que não funcionam pra você</strong></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Baseado em <strong>neurociência</strong> do aprendizado</span>
+                </div>
+              </div>
+            </Card>
+
+            {/* Produto 4 */}
+            <Card className="p-6 border-2 border-primary/20 hover:border-primary/40 transition-colors">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-6 h-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <Badge variant="outline" className="mb-2">Valor: R$20</Badge>
+                  <h4 className="font-bold text-lg">📍 Mapa de Oportunidades</h4>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground mb-3">
+                Lista de <strong>editais abertos e previstos</strong> para sua carreira nos próximos 12 meses.
+              </p>
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Saiba <strong>quando e onde</strong> as provas acontecem</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Não perca <strong>nenhuma oportunidade</strong></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Fique <strong>na frente</strong> de 99% dos concurseiros</span>
+                </div>
+              </div>
+            </Card>
+
+            {/* Produto 5 */}
+            <Card className="p-6 border-2 border-primary/20 hover:border-primary/40 transition-colors">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Briefcase className="w-6 h-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <Badge variant="outline" className="mb-2">Valor: R$15</Badge>
+                  <h4 className="font-bold text-lg">💼 3 Carreiras Alternativas</h4>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground mb-3">
+                Outras opções compatíveis com <strong>matérias semelhantes</strong> à sua carreira ideal.
+              </p>
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Amplia suas <strong>chances de aprovação</strong></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Evita recomeçar <strong>do zero</strong></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Mais segurança no <strong>plano B e C</strong></span>
+                </div>
+              </div>
+            </Card>
+
+            {/* Produto 6 */}
+            <Card className="p-6 border-2 border-primary/20 hover:border-primary/40 transition-colors">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Users className="w-6 h-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <Badge variant="outline" className="mb-2">Valor: R$25</Badge>
+                  <h4 className="font-bold text-lg">🤖 ChatGPT "Coach de Aprovação"</h4>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground mb-3">
+                IA personalizada que <strong>conhece sua carreira</strong> e responde suas dúvidas 24h.
+              </p>
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Como ter um <strong>professor particular</strong> sempre disponível</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Tire dúvidas, revise e <strong>ajuste seu plano</strong></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Treinado especificamente para <strong>seu concurso</strong></span>
+                </div>
+              </div>
+            </Card>
           </div>
 
-          {/* Social proof */}
-          <div className="bg-accent/10 border border-accent/20 rounded-lg p-4 mb-6">
-            <p className="text-sm text-center">
-              🔥 <strong>23 pessoas</strong> compraram nas últimas 24h<br />
+          {/* Value Stacking */}
+          <Card className="p-8 mb-6 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/10 border-4 border-primary/30 relative overflow-hidden animate-fade-in">
+            <div className="absolute top-4 right-4 bg-destructive text-destructive-foreground text-sm font-bold px-4 py-2 rounded-full animate-pulse shadow-lg">
+              54% OFF
+            </div>
+
+            <div className="text-center mb-6">
+              <p className="text-sm text-muted-foreground mb-2">Se comprasse tudo separado:</p>
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <span className="text-3xl font-bold line-through text-muted-foreground">R$ 110,00</span>
+              </div>
+              
+              <div className="mb-3">
+                <p className="text-lg text-muted-foreground mb-2">
+                  Mas como você demonstrou <strong>alto potencial</strong> no quiz e decidiu agir agora:
+                </p>
+              </div>
+
+              <div className="inline-block p-6 rounded-2xl bg-gradient-to-r from-primary to-accent">
+                <p className="text-white text-lg mb-2">🎯 PACOTE COMPLETO POR APENAS</p>
+                <p className="text-5xl font-bold text-white">R$ 50,00</p>
+                <p className="text-white/90 text-sm mt-2">Acesso imediato após o pagamento</p>
+              </div>
+            </div>
+          </Card>
+
+          {/* Timer */}
+          <div className="text-center mb-8 animate-fade-in">
+            <p className="text-sm text-muted-foreground mb-3">⏰ OFERTA EXPIRA EM:</p>
+            <CountdownTimer initialMinutes={120} />
+            <p className="text-xs text-muted-foreground mt-2">
               ⚠️ <strong>Restam apenas 7 vagas</strong> hoje com desconto
             </p>
           </div>
@@ -196,60 +360,53 @@ export const Results = ({
                   Se você não ficar 100% satisfeito, devolvemos seu dinheiro.<br />
                   Sem perguntas, sem burocracia.
                 </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  🔒 <strong>Pagamento 100% seguro via Mercado Pago</strong>
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Payment details */}
-          <div className="text-center mb-6 space-y-2 text-sm text-muted-foreground">
-            <p>💳 Pagamento único de R$ 50,00</p>
-            <p>🔒 Ambiente 100% seguro (Mercado Pago)</p>
-            <p>📧 Acesso imediato após confirmação do pagamento</p>
-          </div>
-
-          <div onClick={() => trackEvent('upsell_clicked', { career: recommendation.careerName })}>
+          {/* CTA Button */}
+          <div id="mercadopago-button" onClick={() => trackEvent('upsell_clicked', { career: recommendation.careerName })}>
             <MercadoPagoButton 
               userName={userName} 
               userEmail={userEmail}
               quizResponseId={quizResponseId}
             />
           </div>
-          
-          <p className="text-center text-xs text-muted-foreground mt-4">
-            👆 Clique aqui e comece sua aprovação hoje
-          </p>
-        </Card>
+        </div>
 
         {/* Testimonials */}
-        <div className="mb-8">
-          <h3 className="text-xl font-bold text-center mb-6">
-            O que dizem quem já garantiu o Pacote Completo:
+        <div className="mb-8 mt-12">
+          <h3 className="text-2xl font-bold text-center mb-6">
+            ⭐ O que dizem quem já garantiu o Pacote:
           </h3>
           <div className="grid md:grid-cols-3 gap-4">
             {[
               {
-                name: "M.S.",
-                text: "Passei para Auditor Fiscal seguindo o plano! O cronograma foi essencial.",
+                name: "Ana R.",
+                text: "Achei meu concurso e comecei a estudar certo — o cronograma me salvou!",
                 rating: 5
               },
               {
-                name: "A.R.",
-                text: "Nunca tinha pensado em TRT, mas a IA acertou em cheio. Hoje estou estudando focado!",
+                name: "Carlos M.",
+                text: "Economizei tempo e já estou revisando com o plano da IA.",
                 rating: 5
               },
               {
-                name: "J.C.",
-                text: "O grupo de WhatsApp foi fundamental pra manter foco. Valeu cada centavo!",
+                name: "Júlia S.",
+                text: "O ChatGPT personalizado tirou todas minhas dúvidas — parece um professor particular!",
                 rating: 5
               }
             ].map((testimonial, i) => (
-              <Card key={i} className="p-4">
-                <div className="flex gap-1 mb-2">
+              <Card key={i} className="p-5 border-2 border-primary/10">
+                <div className="flex gap-1 mb-3">
                   {[...Array(testimonial.rating)].map((_, j) => (
                     <Star key={j} className="w-4 h-4 fill-primary text-primary" />
                   ))}
                 </div>
-                <p className="text-sm text-muted-foreground italic mb-2">
+                <p className="text-sm text-muted-foreground mb-3">
                   "{testimonial.text}"
                 </p>
                 <p className="text-xs font-semibold">— {testimonial.name}</p>
@@ -262,12 +419,25 @@ export const Results = ({
         {/* CTA Footer */}
         <div className="text-center mt-12 p-6 rounded-2xl bg-card shadow-[var(--shadow-card)]">
           <p className="text-muted-foreground mb-2">
-            ✨ Resultado enviado para <strong>{userEmail}</strong>
+            ✨ Seu resultado gratuito foi enviado para <strong>{userEmail}</strong>
           </p>
           <p className="text-sm text-muted-foreground">
-            Boa sorte na sua jornada rumo à aprovação! 🚀
+            Agora é hora de transformar essa descoberta em aprovação. 🚀
           </p>
         </div>
+      </div>
+
+      {/* Sticky CTA Mobile */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-sm border-t border-primary/20 md:hidden z-50">
+        <Button 
+          className="w-full h-14 text-lg font-bold bg-gradient-to-r from-primary to-accent hover:opacity-90"
+          onClick={() => {
+            trackEvent('upsell_clicked', { career: recommendation.careerName, source: 'sticky_mobile' });
+            document.getElementById('mercadopago-button')?.scrollIntoView({ behavior: 'smooth' });
+          }}
+        >
+          🔥 Quero Meu Pacote por R$ 50
+        </Button>
       </div>
       </div>
       <Footer />
