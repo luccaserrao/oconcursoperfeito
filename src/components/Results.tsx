@@ -21,10 +21,10 @@ export const Results = ({
   userEmail,
   quizResponseId
 }: ResultsProps) => {
-  trackEvent('results_viewed', { career: recommendation.careerName });
-
-  return (
-    <>
+  trackEvent('results_viewed', {
+    career: recommendation.careerName
+  });
+  return <>
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 py-12">
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
@@ -99,11 +99,9 @@ export const Results = ({
 
           {/* Mini-CTA */}
           <div className="mt-8 text-center">
-            <Button 
-              variant="ghost" 
-              className="text-primary hover:text-primary/80 hover:bg-primary/5"
-              onClick={() => document.getElementById('offer-section')?.scrollIntoView({ behavior: 'smooth' })}
-            >
+            <Button variant="ghost" className="text-primary hover:text-primary/80 hover:bg-primary/5" onClick={() => document.getElementById('offer-section')?.scrollIntoView({
+              behavior: 'smooth'
+            })}>
               💡 Veja como desbloquear + receber seu plano completo
             </Button>
           </div>
@@ -141,7 +139,7 @@ export const Results = ({
                   <BookOpen className="w-6 h-6 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <Badge variant="outline" className="mb-2">Valor: R$15</Badge>
+                  <Badge variant="outline" className="mb-2">Valor: R$15,00</Badge>
                   <h4 className="font-bold text-lg">📘 Guia das Matérias-Chave</h4>
                 </div>
               </div>
@@ -171,7 +169,7 @@ export const Results = ({
                   <Calendar className="w-6 h-6 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <Badge variant="outline" className="mb-2">Valor: R$25</Badge>
+                  <Badge variant="outline" className="mb-2">Valor: R$25,00</Badge>
                   <h4 className="font-bold text-lg">📅 Plano de Estudo 12 Semanas</h4>
                 </div>
               </div>
@@ -201,7 +199,7 @@ export const Results = ({
                   <Sparkles className="w-6 h-6 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <Badge variant="outline" className="mb-2">Valor: R$10</Badge>
+                  <Badge variant="outline" className="mb-2">Valor: R$10,00</Badge>
                   <h4 className="font-bold text-lg">🧠 Estilo de Aprendizado Ideal</h4>
                 </div>
               </div>
@@ -231,7 +229,7 @@ export const Results = ({
                   <MapPin className="w-6 h-6 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <Badge variant="outline" className="mb-2">Valor: R$20</Badge>
+                  <Badge variant="outline" className="mb-2">Valor: R$20,00</Badge>
                   <h4 className="font-bold text-lg">📍 Mapa de Oportunidades</h4>
                 </div>
               </div>
@@ -261,7 +259,7 @@ export const Results = ({
                   <Briefcase className="w-6 h-6 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <Badge variant="outline" className="mb-2">Valor: R$15</Badge>
+                  <Badge variant="outline" className="mb-2">Valor: R$15,00</Badge>
                   <h4 className="font-bold text-lg">💼 3 Carreiras Alternativas</h4>
                 </div>
               </div>
@@ -291,7 +289,7 @@ export const Results = ({
                   <Users className="w-6 h-6 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <Badge variant="outline" className="mb-2">Valor: R$25</Badge>
+                  <Badge variant="outline" className="mb-2">Valor: R$25,00</Badge>
                   <h4 className="font-bold text-lg">🤖 ChatGPT "Coach de Aprovação"</h4>
                 </div>
               </div>
@@ -368,12 +366,10 @@ export const Results = ({
           </div>
 
           {/* CTA Button */}
-          <div id="mercadopago-button" onClick={() => trackEvent('upsell_clicked', { career: recommendation.careerName })}>
-            <MercadoPagoButton 
-              userName={userName} 
-              userEmail={userEmail}
-              quizResponseId={quizResponseId}
-            />
+          <div id="mercadopago-button" onClick={() => trackEvent('upsell_clicked', {
+            career: recommendation.careerName
+          })}>
+            <MercadoPagoButton userName={userName} userEmail={userEmail} quizResponseId={quizResponseId} />
           </div>
         </div>
 
@@ -383,35 +379,27 @@ export const Results = ({
             ⭐ O que dizem quem já garantiu o Pacote:
           </h3>
           <div className="grid md:grid-cols-3 gap-4">
-            {[
-              {
-                name: "Ana R.",
-                text: "Achei meu concurso e comecei a estudar certo — o cronograma me salvou!",
-                rating: 5
-              },
-              {
-                name: "Carlos M.",
-                text: "Economizei tempo e já estou revisando com o plano da IA.",
-                rating: 5
-              },
-              {
-                name: "Júlia S.",
-                text: "O ChatGPT personalizado tirou todas minhas dúvidas — parece um professor particular!",
-                rating: 5
-              }
-            ].map((testimonial, i) => (
-              <Card key={i} className="p-5 border-2 border-primary/10">
+            {[{
+              name: "Ana R.",
+              text: "Achei meu concurso e comecei a estudar certo — o cronograma me salvou!",
+              rating: 5
+            }, {
+              name: "Carlos M.",
+              text: "Economizei tempo e já estou revisando com o plano da IA.",
+              rating: 5
+            }, {
+              name: "Júlia S.",
+              text: "O ChatGPT personalizado tirou todas minhas dúvidas — parece um professor particular!",
+              rating: 5
+            }].map((testimonial, i) => <Card key={i} className="p-5 border-2 border-primary/10">
                 <div className="flex gap-1 mb-3">
-                  {[...Array(testimonial.rating)].map((_, j) => (
-                    <Star key={j} className="w-4 h-4 fill-primary text-primary" />
-                  ))}
+                  {[...Array(testimonial.rating)].map((_, j) => <Star key={j} className="w-4 h-4 fill-primary text-primary" />)}
                 </div>
                 <p className="text-sm text-muted-foreground mb-3">
                   "{testimonial.text}"
                 </p>
                 <p className="text-xs font-semibold">— {testimonial.name}</p>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
 
@@ -429,18 +417,19 @@ export const Results = ({
 
       {/* Sticky CTA Mobile */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-sm border-t border-primary/20 md:hidden z-50">
-        <Button 
-          className="w-full h-14 text-lg font-bold bg-gradient-to-r from-primary to-accent hover:opacity-90"
-          onClick={() => {
-            trackEvent('upsell_clicked', { career: recommendation.careerName, source: 'sticky_mobile' });
-            document.getElementById('mercadopago-button')?.scrollIntoView({ behavior: 'smooth' });
-          }}
-        >
+        <Button className="w-full h-14 text-lg font-bold bg-gradient-to-r from-primary to-accent hover:opacity-90" onClick={() => {
+          trackEvent('upsell_clicked', {
+            career: recommendation.careerName,
+            source: 'sticky_mobile'
+          });
+          document.getElementById('mercadopago-button')?.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }}>
           🔥 Quero Meu Pacote por R$ 50
         </Button>
       </div>
       </div>
       <Footer />
-    </>
-  );
+    </>;
 };
