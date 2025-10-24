@@ -331,11 +331,24 @@ export const Results = ({
                 </p>
               </div>
 
-              <div className="inline-block p-6 rounded-2xl bg-gradient-to-r from-primary to-accent">
-                <p className="text-white text-lg mb-2">🎯 PACOTE COMPLETO POR APENAS</p>
-                <p className="text-5xl font-bold text-white">R$ 50,00</p>
-                <p className="text-white/90 text-sm mt-2">Acesso imediato após o pagamento</p>
-              </div>
+              <Button 
+                className="p-6 rounded-2xl bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity cursor-pointer h-auto"
+                onClick={() => {
+                  trackEvent('upsell_clicked', {
+                    career: recommendation.careerName,
+                    source: 'value_stacking_card'
+                  });
+                  document.getElementById('mercadopago-button')?.scrollIntoView({
+                    behavior: 'smooth'
+                  });
+                }}
+              >
+                <div className="text-center">
+                  <p className="text-white text-lg mb-2">🎯 PACOTE COMPLETO POR APENAS</p>
+                  <p className="text-5xl font-bold text-white">R$ 50,00</p>
+                  <p className="text-white/90 text-sm mt-2">Clique para pagar com Mercado Pago</p>
+                </div>
+              </Button>
             </div>
           </Card>
 
