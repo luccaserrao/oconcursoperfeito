@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
-import { Search, Users, MessageCircle, RefreshCw } from "lucide-react";
+import { Search, Users, MessageCircle, RefreshCw, CreditCard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -116,10 +116,16 @@ const AdminUsers = () => {
               Todos os usuários que completaram o quiz
             </p>
           </div>
-          <Button onClick={loadUsers} variant="outline" disabled={loadingUsers}>
-            <RefreshCw className={`w-4 h-4 mr-2 ${loadingUsers ? 'animate-spin' : ''}`} />
-            Atualizar
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => navigate('/admin/payments')} variant="outline">
+              <CreditCard className="w-4 h-4 mr-2" />
+              Pagamentos
+            </Button>
+            <Button onClick={loadUsers} variant="outline" disabled={loadingUsers}>
+              <RefreshCw className={`w-4 h-4 mr-2 ${loadingUsers ? 'animate-spin' : ''}`} />
+              Atualizar
+            </Button>
+          </div>
         </div>
 
         <Card>

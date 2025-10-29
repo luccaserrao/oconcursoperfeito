@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, XCircle, Copy, ExternalLink, RefreshCw } from "lucide-react";
+import { CheckCircle2, XCircle, Copy, ExternalLink, RefreshCw, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -200,9 +200,15 @@ const AdminPayments = () => {
 
   return (
     <div className="container mx-auto py-10 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Painel de Pagamentos</h1>
-        <p className="text-muted-foreground">Gerenciar Mercado Pago e pedidos</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Painel de Pagamentos</h1>
+          <p className="text-muted-foreground">Gerenciar Mercado Pago e pedidos</p>
+        </div>
+        <Button variant="outline" onClick={() => navigate('/admin/users')}>
+          <Users className="w-4 h-4 mr-2" />
+          Ver Usuários
+        </Button>
       </div>
 
       <Card>
