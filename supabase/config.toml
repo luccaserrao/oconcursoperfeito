@@ -26,3 +26,6 @@ verify_jwt = true
 
 [functions.list-orders]
 verify_jwt = true
+
+[functions.list-users]
+verify_jwt = true
