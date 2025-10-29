@@ -53,7 +53,9 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
     } else if (currentQuestion === 10) {
       toast.success("💪 Já passou da metade! Sua carreira ideal está próxima");
     } else if (currentQuestion === 15) {
-      toast.success("🏁 Quase lá! Apenas 2 perguntas");
+      toast.success("🏁 Faltam só 5 perguntas! Sua carreira ideal está chegando");
+    } else if (currentQuestion === 17) {
+      toast.success("🚀 Últimas 3 perguntas! Está quase lá!");
     }
     
     // Track progress milestones

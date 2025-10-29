@@ -173,5 +173,32 @@ export const quizQuestions: QuizQuestion[] = [
       "Lido bem com pressão moderada",
       "Funciono melhor sob pressão e desafios constantes"
     ]
+  },
+  {
+    id: "q18",
+    question: "Você sabia que candidatos que estudam com auxílio de Inteligência Artificial têm até 3x mais chances de aprovação?",
+    options: [
+      "Sim, já sabia disso",
+      "Não sabia, mas faz sentido",
+      "Não acredito muito nisso"
+    ]
+  },
+  {
+    id: "q19",
+    question: "Como você avalia sua preparação hoje para o concurso ideal?",
+    options: [
+      "Estou começando agora e me sinto perdido",
+      "Já estudo há um tempo, mas sem direção clara",
+      "Tenho um plano sólido de estudos"
+    ]
+  },
+  {
+    id: "q20",
+    question: "Se existisse um guia personalizado com IA, mostrando o que mais cai na prova e um plano de estudo feito sob medida, por apenas R$50, você:",
+    options: [
+      "Investiria agora para aumentar minhas chances",
+      "Gostaria de saber mais antes de decidir",
+      "Não investiria no momento"
+    ]
   }
 ];
