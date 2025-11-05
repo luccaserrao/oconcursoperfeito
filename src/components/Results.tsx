@@ -58,43 +58,13 @@ export const Results = ({
           {/* Locked Information Grid */}
           <div className="grid md:grid-cols-2 gap-4 mt-8">
             {/* Próxima Prova - BLOQUEADA */}
-            <div className="relative p-4 rounded-xl bg-primary/5 border border-primary/20 min-h-[100px]">
-              <div className="blur-sm select-none pointer-events-none">
-                <Calendar className="w-5 h-5 text-primary mb-1" />
-                <p className="text-sm text-muted-foreground">Próxima Prova</p>
-                <p className="font-semibold">XX/XX/XXXX</p>
-              </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-sm rounded-xl">
-                <Lock className="w-6 h-6 text-primary mb-2" />
-                <p className="text-xs font-semibold text-primary">🔒 Desbloqueie</p>
-              </div>
-            </div>
+            
 
             {/* Locais de Trabalho - BLOQUEADO */}
-            <div className="relative p-4 rounded-xl bg-primary/5 border border-primary/20 min-h-[100px]">
-              <div className="blur-sm select-none pointer-events-none">
-                <MapPin className="w-5 h-5 text-primary mb-1" />
-                <p className="text-sm text-muted-foreground">Locais de Trabalho</p>
-                <p className="font-semibold">Tribunais, Órgãos...</p>
-              </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-sm rounded-xl">
-                <Lock className="w-6 h-6 text-primary mb-2" />
-                <p className="text-xs font-semibold text-primary">🔒 Desbloqueie</p>
-              </div>
-            </div>
+            
 
             {/* Rotina de Trabalho - BLOQUEADA */}
-            <div className="relative p-4 rounded-xl bg-primary/5 border border-primary/20 md:col-span-2 min-h-[100px]">
-              <div className="blur-sm select-none pointer-events-none">
-                <Briefcase className="w-5 h-5 text-primary mb-1" />
-                <p className="text-sm text-muted-foreground">Rotina de Trabalho</p>
-                <p className="font-semibold">Horários, ambiente, benefícios...</p>
-              </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-sm rounded-xl">
-                <Lock className="w-6 h-6 text-primary mb-2" />
-                <p className="text-xs font-semibold text-primary">🔒 Desbloqueie no Pacote</p>
-              </div>
-            </div>
+            
           </div>
         </Card>
 
@@ -109,16 +79,15 @@ export const Results = ({
               <div className="text-center mb-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <Lock className="w-4 h-4 text-primary" />
-                  <h3 className="font-bold text-lg">Análise do Edital + o Seu Cargo</h3>
+                  <h3 className="font-bold text-lg">Análise do Edital + Como Estudar p/ seu Cargo</h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Saiba o que realmente cai na prova, as matérias mais cobradas e os requisitos do edital.
                 </p>
               </div>
-              <Button 
-                className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                onClick={() => document.getElementById('purchase-button')?.scrollIntoView({ behavior: 'smooth' })}
-              >
+              <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90" onClick={() => document.getElementById('purchase-button')?.scrollIntoView({
+                behavior: 'smooth'
+              })}>
                 🔓 Desbloquear
               </Button>
             </div>
@@ -140,10 +109,9 @@ export const Results = ({
                   Descubra quantas horas estudar por dia e como organizar sua rotina com base no seu cargo.
                 </p>
               </div>
-              <Button 
-                className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                onClick={() => document.getElementById('purchase-button')?.scrollIntoView({ behavior: 'smooth' })}
-              >
+              <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90" onClick={() => document.getElementById('purchase-button')?.scrollIntoView({
+                behavior: 'smooth'
+              })}>
                 🔓 Desbloquear
               </Button>
             </div>
@@ -165,12 +133,9 @@ export const Results = ({
                   Receba questões da banca, simulados corrigidos, materiais gratuitos e recomendações de estudo.
                 </p>
               </div>
-              <Button 
-                className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                onClick={() => document.getElementById('purchase-button')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                🔓 Desbloquear no Pacote
-              </Button>
+              <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90" onClick={() => document.getElementById('purchase-button')?.scrollIntoView({
+                behavior: 'smooth'
+              })}>🔓 Desbloquear </Button>
             </div>
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-40"></div>
           </Card>
@@ -240,7 +205,7 @@ export const Results = ({
                 </div>
                 <div className="flex-1">
                   <Badge variant="outline" className="mb-2">Valor: R$25,00</Badge>
-                  <h4 className="font-bold text-lg">📅 Plano de Estudo 12 Semanas</h4>
+                  <h4 className="font-bold text-lg">📅 Plano de Estudo de 1 mês</h4>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground mb-3">
@@ -273,8 +238,7 @@ export const Results = ({
                   <h4 className="font-bold text-lg">🧠 Estilo de Aprendizado Ideal</h4>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground mb-3">
-                Descubra como <strong>você aprende mais rápido</strong>: vídeos, leitura, questões ou presencial.
+              <p className="text-sm text-muted-foreground mb-3">Descubra como você aprende mais rápido: vídeos, leitura, questões ou presencial, por meio do nosso teste de IA<strong>você aprende mais rápido</strong>: vídeos, leitura, questões ou presencial.
               </p>
               <div className="space-y-1.5 text-xs text-muted-foreground">
                 <div className="flex items-center gap-2">
@@ -360,7 +324,7 @@ export const Results = ({
                 </div>
                 <div className="flex-1">
                   <Badge variant="outline" className="mb-2">Valor: R$25,00</Badge>
-                  <h4 className="font-bold text-lg">🤖 ChatGPT "Coach de Aprovação"</h4>
+                  <h4 className="font-bold text-lg">🤖 Professor Inteligência Artificial</h4>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground mb-3">
@@ -401,19 +365,15 @@ export const Results = ({
                 </p>
               </div>
 
-              <Button 
-                id="purchase-button"
-                className="p-6 rounded-2xl bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity cursor-pointer h-auto"
-                onClick={() => {
-                  trackEvent('upsell_clicked', {
-                    career: recommendation.careerName,
-                    source: 'value_stacking_card'
-                  });
-                  document.getElementById('mercadopago-button')?.scrollIntoView({
-                    behavior: 'smooth'
-                  });
-                }}
-              >
+              <Button id="purchase-button" className="p-6 rounded-2xl bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity cursor-pointer h-auto" onClick={() => {
+                trackEvent('upsell_clicked', {
+                  career: recommendation.careerName,
+                  source: 'value_stacking_card'
+                });
+                document.getElementById('mercadopago-button')?.scrollIntoView({
+                  behavior: 'smooth'
+                });
+              }}>
                 <div className="text-center">
                   <p className="text-white text-lg mb-2">🎯 PACOTE COMPLETO POR APENAS</p>
                   <p className="text-5xl font-bold text-white">R$ 50,00</p>
@@ -468,29 +428,25 @@ export const Results = ({
             ⭐ O que dizem quem já garantiu o Pacote:
           </h3>
           <div className="grid md:grid-cols-3 gap-4">
-            {[
-              {
-                name: "Camila Torres",
-                role: "Técnica Administrativa (TRE-SP)",
-                text: "Descobri que estava estudando para o concurso errado. Achei que queria área policial, mas meu perfil era administrativo. Agora estudo para tribunais e me sinto no caminho certo.",
-                date: "03/05/2024",
-                rating: 5
-              },
-              {
-                name: "Rogério P. Lima",
-                role: "Analista Judiciário (TRT)",
-                text: "O plano de 30 dias me mostrou quanto tempo eu realmente precisava estudar por semana. Parei de me culpar e comecei a avançar.",
-                date: "14/08/2024",
-                rating: 5
-              },
-              {
-                name: "Beatriz M.",
-                role: "Estudante de Enfermagem Pública",
-                text: "O professor IA cria questões idênticas às da banca e ainda explica os erros. Nunca aprendi tanto em tão pouco tempo.",
-                date: "27/09/2024",
-                rating: 5
-              }
-            ].map((testimonial, i) => <Card key={i} className="p-5 border-2 border-primary/10">
+            {[{
+              name: "Camila Torres",
+              role: "Técnica Administrativa (TRE-SP)",
+              text: "Descobri que estava estudando para o concurso errado. Achei que queria área policial, mas meu perfil era administrativo. Agora estudo para tribunais e me sinto no caminho certo.",
+              date: "03/05/2024",
+              rating: 5
+            }, {
+              name: "Rogério P. Lima",
+              role: "Analista Judiciário (TRT)",
+              text: "O plano de 30 dias me mostrou quanto tempo eu realmente precisava estudar por semana. Parei de me culpar e comecei a avançar.",
+              date: "14/08/2024",
+              rating: 5
+            }, {
+              name: "Beatriz M.",
+              role: "Estudante de Enfermagem Pública",
+              text: "O professor IA cria questões idênticas às da banca e ainda explica os erros. Nunca aprendi tanto em tão pouco tempo.",
+              date: "27/09/2024",
+              rating: 5
+            }].map((testimonial, i) => <Card key={i} className="p-5 border-2 border-primary/10">
                 <div className="flex gap-1 mb-3">
                   {[...Array(testimonial.rating)].map((_, j) => <Star key={j} className="w-4 h-4 fill-primary text-primary" />)}
                 </div>
