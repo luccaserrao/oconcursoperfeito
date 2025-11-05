@@ -96,15 +96,6 @@ export const Results = ({
               </div>
             </div>
           </div>
-
-          {/* Mini-CTA */}
-          <div className="mt-8 text-center">
-            <Button variant="ghost" className="text-primary hover:text-primary/80 hover:bg-primary/5" onClick={() => document.getElementById('offer-section')?.scrollIntoView({
-              behavior: 'smooth'
-            })}>
-              💡 Veja como desbloquear + receber seu plano completo
-            </Button>
-          </div>
         </Card>
 
         {/* 3 Locked Product Cards */}
@@ -184,6 +175,7 @@ export const Results = ({
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-40"></div>
           </Card>
         </div>
+
 
         {/* Emotional Transition */}
         <Card className="p-6 mb-8 bg-gradient-to-r from-accent/10 to-primary/10 border-2 border-primary/20 text-center animate-fade-in">
