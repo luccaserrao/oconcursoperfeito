@@ -90,18 +90,18 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
       onClick={handleClick}
       disabled={isLoading}
       size="lg"
-      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-lg py-6 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-base md:text-lg py-6 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
     >
       {isLoading ? (
-        <>
+        <span className="flex items-center justify-center">
           <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
           Processando...
-        </>
+        </span>
       ) : (
-        <>
-          <CreditCard className="mr-2 w-5 h-5" />
-          Pagar R$ 50,00 com Mercado Pago
-        </>
+        <span className="flex items-center justify-center whitespace-nowrap">
+          <CreditCard className="mr-2 w-5 h-5 flex-shrink-0" />
+          <span className="truncate">Pagar R$ 50 com Mercado Pago</span>
+        </span>
       )}
     </Button>
   );
