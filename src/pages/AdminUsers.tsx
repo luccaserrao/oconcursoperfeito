@@ -14,12 +14,15 @@ interface User {
   whatsapp: string;
   careerName: string;
   created_at: string;
+  isQualified: boolean;
+  qualificationScore: number;
 }
 
 const AdminUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showOnlyQualified, setShowOnlyQualified] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const navigate = useNavigate();
@@ -92,11 +95,18 @@ const AdminUsers = () => {
     }
   };
 
-  const filteredUsers = users.filter(user => 
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.careerName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredUsers = users
+    .filter(user => 
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.careerName.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter(user => !showOnlyQualified || user.isQualified)
+    .sort((a, b) => {
+      if (a.isQualified && !b.isQualified) return -1;
+      if (!a.isQualified && b.isQualified) return 1;
+      return 0;
+    });
 
   if (isCheckingAuth) {
     return (
@@ -129,7 +139,7 @@ const AdminUsers = () => {
         </div>
 
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-6 space-y-4">
             <div className="flex items-center gap-2">
               <Search className="w-5 h-5 text-muted-foreground" />
               <Input
@@ -138,6 +148,21 @@ const AdminUsers = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="max-w-md"
               />
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <Button
+                variant={showOnlyQualified ? "default" : "outline"}
+                onClick={() => setShowOnlyQualified(!showOnlyQualified)}
+                className="gap-2"
+              >
+                <Users className="w-4 h-4" />
+                {showOnlyQualified ? "Todos os Usuários" : "Apenas Leads Qualificados"}
+                {showOnlyQualified && users.filter(u => u.isQualified).length > 0 && (
+                  <span className="ml-2 bg-white text-primary rounded-full px-2 py-0.5 text-xs font-semibold">
+                    {users.filter(u => u.isQualified).length}
+                  </span>
+                )}
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -164,6 +189,7 @@ const AdminUsers = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead>Status</TableHead>
                       <TableHead>Nome</TableHead>
                       <TableHead>E-mail</TableHead>
                       <TableHead>Carreira Recomendada</TableHead>
@@ -174,6 +200,29 @@ const AdminUsers = () => {
                   <TableBody>
                     {filteredUsers.map((user, index) => (
                       <TableRow key={`${user.email}-${index}`}>
+                        <TableCell>
+                          {user.isQualified ? (
+                            <div className="flex items-center gap-2">
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-green-500 to-emerald-600 text-white animate-pulse">
+                                🔥 HOT LEAD
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                ({user.qualificationScore}/3)
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-700">
+                                Lead Padrão
+                              </span>
+                              {user.qualificationScore > 0 && (
+                                <span className="text-xs text-muted-foreground">
+                                  ({user.qualificationScore}/3)
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </TableCell>
                         <TableCell className="font-medium">{user.name}</TableCell>
                         <TableCell>{user.email}</TableCell>
                         <TableCell>{user.careerName}</TableCell>
@@ -205,6 +254,30 @@ const AdminUsers = () => {
               {filteredUsers.map((user, index) => (
                 <Card key={`${user.email}-${index}`}>
                   <CardContent className="pt-6 space-y-3">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Status</p>
+                      {user.isQualified ? (
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-green-500 to-emerald-600 text-white animate-pulse">
+                            🔥 HOT LEAD
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            ({user.qualificationScore}/3)
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-700">
+                            Lead Padrão
+                          </span>
+                          {user.qualificationScore > 0 && (
+                            <span className="text-xs text-muted-foreground">
+                              ({user.qualificationScore}/3)
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Nome</p>
                       <p className="font-semibold">{user.name}</p>

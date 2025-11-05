@@ -62,7 +62,7 @@ serve(async (req) => {
     // Fetch quiz responses
     const { data: responses, error: queryError } = await supabaseAdmin
       .from('quiz_responses')
-      .select('name, email, whatsapp, ai_recommendation, created_at')
+      .select('name, email, whatsapp, ai_recommendation, answers, created_at')
       .order('created_at', { ascending: false })
       .limit(100);
 
@@ -76,14 +76,42 @@ serve(async (req) => {
 
     console.log(`✅ Fetched ${responses?.length || 0} quiz responses`);
 
+    // Function to check if user is a qualified lead (Hot Lead)
+    const isQualifiedLead = (answers: any[]) => {
+      if (!answers || answers.length === 0) {
+        return { isQualified: false, score: 0 };
+      }
+
+      const q18 = answers.find(a => a.question?.includes("Inteligência Artificial"))?.answer;
+      const q19 = answers.find(a => a.question?.includes("preparação hoje"))?.answer;
+      const q20 = answers.find(a => a.question?.includes("guia personalizado"))?.answer;
+      
+      const q18Valid = q18 === "Sim, já sabia disso" || q18 === "Não sabia, mas faz sentido";
+      const q19Valid = q19 === "Estou começando agora e me sinto perdido" || 
+                       q19 === "Já estudo há um tempo, mas sem direção clara";
+      const q20Valid = q20 === "Investiria agora para aumentar minhas chances" || 
+                       q20 === "Gostaria de saber mais antes de decidir";
+      
+      const score = [q18Valid, q19Valid, q20Valid].filter(Boolean).length;
+      return { 
+        isQualified: q18Valid && q19Valid && q20Valid,
+        score
+      };
+    };
+
     // Process responses to extract careerName from ai_recommendation
-    const users = responses?.map(response => ({
-      name: response.name,
-      email: response.email,
-      whatsapp: response.whatsapp,
-      careerName: (response.ai_recommendation as any)?.careerName || 'N/A',
-      created_at: response.created_at
-    })) || [];
+    const users = responses?.map(response => {
+      const qualification = isQualifiedLead(response.answers || []);
+      return {
+        name: response.name,
+        email: response.email,
+        whatsapp: response.whatsapp,
+        careerName: (response.ai_recommendation as any)?.careerName || 'N/A',
+        created_at: response.created_at,
+        isQualified: qualification.isQualified,
+        qualificationScore: qualification.score
+      };
+    }) || [];
 
     return new Response(
       JSON.stringify({ users }),
