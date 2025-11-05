@@ -7,11 +7,11 @@ export const quizQuestions: QuizQuestion[] = [
     question: "Você prefere resolver problemas práticos com suas próprias mãos do que lidar com pessoas?",
     type: "likert",
     options: [
-      "Concordo totalmente",
-      "Concordo",
-      "Neutro",
+      "Discordo totalmente",
       "Discordo",
-      "Discordo totalmente"
+      "Neutro",
+      "Concordo",
+      "Concordo totalmente"
     ]
   },
   {
@@ -19,11 +19,11 @@ export const quizQuestions: QuizQuestion[] = [
     question: "Você gosta de pesquisar, entender como as coisas funcionam e encontrar soluções lógicas?",
     type: "likert",
     options: [
-      "Concordo totalmente",
-      "Concordo",
-      "Neutro",
+      "Discordo totalmente",
       "Discordo",
-      "Discordo totalmente"
+      "Neutro",
+      "Concordo",
+      "Concordo totalmente"
     ]
   },
   {
@@ -31,11 +31,11 @@ export const quizQuestions: QuizQuestion[] = [
     question: "Você se sente mais realizado criando, desenhando ou inovando ideias?",
     type: "likert",
     options: [
-      "Concordo totalmente",
-      "Concordo",
-      "Neutro",
+      "Discordo totalmente",
       "Discordo",
-      "Discordo totalmente"
+      "Neutro",
+      "Concordo",
+      "Concordo totalmente"
     ]
   },
   {
@@ -43,11 +43,11 @@ export const quizQuestions: QuizQuestion[] = [
     question: "Você gosta de ensinar, orientar pessoas e se comunicar?",
     type: "likert",
     options: [
-      "Concordo totalmente",
-      "Concordo",
-      "Neutro",
+      "Discordo totalmente",
       "Discordo",
-      "Discordo totalmente"
+      "Neutro",
+      "Concordo",
+      "Concordo totalmente"
     ]
   },
   {
@@ -55,11 +55,11 @@ export const quizQuestions: QuizQuestion[] = [
     question: "Prefere seguir regras claras e trabalhar com organização e processos definidos?",
     type: "likert",
     options: [
-      "Concordo totalmente",
-      "Concordo",
-      "Neutro",
+      "Discordo totalmente",
       "Discordo",
-      "Discordo totalmente"
+      "Neutro",
+      "Concordo",
+      "Concordo totalmente"
     ]
   },
   

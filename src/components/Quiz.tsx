@@ -148,7 +148,13 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
                         className={`p-4 rounded-lg border-2 transition-all duration-200 text-sm font-medium text-center ${colors[index]}`}
                       >
                         <div className="text-2xl mb-1">{index + 1}</div>
-                        <div className="text-xs leading-tight">{option}</div>
+                        <div className="text-xs leading-tight">
+                          {index === 0 ? "Discordo muito" : 
+                           index === 1 ? "Discordo" : 
+                           index === 2 ? "Neutro" : 
+                           index === 3 ? "Concordo" : 
+                           "Concordo muito"}
+                        </div>
                       </button>
                     );
                   })}

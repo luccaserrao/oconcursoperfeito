@@ -117,7 +117,7 @@ export const Results = ({
               </div>
               <Button 
                 className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                onClick={() => document.getElementById('offer-section')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => document.getElementById('purchase-button')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 🔓 Desbloquear
               </Button>
@@ -142,7 +142,7 @@ export const Results = ({
               </div>
               <Button 
                 className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                onClick={() => document.getElementById('offer-section')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => document.getElementById('purchase-button')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 🔓 Desbloquear
               </Button>
@@ -167,7 +167,7 @@ export const Results = ({
               </div>
               <Button 
                 className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                onClick={() => document.getElementById('offer-section')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => document.getElementById('purchase-button')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 🔓 Desbloquear no Pacote
               </Button>
@@ -402,6 +402,7 @@ export const Results = ({
               </div>
 
               <Button 
+                id="purchase-button"
                 className="p-6 rounded-2xl bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity cursor-pointer h-auto"
                 onClick={() => {
                   trackEvent('upsell_clicked', {
