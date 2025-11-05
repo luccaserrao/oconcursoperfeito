@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { MercadoPagoButton } from "./MercadoPagoButton";
 import { CountdownTimer } from "./CountdownTimer";
 import { Footer } from "./Footer";
-import { Trophy, DollarSign, MapPin, BookOpen, Calendar, CheckCircle2, Sparkles, Lock, Briefcase, Clock, Star, Shield, Users } from "lucide-react";
+import { Trophy, DollarSign, MapPin, BookOpen, Calendar, CheckCircle2, Sparkles, Lock, Briefcase, Clock, Star, Shield, Users, Copy } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 interface ResultsProps {
   recommendation: CareerRecommendation;
@@ -104,6 +104,124 @@ export const Results = ({
             })}>
               💡 Veja como desbloquear + receber seu plano completo
             </Button>
+          </div>
+        </Card>
+
+        {/* Locked Products Section */}
+        <Card className="p-6 mb-8 bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-primary/20 animate-fade-in">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Lock className="w-5 h-5 text-primary" />
+            <h3 className="text-xl md:text-2xl font-bold text-center">
+              🎯 O Que Você Receberá no Pacote Completo
+            </h3>
+          </div>
+          
+          <div className="space-y-3">
+            {/* Produto 1: Análise do Edital */}
+            <div className="relative p-4 rounded-xl bg-background border border-primary/20 hover:border-primary/40 transition-colors">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <BookOpen className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1 blur-[2px] select-none pointer-events-none">
+                  <h4 className="font-bold text-base mb-1 flex items-center gap-2">
+                    📘 Análise do Edital + Cargo
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Saiba exatamente o que cai na prova, requisitos e matérias que mais caem.
+                  </p>
+                </div>
+                <Button variant="ghost" size="icon" className="flex-shrink-0 blur-[2px]">
+                  <Copy className="w-4 h-4" />
+                </Button>
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-[1px] rounded-xl">
+                <Lock className="w-5 h-5 text-primary" />
+              </div>
+            </div>
+
+            {/* Produto 2: Plano de Estudos */}
+            <div className="relative p-4 rounded-xl bg-background border border-primary/20 hover:border-primary/40 transition-colors">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Calendar className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1 blur-[2px] select-none pointer-events-none">
+                  <h4 className="font-bold text-base mb-1">
+                    📅 Plano de Estudos 30 dias
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Descubra quanto estudar por dia e comece com organização.
+                  </p>
+                </div>
+                <Button variant="ghost" size="icon" className="flex-shrink-0 blur-[2px]">
+                  <Copy className="w-4 h-4" />
+                </Button>
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-[1px] rounded-xl">
+                <Lock className="w-5 h-5 text-primary" />
+              </div>
+            </div>
+
+            {/* Produto 3: Professor IA */}
+            <div className="relative p-4 rounded-xl bg-background border border-primary/20 hover:border-primary/40 transition-colors">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1 blur-[2px] select-none pointer-events-none">
+                  <h4 className="font-bold text-base mb-1">
+                    🎓 Professor IA + Simulados
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Receba questões, simulados, correções e materiais certos para sua carreira.
+                  </p>
+                </div>
+                <Button variant="ghost" size="icon" className="flex-shrink-0 blur-[2px]">
+                  <Copy className="w-4 h-4" />
+                </Button>
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-[1px] rounded-xl">
+                <Lock className="w-5 h-5 text-primary" />
+              </div>
+            </div>
+
+            {/* Produto 4: Carreiras Compatíveis */}
+            <div className="relative p-4 rounded-xl bg-background border border-primary/20 hover:border-primary/40 transition-colors">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Briefcase className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1 blur-[2px] select-none pointer-events-none">
+                  <h4 className="font-bold text-base mb-1">
+                    ✨ +3 Carreiras Compatíveis
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Outras áreas com matérias semelhantes e salários próximos.
+                  </p>
+                </div>
+                <Button variant="ghost" size="icon" className="flex-shrink-0 blur-[2px]">
+                  <Copy className="w-4 h-4" />
+                </Button>
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-[1px] rounded-xl">
+                <Lock className="w-5 h-5 text-primary" />
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <div className="mt-6 text-center">
+            <Button 
+              size="lg" 
+              className="w-full md:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90"
+              onClick={() => document.getElementById('offer-section')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              🔓 Desbloquear Plano Completo Agora
+            </Button>
+            <p className="text-xs text-muted-foreground mt-2">
+              Acesso imediato após o pagamento
+            </p>
           </div>
         </Card>
 
