@@ -1,9 +1,73 @@
 import { QuizQuestion } from "@/types/quiz";
 
 export const quizQuestions: QuizQuestion[] = [
+  // ===== RIASEC - 5 PERGUNTAS (ESCALA LIKERT) =====
+  {
+    id: "riasec_1",
+    question: "Você prefere resolver problemas práticos com suas próprias mãos do que lidar com pessoas?",
+    type: "likert",
+    options: [
+      "Concordo totalmente",
+      "Concordo",
+      "Neutro",
+      "Discordo",
+      "Discordo totalmente"
+    ]
+  },
+  {
+    id: "riasec_2",
+    question: "Você gosta de pesquisar, entender como as coisas funcionam e encontrar soluções lógicas?",
+    type: "likert",
+    options: [
+      "Concordo totalmente",
+      "Concordo",
+      "Neutro",
+      "Discordo",
+      "Discordo totalmente"
+    ]
+  },
+  {
+    id: "riasec_3",
+    question: "Você se sente mais realizado criando, desenhando ou inovando ideias?",
+    type: "likert",
+    options: [
+      "Concordo totalmente",
+      "Concordo",
+      "Neutro",
+      "Discordo",
+      "Discordo totalmente"
+    ]
+  },
+  {
+    id: "riasec_4",
+    question: "Você gosta de ensinar, orientar pessoas e se comunicar?",
+    type: "likert",
+    options: [
+      "Concordo totalmente",
+      "Concordo",
+      "Neutro",
+      "Discordo",
+      "Discordo totalmente"
+    ]
+  },
+  {
+    id: "riasec_5",
+    question: "Prefere seguir regras claras e trabalhar com organização e processos definidos?",
+    type: "likert",
+    options: [
+      "Concordo totalmente",
+      "Concordo",
+      "Neutro",
+      "Discordo",
+      "Discordo totalmente"
+    ]
+  },
+  
+  // ===== PERGUNTAS ORIGINAIS (20 PERGUNTAS) =====
   {
     id: "q1",
     question: "Qual é o seu nível de escolaridade atual?",
+    type: "multiple-choice",
     options: [
       "Ensino Fundamental completo ou em andamento",
       "Ensino Médio completo ou em andamento",
@@ -14,6 +78,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q2",
     question: "Você prefere trabalhar mais com:",
+    type: "multiple-choice",
     options: [
       "Atendimento ao público e relacionamento interpessoal",
       "Análise de documentos e processos administrativos",
@@ -25,6 +90,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q3",
     question: "Em relação ao salário, você busca uma faixa inicial de:",
+    type: "multiple-choice",
     options: [
       "R$ 2.000 a R$ 4.000",
       "R$ 4.000 a R$ 8.000",
@@ -35,6 +101,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q4",
     question: "Quanto tempo você pode dedicar aos estudos por semana?",
+    type: "multiple-choice",
     options: [
       "Menos de 10 horas",
       "10 a 20 horas",
@@ -45,6 +112,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q5",
     question: "Você tem mais facilidade com:",
+    type: "multiple-choice",
     options: [
       "Matérias de Humanas (Português, Direito, História)",
       "Matérias de Exatas (Matemática, Raciocínio Lógico, Estatística)",
@@ -55,6 +123,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q6",
     question: "Qual ambiente de trabalho você prefere?",
+    type: "multiple-choice",
     options: [
       "Escritório administrativo com rotina estável",
       "Trabalho externo com deslocamentos e fiscalização",
@@ -66,6 +135,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q7",
     question: "Você se sente mais confortável em cargos que exigem:",
+    type: "multiple-choice",
     options: [
       "Trabalho em equipe e colaboração constante",
       "Autonomia e trabalho individual",
@@ -76,6 +146,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q8",
     question: "Qual é a sua disponibilidade para mudança de cidade?",
+    type: "multiple-choice",
     options: [
       "Prefiro vagas apenas na minha cidade",
       "Aceito vagas em cidades próximas (mesma região)",
@@ -86,6 +157,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q9",
     question: "Você tem experiência ou formação em qual área?",
+    type: "multiple-choice",
     options: [
       "Área da Saúde (Enfermagem, Medicina, Odontologia, etc.)",
       "Área Jurídica (Direito)",
@@ -98,6 +170,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q10",
     question: "Qual é o seu principal objetivo ao passar em um concurso?",
+    type: "multiple-choice",
     options: [
       "Estabilidade financeira e segurança no emprego",
       "Alto salário e possibilidade de crescimento",
@@ -108,6 +181,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q11",
     question: "Você se interessa por cargos que envolvem:",
+    type: "multiple-choice",
     options: [
       "Investigação e análise de crimes",
       "Fiscalização tributária e financeira",
@@ -119,6 +193,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q12",
     question: "Qual nível de concorrência você está disposto a enfrentar?",
+    type: "multiple-choice",
     options: [
       "Prefiro concursos com menor concorrência (mais chances)",
       "Aceito concorrência moderada",
@@ -129,6 +204,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q13",
     question: "Você prefere concursos com provas que incluem:",
+    type: "multiple-choice",
     options: [
       "Apenas prova objetiva (múltipla escolha)",
       "Prova objetiva + discursiva",
@@ -139,6 +215,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q14",
     question: "Em relação à jornada de trabalho, você prefere:",
+    type: "multiple-choice",
     options: [
       "20 a 30 horas semanais",
       "40 horas semanais (período integral)",
@@ -149,6 +226,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q15",
     question: "Qual a sua idade atual?",
+    type: "multiple-choice",
     options: [
       "18 a 25 anos",
       "26 a 35 anos",
@@ -159,6 +237,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q16",
     question: "Você tem interesse em cargos que exigem porte de arma?",
+    type: "multiple-choice",
     options: [
       "Sim, tenho interesse em carreiras policiais/militares",
       "Talvez, dependendo do cargo",
@@ -168,6 +247,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q17",
     question: "Como você lida com pressão e prazos apertados?",
+    type: "multiple-choice",
     options: [
       "Prefiro ambientes com menos pressão e rotina mais tranquila",
       "Lido bem com pressão moderada",
@@ -177,6 +257,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q18",
     question: "Você sabia que candidatos que estudam com auxílio de Inteligência Artificial têm até 3x mais chances de aprovação?",
+    type: "multiple-choice",
     options: [
       "Sim, já sabia disso",
       "Não sabia, mas faz sentido",
@@ -186,6 +267,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q19",
     question: "Como você avalia sua preparação hoje para o concurso ideal?",
+    type: "multiple-choice",
     options: [
       "Estou começando agora e me sinto perdido",
       "Já estudo há um tempo, mas sem direção clara",
@@ -195,6 +277,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q20",
     question: "Se existisse um guia personalizado com IA, mostrando o que mais cai na prova e um plano de estudo feito sob medida, por apenas R$50, você:",
+    type: "multiple-choice",
     options: [
       "Investiria agora para aumentar minhas chances",
       "Gostaria de saber mais antes de decidir",

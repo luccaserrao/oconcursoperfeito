@@ -2,6 +2,7 @@ export interface QuizQuestion {
   id: string;
   question: string;
   options: string[];
+  type?: "likert" | "multiple-choice";
 }
 
 export interface QuizAnswer {

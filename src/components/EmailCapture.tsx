@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, Sparkles } from "lucide-react";
 
 interface EmailCaptureProps {
@@ -13,8 +14,9 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ name?: string; email?: string; whatsapp?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string; email?: string; whatsapp?: string; terms?: string }>({});
 
   const formatWhatsApp = (value: string) => {
     const numbers = value.replace(/\D/g, '');
@@ -25,7 +27,7 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
   };
 
   const validateForm = () => {
-    const newErrors: { name?: string; email?: string; whatsapp?: string } = {};
+    const newErrors: { name?: string; email?: string; whatsapp?: string; terms?: string } = {};
 
     if (!name.trim()) {
       newErrors.name = "Por favor, informe seu nome";
@@ -41,6 +43,10 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
       newErrors.whatsapp = "Por favor, informe seu WhatsApp";
     } else if (whatsapp.replace(/\D/g, '').length < 11) {
       newErrors.whatsapp = "WhatsApp deve ter 11 dígitos (DDD + número)";
+    }
+
+    if (!acceptedTerms) {
+      newErrors.terms = "Você precisa aceitar os termos para continuar";
     }
 
     setErrors(newErrors);
@@ -138,11 +144,36 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
               </p>
             </div>
 
+            {/* LGPD Checkbox */}
+            <div className="space-y-2">
+              <div className="flex items-start gap-3">
+                <Checkbox 
+                  id="terms" 
+                  checked={acceptedTerms}
+                  onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
+                  className="mt-1"
+                />
+                <label htmlFor="terms" className="text-sm text-muted-foreground cursor-pointer leading-tight">
+                  Li e concordo com os{" "}
+                  <a href="/terms" target="_blank" className="text-primary underline hover:text-primary/80">
+                    Termos de Uso
+                  </a>
+                  {" "}e a{" "}
+                  <a href="/privacy" target="_blank" className="text-primary underline hover:text-primary/80">
+                    Política de Privacidade
+                  </a>.
+                </label>
+              </div>
+              {errors.terms && (
+                <p className="text-sm text-destructive">{errors.terms}</p>
+              )}
+            </div>
+
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-primary to-accent"
               size="lg"
-              disabled={loading}
+              disabled={loading || !acceptedTerms}
             >
               {loading ? (
                 <>
@@ -150,7 +181,7 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
                   Gerando sua recomendação...
                 </>
               ) : (
-                "Ver Minha Carreira Ideal"
+                "Gerar meu resultado com IA"
               )}
             </Button>
 

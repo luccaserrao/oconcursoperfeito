@@ -353,13 +353,18 @@ export const Results = ({
           </Card>
 
           {/* Timer */}
-          <div className="text-center mb-8 animate-fade-in">
-            <p className="text-sm text-muted-foreground mb-3">⏰ OFERTA EXPIRA EM:</p>
-            <CountdownTimer initialMinutes={120} />
-            <p className="text-xs text-muted-foreground mt-2">
-              ⚠️ <strong>Restam apenas 7 vagas</strong> hoje com desconto
+          <Card className="p-6 mb-6 bg-destructive/10 border-2 border-destructive text-center animate-fade-in">
+            <p className="text-destructive font-bold text-lg mb-2">
+              ⚠️ ATENÇÃO: Seus resultados foram salvos por apenas 15 minutos
             </p>
-          </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Após esse prazo, os dados serão excluídos por segurança e você precisará refazer o teste.
+            </p>
+            <CountdownTimer initialMinutes={15} />
+            <p className="text-xs text-muted-foreground mt-2">
+              ⏰ Oferta expira em minutos
+            </p>
+          </Card>
 
           {/* Guarantee */}
           <div className="bg-background/80 border-2 border-primary/20 rounded-xl p-6 mb-6">
@@ -392,26 +397,41 @@ export const Results = ({
             ⭐ O que dizem quem já garantiu o Pacote:
           </h3>
           <div className="grid md:grid-cols-3 gap-4">
-            {[{
-              name: "Ana R.",
-              text: "Achei meu concurso e comecei a estudar certo — o cronograma me salvou!",
-              rating: 5
-            }, {
-              name: "Carlos M.",
-              text: "Economizei tempo e já estou revisando com o plano da IA.",
-              rating: 5
-            }, {
-              name: "Júlia S.",
-              text: "O ChatGPT personalizado tirou todas minhas dúvidas — parece um professor particular!",
-              rating: 5
-            }].map((testimonial, i) => <Card key={i} className="p-5 border-2 border-primary/10">
+            {[
+              {
+                name: "Camila Torres",
+                role: "Técnica Administrativa (TRE-SP)",
+                text: "Descobri que estava estudando para o concurso errado. Achei que queria área policial, mas meu perfil era administrativo. Agora estudo para tribunais e me sinto no caminho certo.",
+                date: "03/05/2024",
+                rating: 5
+              },
+              {
+                name: "Rogério P. Lima",
+                role: "Analista Judiciário (TRT)",
+                text: "O plano de 30 dias me mostrou quanto tempo eu realmente precisava estudar por semana. Parei de me culpar e comecei a avançar.",
+                date: "14/08/2024",
+                rating: 5
+              },
+              {
+                name: "Beatriz M.",
+                role: "Estudante de Enfermagem Pública",
+                text: "O professor IA cria questões idênticas às da banca e ainda explica os erros. Nunca aprendi tanto em tão pouco tempo.",
+                date: "27/09/2024",
+                rating: 5
+              }
+            ].map((testimonial, i) => <Card key={i} className="p-5 border-2 border-primary/10">
                 <div className="flex gap-1 mb-3">
                   {[...Array(testimonial.rating)].map((_, j) => <Star key={j} className="w-4 h-4 fill-primary text-primary" />)}
                 </div>
                 <p className="text-sm text-muted-foreground mb-3">
                   "{testimonial.text}"
                 </p>
-                <p className="text-xs font-semibold">— {testimonial.name}</p>
+                <p className="text-xs font-semibold">
+                  — {testimonial.name}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {testimonial.role} • {testimonial.date}
+                </p>
               </Card>)}
           </div>
         </div>

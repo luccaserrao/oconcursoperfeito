@@ -62,8 +62,8 @@ export const Landing = ({ onStart }: LandingProps) => {
                 {[
                   {
                     icon: "1️⃣",
-                    title: "Responda 17 perguntas",
-                    description: "Leva apenas 5 minutos"
+                    title: "Responda 25 perguntas",
+                    description: "Leva apenas 7-10 minutos"
                   },
                   {
                     icon: "2️⃣",
@@ -153,7 +153,7 @@ export const Landing = ({ onStart }: LandingProps) => {
                     Quanto tempo leva?
                   </AccordionTrigger>
                   <AccordionContent className="text-muted-foreground">
-                    O quiz tem 17 perguntas e leva em média 5 minutos. 
+                    O quiz tem 25 perguntas e leva em média 7-10 minutos. 
                     Você recebe o resultado imediatamente após finalizar.
                   </AccordionContent>
                 </AccordionItem>

@@ -20,6 +20,7 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
 
   const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;
   const question = quizQuestions[currentQuestion];
+  const isLikertQuestion = question.type === "likert";
 
   // Load saved progress on mount
   useEffect(() => {
@@ -50,11 +51,11 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
   useEffect(() => {
     if (currentQuestion === 5) {
       toast.success("🎉 Ótimo! Você está indo muito bem!");
-    } else if (currentQuestion === 10) {
+    } else if (currentQuestion === 12) {
       toast.success("💪 Já passou da metade! Sua carreira ideal está próxima");
-    } else if (currentQuestion === 15) {
-      toast.success("🏁 Faltam só 5 perguntas! Sua carreira ideal está chegando");
     } else if (currentQuestion === 17) {
+      toast.success("🏁 Faltam só 8 perguntas! Sua carreira ideal está chegando");
+    } else if (currentQuestion === 22) {
       toast.success("🚀 Últimas 3 perguntas! Está quase lá!");
     }
     
@@ -123,25 +124,61 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
             {question.question}
           </h2>
 
+          {/* Question Options */}
           <div className="space-y-3">
-            {question.options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedOption(option)}
-                className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 relative group ${
-                  selectedOption === option
-                    ? "border-primary bg-primary/10 shadow-md scale-[1.02]"
-                    : "border-border hover:border-primary/50 hover:bg-primary/5 hover:scale-[1.01]"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-base flex-1">{option}</span>
-                  {selectedOption === option && (
-                    <CheckCircle className="w-5 h-5 text-primary animate-scale-in" />
-                  )}
+            {isLikertQuestion ? (
+              // Likert Scale - Horizontal buttons
+              <div className="space-y-4">
+                <div className="grid grid-cols-5 gap-2">
+                  {question.options.map((option, index) => {
+                    const colors = [
+                      "border-destructive/50 hover:bg-destructive/10 hover:border-destructive data-[selected=true]:bg-destructive data-[selected=true]:text-destructive-foreground",
+                      "border-orange-500/50 hover:bg-orange-500/10 hover:border-orange-500 data-[selected=true]:bg-orange-500 data-[selected=true]:text-white",
+                      "border-muted hover:bg-muted hover:border-muted-foreground data-[selected=true]:bg-muted data-[selected=true]:text-foreground",
+                      "border-green-500/50 hover:bg-green-500/10 hover:border-green-500 data-[selected=true]:bg-green-500 data-[selected=true]:text-white",
+                      "border-primary/50 hover:bg-primary/10 hover:border-primary data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground"
+                    ];
+                    
+                    return (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => setSelectedOption(option)}
+                        data-selected={selectedOption === option}
+                        className={`p-4 rounded-lg border-2 transition-all duration-200 text-sm font-medium text-center ${colors[index]}`}
+                      >
+                        <div className="text-2xl mb-1">{index + 1}</div>
+                        <div className="text-xs leading-tight">{option}</div>
+                      </button>
+                    );
+                  })}
                 </div>
-              </button>
-            ))}
+                <div className="flex justify-between text-xs text-muted-foreground px-1">
+                  <span>← Discordo</span>
+                  <span>Concordo →</span>
+                </div>
+              </div>
+            ) : (
+              // Multiple Choice - Regular buttons
+              question.options.map((option, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedOption(option)}
+                  className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 relative group ${
+                    selectedOption === option
+                      ? "border-primary bg-primary/10 shadow-md scale-[1.02]"
+                      : "border-border hover:border-primary/50 hover:bg-primary/5 hover:scale-[1.01]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-base flex-1">{option}</span>
+                    {selectedOption === option && (
+                      <CheckCircle className="w-5 h-5 text-primary animate-scale-in" />
+                    )}
+                  </div>
+                </button>
+              ))
+            )}
           </div>
 
           {/* Navigation */}
