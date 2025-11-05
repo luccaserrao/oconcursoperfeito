@@ -61,7 +61,8 @@ export const Results = ({
                     source: 'blurred_name'
                   });
                   document.getElementById('mercadopago-button')?.scrollIntoView({
-                    behavior: 'smooth'
+                    behavior: 'smooth',
+                    block: 'center'
                   });
                 }}
               >
@@ -269,7 +270,8 @@ export const Results = ({
             source: 'sticky_mobile'
           });
           document.getElementById('mercadopago-button')?.scrollIntoView({
-            behavior: 'smooth'
+            behavior: 'smooth',
+            block: 'center'
           });
         }}>
           🔓 Desbloquear por R$ 50
