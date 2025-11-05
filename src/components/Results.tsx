@@ -53,8 +53,19 @@ export const Results = ({
             
             {/* Nome do cargo BORRADO */}
             <div className="relative mb-6">
-              <div className="absolute inset-0 flex items-center justify-center z-10">
-                <div className="bg-background/90 backdrop-blur-sm rounded-lg px-6 py-3 border-2 border-primary">
+              <div 
+                className="absolute inset-0 flex items-center justify-center z-10 cursor-pointer"
+                onClick={() => {
+                  trackEvent('unlock_career_clicked', {
+                    career: recommendation.careerName,
+                    source: 'blurred_name'
+                  });
+                  document.getElementById('mercadopago-button')?.scrollIntoView({
+                    behavior: 'smooth'
+                  });
+                }}
+              >
+                <div className="bg-background/90 backdrop-blur-sm rounded-lg px-6 py-3 border-2 border-primary hover:bg-primary/10 transition-colors">
                   <Lock className="w-6 h-6 text-primary inline-block mr-2" />
                   <span className="text-lg font-bold">Desbloqueie para ver o nome do cargo ideal</span>
                 </div>
