@@ -85,7 +85,7 @@ export const Results = ({
                   Saiba o que realmente cai na prova, as matérias mais cobradas e os requisitos do edital.
                 </p>
               </div>
-              <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90" onClick={() => document.getElementById('purchase-button')?.scrollIntoView({
+              <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90" onClick={() => document.getElementById('mercadopago-button')?.scrollIntoView({
                 behavior: 'smooth'
               })}>
                 🔓 Desbloquear
@@ -109,7 +109,7 @@ export const Results = ({
                   Descubra quantas horas estudar por dia e como organizar sua rotina com base no seu cargo.
                 </p>
               </div>
-              <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90" onClick={() => document.getElementById('purchase-button')?.scrollIntoView({
+              <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90" onClick={() => document.getElementById('mercadopago-button')?.scrollIntoView({
                 behavior: 'smooth'
               })}>
                 🔓 Desbloquear
@@ -133,7 +133,7 @@ export const Results = ({
                   Receba questões da banca, simulados corrigidos, materiais gratuitos e recomendações de estudo.
                 </p>
               </div>
-              <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90" onClick={() => document.getElementById('purchase-button')?.scrollIntoView({
+              <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90" onClick={() => document.getElementById('mercadopago-button')?.scrollIntoView({
                 behavior: 'smooth'
               })}>🔓 Desbloquear </Button>
             </div>
