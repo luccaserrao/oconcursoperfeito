@@ -31,7 +31,6 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
         if (savedQ > 0) {
           setCurrentQuestion(savedQ);
           setAnswers(savedA);
-          toast.info("👋 Bem-vindo de volta! Continue de onde parou");
         }
       } catch (e) {
         console.error("Failed to load saved progress:", e);
@@ -47,24 +46,22 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
     }
   }, [currentQuestion, answers]);
 
-  // Motivational toasts at milestones
+  // Track progress milestones
   useEffect(() => {
-    if (currentQuestion === 5) {
-      toast.success("🎉 Ótimo! Você está indo muito bem!");
-    } else if (currentQuestion === 12) {
-      toast.success("💪 Já passou da metade! Sua carreira ideal está próxima");
-    } else if (currentQuestion === 17) {
-      toast.success("🏁 Faltam só 8 perguntas! Sua carreira ideal está chegando");
-    } else if (currentQuestion === 22) {
-      toast.success("🚀 Últimas 3 perguntas! Está quase lá!");
-    }
-    
-    // Track progress milestones
     const progressPercent = Math.round(progress);
     if ([25, 50, 75].includes(progressPercent)) {
       trackEvent('quiz_progress', { progress: progressPercent });
     }
   }, [currentQuestion, progress]);
+
+  // Get motivational message based on progress
+  const getMotivationalMessage = () => {
+    if (currentQuestion >= 22) return "🚀 Últimas perguntas!";
+    if (currentQuestion >= 17) return "🏁 Faltam só 8 perguntas";
+    if (currentQuestion >= 12) return "💪 Já passou da metade";
+    if (currentQuestion >= 5) return "🎉 Ótimo progresso";
+    return "✨ Continue assim";
+  };
 
   const handleNext = () => {
     if (!selectedOption) return;
@@ -116,6 +113,11 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
             </span>
           </div>
           <Progress value={progress} className="h-3" />
+          {currentQuestion >= 5 && (
+            <div className="text-center text-sm text-muted-foreground animate-fade-in">
+              {getMotivationalMessage()}
+            </div>
+          )}
         </div>
 
         {/* Question Card */}
