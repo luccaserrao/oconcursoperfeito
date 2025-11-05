@@ -70,6 +70,30 @@ const Index = () => {
       const data = await response.json();
       setRecommendation(data.recommendation);
       setQuizResponseId(data.quizResponseId);
+      
+      // Send welcome email (don't block flow if it fails)
+      try {
+        await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-welcome-email`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name,
+              email,
+              quizResponseId: data.quizResponseId,
+              careerName: data.recommendation.careerName,
+            }),
+          }
+        );
+        console.log("Welcome email sent successfully");
+      } catch (emailError) {
+        // Don't block the flow if email fails
+        console.error("Error sending welcome email:", emailError);
+      }
+      
       setCurrentStep("results");
       
       toast.success("Resultado gerado com sucesso!");

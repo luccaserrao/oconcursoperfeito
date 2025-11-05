@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      email_logs: {
+        Row: {
+          email_type: string
+          error_message: string | null
+          id: string
+          quiz_response_id: string | null
+          resend_email_id: string | null
+          sent_at: string | null
+          status: string | null
+          user_email: string
+          user_name: string | null
+        }
+        Insert: {
+          email_type: string
+          error_message?: string | null
+          id?: string
+          quiz_response_id?: string | null
+          resend_email_id?: string | null
+          sent_at?: string | null
+          status?: string | null
+          user_email: string
+          user_name?: string | null
+        }
+        Update: {
+          email_type?: string
+          error_message?: string | null
+          id?: string
+          quiz_response_id?: string | null
+          resend_email_id?: string | null
+          sent_at?: string | null
+          status?: string | null
+          user_email?: string
+          user_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_logs_quiz_response_id_fkey"
+            columns: ["quiz_response_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_responses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           amount: number

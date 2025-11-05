@@ -29,3 +29,9 @@ verify_jwt = true
 
 [functions.list-users]
 verify_jwt = true
+
+[functions.send-welcome-email]
+verify_jwt = false
+
+[functions.send-reminder-email]
+verify_jwt = false
