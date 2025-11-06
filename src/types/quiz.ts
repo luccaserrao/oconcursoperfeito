@@ -19,6 +19,21 @@ export interface CareerRecommendation {
   workRoutine: string;
   subjects: string[];
   examFrequency: string;
+  riasec?: {
+    top1: string;
+    top2: string;
+    scores?: {
+      Realista: number;
+      Investigativo: number;
+      Artístico: number;
+      Social: number;
+      Empreendedor: number;
+      Convencional: number;
+    };
+    habilidades: string[];
+    habilidade_destaque: string;
+    contexto_profissional: string;
+  };
 }
 
 export interface PaidContent {

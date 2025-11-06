@@ -56,8 +56,18 @@ serve(async (req) => {
       `Pergunta ${i + 1}: ${a.question}\nResposta: ${a.answer}`
     ).join('\n\n');
 
-    const systemPrompt = `Você é um especialista em concursos públicos no Brasil. Com base nas respostas do quiz, 
-você deve recomendar a carreira em concurso público PERFEITA para o perfil da pessoa.
+    const systemPrompt = `Você é um especialista em concursos públicos no Brasil e psicólogo vocacional especializado na metodologia RIASEC (Holland). 
+Com base nas respostas do quiz, você deve:
+1. Analisar o perfil RIASEC da pessoa
+2. Recomendar a carreira em concurso público PERFEITA para o perfil
+
+METODOLOGIA RIASEC (Holland):
+- Realista (R): Práticas, objetivas, preferem trabalho manual/técnico, gostam de mecânica, construção, agricultura
+- Investigativo (I): Analíticas, curiosas, gostam de pesquisar, resolver problemas complexos, ciências
+- Artístico (A): Criativas, expressivas, gostam de arte, design, música, escrita
+- Social (S): Empáticas, comunicativas, gostam de ajudar pessoas, ensinar, aconselhar
+- Empreendedor (E): Persuasivas, líderes, gostam de vender, negociar, gerenciar projetos
+- Convencional (C): Organizadas, detalhistas, gostam de dados, administração, seguir procedimentos
 
 Sua resposta deve ser um JSON com esta estrutura EXATA:
 {
@@ -68,7 +78,22 @@ Sua resposta deve ser um JSON com esta estrutura EXATA:
   "workplaces": ["Local 1 com estado/município", "Local 2 com estado/município", "Local 3 com estado/município"],
   "workRoutine": "Descrição breve da rotina de trabalho (2-3 frases)",
   "subjects": ["Lista de 5-8 principais matérias para estudar"],
-  "examFrequency": "Análise detalhada: Liste os últimos 3-5 concursos com anos | Calcule o intervalo médio entre editais | Indique se há previsão oficial ou rumores de novo edital. Exemplo: 'Últimos concursos: 2019 (Cespe), 2021 (FCC), 2023 (Vunesp). Intervalo médio: 2 anos. Governo anunciou novo edital para 2025 no planejamento orçamentário.'"
+  "examFrequency": "Análise detalhada: Liste os últimos 3-5 concursos com anos | Calcule o intervalo médio entre editais | Indique se há previsão oficial ou rumores de novo edital. Exemplo: 'Últimos concursos: 2019 (Cespe), 2021 (FCC), 2023 (Vunesp). Intervalo médio: 2 anos. Governo anunciou novo edital para 2025 no planejamento orçamentário.'",
+  "riasec": {
+    "top1": "Código RIASEC dominante (ex: Realista, Investigativo, Social, etc)",
+    "top2": "Código RIASEC secundário",
+    "scores": {
+      "Realista": 0-100,
+      "Investigativo": 0-100,
+      "Artístico": 0-100,
+      "Social": 0-100,
+      "Empreendedor": 0-100,
+      "Convencional": 0-100
+    },
+    "habilidades": ["lista de 5 habilidades principais baseadas no perfil RIASEC"],
+    "habilidade_destaque": "adjetivo que melhor descreve a pessoa (ex: práticas e objetivas, analíticas e curiosas)",
+    "contexto_profissional": "onde a pessoa se destaca profissionalmente (ex: resolver problemas complexos, ajudar pessoas)"
+  }
 }
 
 IMPORTANTE: 
@@ -86,7 +111,14 @@ CRÍTICO - examDate DEVE SER DETALHADO E FUNDAMENTADO:
   ❌ RUIM: "Previsão para 2025"
   
 - examFrequency DEVE incluir análise histórica real com anos, bancas e intervalos calculados
-- NUNCA use termos genéricos como "Em breve" ou "Frequência moderada" sem dados concretos`;
+- NUNCA use termos genéricos como "Em breve" ou "Frequência moderada" sem dados concretos
+
+CRÍTICO - ANÁLISE RIASEC:
+- Analise cuidadosamente as respostas para identificar os 2 tipos RIASEC dominantes
+- Os scores devem somar aproximadamente 300-400 (não 600)
+- top1 e top2 devem ser os códigos com maiores scores
+- habilidades devem ser específicas e baseadas nos códigos RIASEC identificados
+- habilidade_destaque e contexto_profissional devem refletir a combinação dos 2 tipos dominantes`;
 
     const userPrompt = `Perfil do candidato:
 Nome: ${name}
@@ -94,8 +126,14 @@ Nome: ${name}
 Respostas do quiz:
 ${answersText}
 
-Com base nestas respostas, qual é a carreira em concurso público IDEAL para este perfil? 
-Retorne APENAS o JSON conforme o formato especificado.`;
+TAREFA:
+1. Analise cuidadosamente as respostas acima
+2. Identifique os 2 tipos RIASEC dominantes baseado nas preferências demonstradas
+3. Calcule os scores para cada dimensão RIASEC (0-100)
+4. Liste as 5 principais habilidades baseadas no perfil RIASEC
+5. Recomende a carreira em concurso público IDEAL que combine com este perfil RIASEC
+
+Retorne APENAS o JSON conforme o formato especificado, incluindo o objeto "riasec" completo.`;
 
     // Chamar a IA
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {

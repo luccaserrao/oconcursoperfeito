@@ -8,6 +8,7 @@ import { MercadoPagoButton } from "./MercadoPagoButton";
 import { CountdownTimer } from "./CountdownTimer";
 import { Footer } from "./Footer";
 import { SocialProofPopup } from "./SocialProofPopup";
+import { RiasecScores } from "./RiasecScores";
 import { Trophy, DollarSign, MapPin, BookOpen, Calendar, CheckCircle2, Sparkles, Lock, Briefcase, Clock, Star, Shield, Users, Copy } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 interface ResultsProps {
@@ -22,8 +23,8 @@ export const Results = ({
   userEmail,
   quizResponseId
 }: ResultsProps) => {
-  // Dados RIASEC simulados (temporário - até integração com banco de dados)
-  const riasecData = {
+  // Extrair dados RIASEC da recomendação ou usar fallback
+  const riasecData = recommendation.riasec || {
     top1: "Realista",
     top2: "Investigativo",
     habilidades: ["organizada", "comunicativa", "lógica", "criativa", "persistente"],
@@ -101,6 +102,13 @@ export const Results = ({
             </p>
           </Card>
         </div>
+
+        {/* Scores RIASEC detalhados (se disponíveis) */}
+        {riasecData.scores && (
+          <div className="mb-8 animate-scale-in">
+            <RiasecScores scores={riasecData.scores} />
+          </div>
+        )}
 
         {/* BLOCO 3: Oferta Principal (Primeira Dobra) */}
         <div className="mb-8 animate-scale-in">
