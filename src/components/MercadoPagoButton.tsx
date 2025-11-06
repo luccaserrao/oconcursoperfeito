@@ -13,7 +13,7 @@ interface MercadoPagoButtonProps {
   amount?: number;
 }
 
-export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, productId, amount }: MercadoPagoButtonProps) => {
+export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, productId, amount = 25 }: MercadoPagoButtonProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,13 +29,13 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
       console.log("🚀 Starting payment process");
       
       // Track begin_checkout for Google Ads
-      trackBeginCheckout(50.0);
+      trackBeginCheckout(amount);
       console.log("📊 Google Ads: begin_checkout tracked");
       
       // Track Facebook Pixel - InitiateCheckout
       if (typeof window !== 'undefined' && (window as any).fbq) {
         (window as any).fbq('track', 'InitiateCheckout', {
-          value: 50.00,
+          value: amount,
           currency: 'BRL',
           content_name: 'Pacote Completo de Preparação',
           content_category: 'Concursos Públicos'
@@ -100,7 +100,7 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
       ) : (
         <span className="flex items-center justify-center whitespace-nowrap">
           <CreditCard className="mr-2 w-5 h-5 flex-shrink-0" />
-          <span className="truncate">Pagar R$ 50 com Mercado Pago</span>
+          <span className="truncate">Pagar R$ {amount} com Mercado Pago</span>
         </span>
       )}
     </Button>
