@@ -2,6 +2,23 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+// Função para gerar hash SHA-256 das respostas
+async function generateAnswersHash(answers: any[]): Promise<string> {
+  // Ordenar respostas para garantir hash consistente
+  const sortedAnswers = [...answers].sort((a, b) => 
+    a.question.localeCompare(b.question)
+  );
+  
+  const answersString = JSON.stringify(sortedAnswers);
+  const encoder = new TextEncoder();
+  const data = encoder.encode(answersString);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  
+  return hashHex;
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -46,17 +63,58 @@ serve(async (req) => {
     
     console.log('Generating career recommendation for:', email);
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY not configured');
-    }
+    // Inicializar Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Construir prompt com as respostas
-    const answersText = answers.map((a: any, i: number) => 
-      `Pergunta ${i + 1}: ${a.question}\nResposta: ${a.answer}`
-    ).join('\n\n');
+    // Gerar hash das respostas para cache
+    const answersHash = await generateAnswersHash(answers);
+    console.log('Answers hash:', answersHash);
 
-    const systemPrompt = `Você é um especialista em concursos públicos no Brasil e psicólogo vocacional especializado na metodologia RIASEC (Holland). 
+    // Verificar cache (30 dias de validade)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const { data: cachedRecommendation, error: cacheError } = await supabase
+      .from('quiz_cache')
+      .select('*')
+      .eq('answers_hash', answersHash)
+      .gte('created_at', thirtyDaysAgo.toISOString())
+      .single();
+
+    let recommendation;
+    let fromCache = false;
+
+    if (cachedRecommendation && !cacheError) {
+      // Cache hit! Usar recomendação existente
+      console.log('Cache HIT for hash:', answersHash);
+      recommendation = cachedRecommendation.recommendation;
+      fromCache = true;
+
+      // Atualizar estatísticas do cache
+      await supabase
+        .from('quiz_cache')
+        .update({
+          hit_count: cachedRecommendation.hit_count + 1,
+          last_used_at: new Date().toISOString()
+        })
+        .eq('id', cachedRecommendation.id);
+    } else {
+      // Cache miss - gerar nova recomendação
+      console.log('Cache MISS for hash:', answersHash);
+
+      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+      if (!LOVABLE_API_KEY) {
+        throw new Error('LOVABLE_API_KEY not configured');
+      }
+
+      // Construir prompt com as respostas
+      const answersText = answers.map((a: any, i: number) => 
+        `Pergunta ${i + 1}: ${a.question}\nResposta: ${a.answer}`
+      ).join('\n\n');
+
+      const systemPrompt = `Você é um especialista em concursos públicos no Brasil e psicólogo vocacional especializado na metodologia RIASEC (Holland).
 Com base nas respostas do quiz, você deve:
 1. Analisar o perfil RIASEC da pessoa
 2. Recomendar a carreira em concurso público PERFEITA para o perfil
@@ -120,7 +178,7 @@ CRÍTICO - ANÁLISE RIASEC:
 - habilidades devem ser específicas e baseadas nos códigos RIASEC identificados
 - habilidade_destaque e contexto_profissional devem refletir a combinação dos 2 tipos dominantes`;
 
-    const userPrompt = `Perfil do candidato:
+      const userPrompt = `Perfil do candidato:
 Nome: ${name}
 
 Respostas do quiz:
@@ -135,49 +193,59 @@ TAREFA:
 
 Retorne APENAS o JSON conforme o formato especificado, incluindo o objeto "riasec" completo.`;
 
-    // Chamar a IA
-    const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.8,
-      }),
-    });
+      // Chamar a IA
+      const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: 0.8,
+        }),
+      });
 
-    if (!aiResponse.ok) {
-      const errorText = await aiResponse.text();
-      console.error('AI API error:', aiResponse.status, errorText);
-      throw new Error(`AI API error: ${aiResponse.status}`);
+      if (!aiResponse.ok) {
+        const errorText = await aiResponse.text();
+        console.error('AI API error:', aiResponse.status, errorText);
+        throw new Error(`AI API error: ${aiResponse.status}`);
+      }
+
+      const aiData = await aiResponse.json();
+      const aiContent = aiData.choices[0].message.content;
+      
+      console.log('AI raw response:', aiContent);
+
+      // Parse JSON da resposta da IA
+      try {
+        // Remove markdown code blocks se houver
+        const cleanContent = aiContent.replace(/```json\n?|\n?```/g, '').trim();
+        recommendation = JSON.parse(cleanContent);
+      } catch (parseError) {
+        console.error('Failed to parse AI response:', aiContent);
+        throw new Error('Invalid AI response format');
+      }
+
+      // Salvar no cache
+      const { error: cacheInsertError } = await supabase
+        .from('quiz_cache')
+        .insert({
+          answers_hash: answersHash,
+          recommendation: recommendation
+        });
+
+      if (cacheInsertError) {
+        console.error('Failed to cache recommendation:', cacheInsertError);
+        // Não falhar a requisição se o cache falhar
+      } else {
+        console.log('Recommendation cached successfully');
+      }
     }
-
-    const aiData = await aiResponse.json();
-    const aiContent = aiData.choices[0].message.content;
-    
-    console.log('AI raw response:', aiContent);
-
-    // Parse JSON da resposta da IA
-    let recommendation;
-    try {
-      // Remove markdown code blocks se houver
-      const cleanContent = aiContent.replace(/```json\n?|\n?```/g, '').trim();
-      recommendation = JSON.parse(cleanContent);
-    } catch (parseError) {
-      console.error('Failed to parse AI response:', aiContent);
-      throw new Error('Invalid AI response format');
-    }
-
-    // Salvar no banco
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { data: savedResponse, error: dbError } = await supabase
       .from('quiz_responses')
@@ -196,12 +264,13 @@ Retorne APENAS o JSON conforme o formato especificado, incluindo o objeto "riase
       throw dbError;
     }
 
-    console.log('Successfully saved recommendation for:', email);
+    console.log('Successfully saved recommendation for:', email, fromCache ? '(from cache)' : '(generated)');
 
     return new Response(
       JSON.stringify({ 
         recommendation,
-        quizResponseId: savedResponse.id 
+        quizResponseId: savedResponse.id,
+        cached: fromCache
       }),
       { 
         headers: { 

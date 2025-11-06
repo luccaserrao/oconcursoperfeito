@@ -198,6 +198,33 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_cache: {
+        Row: {
+          answers_hash: string
+          created_at: string
+          hit_count: number
+          id: string
+          last_used_at: string
+          recommendation: Json
+        }
+        Insert: {
+          answers_hash: string
+          created_at?: string
+          hit_count?: number
+          id?: string
+          last_used_at?: string
+          recommendation: Json
+        }
+        Update: {
+          answers_hash?: string
+          created_at?: string
+          hit_count?: number
+          id?: string
+          last_used_at?: string
+          recommendation?: Json
+        }
+        Relationships: []
+      }
       quiz_responses: {
         Row: {
           ai_recommendation: Json
