@@ -46,13 +46,13 @@ export const PaidContent = () => {
           setPaidContent(data.paidContent);
           
           // Track Google Ads Purchase
-          trackPurchase(paymentId, 50.0);
+          trackPurchase(paymentId, 25.0);
           console.log("📊 Google Ads: Purchase tracked");
           
           // Track Facebook Pixel - Purchase
           if (typeof window !== 'undefined' && (window as any).fbq) {
             (window as any).fbq('track', 'Purchase', {
-              value: 50.00,
+              value: 25.00,
               currency: 'BRL',
               content_name: 'Pacote Completo de Preparação',
               content_category: 'Concursos Públicos'

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, Sparkles } from "lucide-react";
+import { trackConversion } from "@/lib/analytics";
 
 interface EmailCaptureProps {
   onSubmit: (name: string, email: string, whatsapp: string) => Promise<void>;
@@ -60,6 +61,18 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
 
     setLoading(true);
     try {
+      // Track Google Ads Lead Conversion
+      trackConversion('AW-400922729/LFG4CLCi_7IbEOmwlr8B');
+      console.log("📊 Google Ads: Lead conversion tracked");
+      
+      // Track Facebook Pixel Lead
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'Lead', {
+          content_name: 'Quiz Email Capture'
+        });
+        console.log("📊 Facebook Pixel: Lead tracked");
+      }
+      
       await onSubmit(
         name.trim(), 
         email.trim().toLowerCase(), 
