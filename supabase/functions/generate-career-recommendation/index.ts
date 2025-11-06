@@ -21,7 +21,7 @@ serve(async (req) => {
       answers: z.array(z.object({
         question: z.string().max(500),
         answer: z.string().max(1000)
-      })).min(1, "Pelo menos uma resposta necessária").max(25, "Muitas respostas")
+      })).min(1, "Pelo menos uma resposta necessária").max(30, "Muitas respostas")
     });
 
     const body = await req.json();
