@@ -283,5 +283,67 @@ export const quizQuestions: QuizQuestion[] = [
       "Gostaria de saber mais antes de decidir",
       "Não investiria no momento"
     ]
+  },
+
+  // ===== NOVAS 5 PERGUNTAS RIASEC =====
+  {
+    id: "riasec_6",
+    question: "Prefiro aprender fazendo, colocando a mão na massa em vez de apenas ouvir explicações.",
+    type: "likert",
+    options: [
+      "Discordo totalmente",
+      "Discordo",
+      "Neutro",
+      "Concordo",
+      "Concordo totalmente"
+    ]
+  },
+  {
+    id: "riasec_7",
+    question: "Gosto de entender o motivo por trás das coisas e resolver problemas usando raciocínio lógico.",
+    type: "likert",
+    options: [
+      "Discordo totalmente",
+      "Discordo",
+      "Neutro",
+      "Concordo",
+      "Concordo totalmente"
+    ]
+  },
+  {
+    id: "riasec_8",
+    question: "Sinto prazer em criar algo novo, diferente ou original — mesmo que as pessoas não entendam de imediato.",
+    type: "likert",
+    options: [
+      "Discordo totalmente",
+      "Discordo",
+      "Neutro",
+      "Concordo",
+      "Concordo totalmente"
+    ]
+  },
+  {
+    id: "riasec_9",
+    question: "Fico feliz quando consigo ajudar alguém a compreender algo ou se sentir melhor com o que ensinei.",
+    type: "likert",
+    options: [
+      "Discordo totalmente",
+      "Discordo",
+      "Neutro",
+      "Concordo",
+      "Concordo totalmente"
+    ]
+  },
+  {
+    id: "riasec_10",
+    question: "Gosto de influenciar pessoas e inspirar outros a acreditarem em uma ideia ou projeto.",
+    type: "likert",
+    options: [
+      "Discordo totalmente",
+      "Discordo",
+      "Neutro",
+      "Concordo",
+      "Concordo totalmente"
+    ]
   }
 ];

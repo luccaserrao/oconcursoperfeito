@@ -56,9 +56,22 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
 
   // Get motivational message based on progress
   const getMotivationalMessage = () => {
-    if (currentQuestion >= 22) return "🚀 Últimas perguntas!";
-    if (currentQuestion >= 17) return "🏁 Faltam só 8 perguntas";
-    if (currentQuestion >= 12) return "💪 Já passou da metade";
+    // Pergunta 30 (última)
+    if (currentQuestion === 29) {
+      return "🏆 Última pergunta! A próxima tela vai revelar seu perfil vocacional.";
+    }
+    // Pergunta 20
+    if (currentQuestion === 19) {
+      return "💪 Falta pouco! Sua combinação de respostas está ficando única.";
+    }
+    // Pergunta 10
+    if (currentQuestion === 9) {
+      return "✨ Você está indo muito bem! Essas respostas ajudam a IA a entender seu perfil.";
+    }
+    
+    // Mensagens gerais de progresso
+    if (currentQuestion >= 25) return "🚀 Últimas perguntas!";
+    if (currentQuestion >= 15) return "🏁 Faltam só 15 perguntas";
     if (currentQuestion >= 5) return "🎉 Ótimo progresso";
     return "✨ Continue assim";
   };
@@ -114,7 +127,11 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
           </div>
           <Progress value={progress} className="h-3" />
           {currentQuestion >= 5 && (
-            <div className="text-center text-sm text-muted-foreground animate-fade-in">
+            <div className={`text-center text-sm animate-fade-in ${
+              [9, 19, 29].includes(currentQuestion) 
+                ? "text-primary font-semibold text-base" 
+                : "text-muted-foreground"
+            }`}>
               {getMotivationalMessage()}
             </div>
           )}
