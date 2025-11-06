@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      email_automation_queue: {
+        Row: {
+          created_at: string | null
+          email_sequence_number: number
+          id: string
+          quiz_response_id: string
+          scheduled_for: string
+          sent_at: string | null
+          skip_reason: string | null
+          status: string | null
+          user_email: string
+          user_name: string
+        }
+        Insert: {
+          created_at?: string | null
+          email_sequence_number: number
+          id?: string
+          quiz_response_id: string
+          scheduled_for: string
+          sent_at?: string | null
+          skip_reason?: string | null
+          status?: string | null
+          user_email: string
+          user_name: string
+        }
+        Update: {
+          created_at?: string | null
+          email_sequence_number?: number
+          id?: string
+          quiz_response_id?: string
+          scheduled_for?: string
+          sent_at?: string | null
+          skip_reason?: string | null
+          status?: string | null
+          user_email?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_automation_queue_quiz_response_id_fkey"
+            columns: ["quiz_response_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_responses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_logs: {
         Row: {
           email_type: string

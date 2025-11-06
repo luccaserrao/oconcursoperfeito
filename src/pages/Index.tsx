@@ -89,6 +89,27 @@ const Index = () => {
           }
         );
         console.log("Welcome email sent successfully");
+        
+        // Schedule email automation sequence (D+5 reminder)
+        try {
+          await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/schedule-email-sequence`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                quizResponseId: data.quizResponseId,
+                userEmail: email,
+                userName: name,
+              }),
+            }
+          );
+          console.log("Email sequence scheduled successfully");
+        } catch (scheduleError) {
+          console.error("Error scheduling email sequence:", scheduleError);
+        }
       } catch (emailError) {
         // Don't block the flow if email fails
         console.error("Error sending welcome email:", emailError);
