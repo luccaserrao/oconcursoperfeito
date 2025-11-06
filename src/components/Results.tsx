@@ -351,7 +351,6 @@ export const Results = ({
               quizResponseId={quizResponseId}
               productId="resultado-completo"
               amount={25}
-              className="w-full mt-8 h-14 text-lg"
             />
           </Card>
         </div>
@@ -423,26 +422,26 @@ export const Results = ({
             quizResponseId={quizResponseId}
             productId="resultado-completo"
             amount={25}
-            className="h-14 text-lg px-8"
           />
         </div>
       </div>
 
-      <Footer />
+        <Footer />
 
-      {/* BLOCO 6: Pop-up de Prova Social */}
-      <SocialProofPopup />
+        {/* BLOCO 6: Pop-up de Prova Social */}
+        <SocialProofPopup />
 
-      {/* Sticky CTA for mobile */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-sm border-t border-border md:hidden z-50 animate-fade-in">
-        <MercadoPagoButton
-          userName={userName}
-          userEmail={userEmail}
-          quizResponseId={quizResponseId}
-          productId="resultado-completo"
-          amount={25}
-        />
+        {/* Sticky CTA for mobile */}
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-sm border-t border-border md:hidden z-50 animate-fade-in">
+          <MercadoPagoButton
+            userName={userName}
+            userEmail={userEmail}
+            quizResponseId={quizResponseId}
+            productId="resultado-completo"
+            amount={25}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
