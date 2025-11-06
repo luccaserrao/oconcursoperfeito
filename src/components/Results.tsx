@@ -48,7 +48,7 @@ export const Results = ({
           {/* Título principal */}
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              🎯 Seu resultado está pronto — veja o que sua personalidade revela e descubra seu futuro no serviço público!
+              🎯 {userName.split(' ')[0]}, seu resultado está pronto — veja o que sua personalidade revela e descubra seu futuro no serviço público!
             </h1>
             
             <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
