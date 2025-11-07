@@ -117,7 +117,6 @@ export const Results = ({
               userName={userName}
               userEmail={userEmail}
               quizResponseId={quizResponseId}
-              productId="resultado-completo"
               amount={25}
               location="floating_desktop"
             />
@@ -380,7 +379,6 @@ export const Results = ({
                   userName={userName}
                   userEmail={userEmail}
                   quizResponseId={quizResponseId}
-                  productId="resultado-completo"
                   amount={25}
                   location="main_offer"
                 />
@@ -412,7 +410,6 @@ export const Results = ({
                     userName={userName}
                     userEmail={userEmail}
                     quizResponseId={quizResponseId}
-                    productId="resultado-completo"
                     amount={25}
                     location="scroll_banner"
                   />
@@ -518,7 +515,6 @@ export const Results = ({
                 userName={userName}
                 userEmail={userEmail}
                 quizResponseId={quizResponseId}
-                productId="resultado-completo"
                 amount={25}
                 location="final_cta"
               />
@@ -538,7 +534,6 @@ export const Results = ({
           userName={userName}
           userEmail={userEmail}
           quizResponseId={quizResponseId}
-          productId="resultado-completo"
           amount={25}
           location="sticky_mobile"
         />
