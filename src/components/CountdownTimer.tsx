@@ -27,8 +27,8 @@ export const CountdownTimer = ({ initialMinutes = 120 }: CountdownTimerProps) =>
   return (
     <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full font-mono text-lg font-bold ${
       isUrgent 
-        ? "bg-destructive/10 text-destructive animate-pulse" 
-        : "bg-primary/10 text-primary"
+        ? "bg-destructive/30 text-destructive animate-pulse" 
+        : "bg-primary/30 text-primary"
     }`}>
       <Clock className="w-5 h-5" />
       <span>
