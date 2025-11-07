@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { CreditCard } from "lucide-react";
-import { trackBeginCheckout } from "@/lib/analytics";
+import { trackBeginCheckout, trackCtaDesbloqueioClick } from "@/lib/analytics";
 
 interface MercadoPagoButtonProps {
   userName: string;
@@ -11,9 +11,10 @@ interface MercadoPagoButtonProps {
   quizResponseId?: string;
   productId?: string;
   amount?: number;
+  location?: string;
 }
 
-export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, productId, amount = 25 }: MercadoPagoButtonProps) => {
+export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, productId, amount = 25, location = 'unknown' }: MercadoPagoButtonProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,6 +28,9 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
     try {
       setIsLoading(true);
       console.log("🚀 Starting payment process");
+      
+      // Track CTA Desbloqueio Click
+      trackCtaDesbloqueioClick(location);
       
       // Track begin_checkout for Google Ads
       trackBeginCheckout(amount);

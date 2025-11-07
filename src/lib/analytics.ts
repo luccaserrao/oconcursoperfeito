@@ -60,6 +60,49 @@ export const trackBeginCheckout = (value: number = 50.0) => {
   }
 };
 
+// Track CTA Desbloqueio Click
+export const trackCtaDesbloqueioClick = (location: string) => {
+  if (typeof window !== 'undefined' && (window as any).gtag) {
+    (window as any).gtag('event', 'cta_desbloqueio_click', {
+      event_category: 'engagement',
+      event_label: location,
+      value: 25
+    });
+  }
+  
+  // Facebook Pixel
+  if (typeof window !== 'undefined' && (window as any).fbq) {
+    (window as any).fbq('trackCustom', 'CtaDesbloqueioClick', {
+      location: location
+    });
+  }
+  console.log('📊 CTA Desbloqueio tracked:', location);
+};
+
+// Track Checkout Success (alias for trackPurchase for clarity)
+export const trackCheckoutSuccess = (transactionId: string, value: number = 25.0) => {
+  trackPurchase(transactionId, value);
+};
+
+// Track Cupom WhatsApp Click
+export const trackCupomWhatsappClick = () => {
+  if (typeof window !== 'undefined' && (window as any).gtag) {
+    (window as any).gtag('event', 'cupom_whatsapp_click', {
+      event_category: 'engagement',
+      event_label: 'discount_coupon_request',
+      value: 5
+    });
+  }
+  
+  // Facebook Pixel
+  if (typeof window !== 'undefined' && (window as any).fbq) {
+    (window as any).fbq('trackCustom', 'CupomWhatsappClick', {
+      discount_value: 5
+    });
+  }
+  console.log('📊 Cupom WhatsApp tracked');
+};
+
 export const initGoogleAnalytics = (measurementId: string) => {
   const script1 = document.createElement('script');
   script1.async = true;
