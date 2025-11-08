@@ -33,6 +33,7 @@ export interface CareerRecommendation {
     habilidades: string[];
     habilidade_destaque: string;
     contexto_profissional: string;
+    descricao_personalizada?: string;
   };
 }
 

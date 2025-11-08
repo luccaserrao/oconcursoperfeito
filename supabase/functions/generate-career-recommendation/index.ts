@@ -114,10 +114,7 @@ serve(async (req) => {
         `Pergunta ${i + 1}: ${a.question}\nResposta: ${a.answer}`
       ).join('\n\n');
 
-      const systemPrompt = `Você é um especialista em concursos públicos no Brasil e psicólogo vocacional especializado na metodologia RIASEC (Holland).
-Com base nas respostas do quiz, você deve:
-1. Analisar o perfil RIASEC da pessoa
-2. Recomendar a carreira em concurso público PERFEITA para o perfil
+      const systemPrompt = `Você é um psicólogo vocacional especializado na metodologia RIASEC (Holland).
 
 METODOLOGIA RIASEC (Holland):
 - Realista (R): Práticas, objetivas, preferem trabalho manual/técnico, gostam de mecânica, construção, agricultura
@@ -127,19 +124,23 @@ METODOLOGIA RIASEC (Holland):
 - Empreendedor (E): Persuasivas, líderes, gostam de vender, negociar, gerenciar projetos
 - Convencional (C): Organizadas, detalhistas, gostam de dados, administração, seguir procedimentos
 
-Sua resposta deve ser um JSON com esta estrutura EXATA:
+Sua tarefa é analisar as respostas do quiz e gerar um perfil RIASEC COMPLETO e PERSONALIZADO.
+
+A descrição deve ser DETALHADA (200-300 palavras) apresentando:
+- Análise das características de personalidade do usuário
+- Comportamento típico e padrões de resposta
+- Preferências profissionais e ambientes de trabalho ideais
+- Pontos fortes e principais habilidades
+- Possíveis desafios e áreas de desenvolvimento
+- Tipo de tarefas que mais trazem satisfação
+- Estilo de comunicação e colaboração
+- Como lida com pressão e tomada de decisões
+
+Retorne APENAS um JSON com esta estrutura EXATA:
 {
-  "careerName": "Nome do cargo/carreira",
-  "justification": "Explicação CURTA de 1 parágrafo (máximo 100 palavras) de por que esta carreira combina",
-  "salary": "Faixa salarial detalhada (inicial e com progressão)",
-  "examDate": "Data da prova - use um dos formatos: Se houver edital aberto: 'Prova em DD/MM/AAAA (inscrições até DD/MM/AAAA)' | Se houver previsão confirmada: 'Previsto para mês/ano conforme [fonte]' | Se não houver edital: 'Sem edital aberto. Últimos concursos: ano1, ano2, ano3. Previsão: [análise baseada no histórico e intervalo médio]'",
-  "workplaces": ["Local 1 com estado/município", "Local 2 com estado/município", "Local 3 com estado/município"],
-  "workRoutine": "Descrição breve da rotina de trabalho (2-3 frases)",
-  "subjects": ["Lista de 5-8 principais matérias para estudar"],
-  "examFrequency": "Análise detalhada: Liste os últimos 3-5 concursos com anos | Calcule o intervalo médio entre editais | Indique se há previsão oficial ou rumores de novo edital. Exemplo: 'Últimos concursos: 2019 (Cespe), 2021 (FCC), 2023 (Vunesp). Intervalo médio: 2 anos. Governo anunciou novo edital para 2025 no planejamento orçamentário.'",
   "riasec": {
-    "top1": "Código RIASEC dominante (ex: Realista, Investigativo, Social, etc)",
-    "top2": "Código RIASEC secundário",
+    "top1": "Código RIASEC dominante (ex: Investigativo)",
+    "top2": "Código RIASEC secundário (ex: Social)",
     "scores": {
       "Realista": 0-100,
       "Investigativo": 0-100,
@@ -148,34 +149,24 @@ Sua resposta deve ser um JSON com esta estrutura EXATA:
       "Empreendedor": 0-100,
       "Convencional": 0-100
     },
-    "habilidades": ["lista de 5 habilidades principais baseadas no perfil RIASEC"],
-    "habilidade_destaque": "adjetivo que melhor descreve a pessoa (ex: práticas e objetivas, analíticas e curiosas)",
-    "contexto_profissional": "onde a pessoa se destaca profissionalmente (ex: resolver problemas complexos, ajudar pessoas)"
+    "descricao_personalizada": "TEXTO COMPLETO de 200-300 palavras descrevendo o perfil psicológico e comportamental",
+    "habilidades": [
+      "habilidade 1",
+      "habilidade 2",
+      "habilidade 3",
+      "habilidade 4",
+      "habilidade 5"
+    ],
+    "habilidade_destaque": "adjetivos que melhor descrevem (ex: analíticas e organizadas)",
+    "contexto_profissional": "descrição do contexto ideal de trabalho"
   }
 }
 
-IMPORTANTE: 
-- Seja específico com nomes reais de cargos brasileiros
-- Salários devem ser realistas (R$)
-- Matérias devem ser específicas do cargo
-- Justificativa deve ser CURTA mas persuasiva (máximo 100 palavras)
-- workplaces deve conter 3 locais específicos com estado/município
-- workRoutine deve descrever como é o dia a dia no trabalho
-
-CRÍTICO - examDate DEVE SER DETALHADO E FUNDAMENTADO:
-  ✅ BOM: "Sem edital aberto. Últimos concursos: 2018, 2021, 2024. Padrão trienal. Próximo esperado para 2027 segundo PPA do governo."
-  ✅ BOM: "Prova em 15/03/2025 (inscrições até 20/01/2025)"
-  ❌ RUIM: "Em breve"
-  ❌ RUIM: "Previsão para 2025"
-  
-- examFrequency DEVE incluir análise histórica real com anos, bancas e intervalos calculados
-- NUNCA use termos genéricos como "Em breve" ou "Frequência moderada" sem dados concretos
-
-CRÍTICO - ANÁLISE RIASEC:
-- Analise cuidadosamente as respostas para identificar os 2 tipos RIASEC dominantes
-- Os scores devem somar aproximadamente 300-400 (não 600)
+IMPORTANTE:
+- Os scores devem somar aproximadamente 300-350 (não 600)
 - top1 e top2 devem ser os códigos com maiores scores
-- habilidades devem ser específicas e baseadas nos códigos RIASEC identificados
+- A descrição personalizada deve ser fluida, detalhada e em português natural
+- Habilidades devem ser específicas baseadas nos códigos RIASEC identificados
 - habilidade_destaque e contexto_profissional devem refletir a combinação dos 2 tipos dominantes`;
 
       const userPrompt = `Perfil do candidato:
@@ -188,10 +179,11 @@ TAREFA:
 1. Analise cuidadosamente as respostas acima
 2. Identifique os 2 tipos RIASEC dominantes baseado nas preferências demonstradas
 3. Calcule os scores para cada dimensão RIASEC (0-100)
-4. Liste as 5 principais habilidades baseadas no perfil RIASEC
-5. Recomende a carreira em concurso público IDEAL que combine com este perfil RIASEC
+4. Escreva uma descrição personalizada COMPLETA (200-300 palavras) do perfil psicológico
+5. Liste as 5 principais habilidades baseadas no perfil RIASEC
+6. Descreva o contexto profissional ideal
 
-Retorne APENAS o JSON conforme o formato especificado, incluindo o objeto "riasec" completo.`;
+Retorne APENAS o JSON conforme o formato especificado.`;
 
       // Chamar a IA
       const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -223,9 +215,21 @@ Retorne APENAS o JSON conforme o formato especificado, incluindo o objeto "riase
 
       // Parse JSON da resposta da IA
       try {
-        // Remove markdown code blocks se houver
         const cleanContent = aiContent.replace(/```json\n?|\n?```/g, '').trim();
-        recommendation = JSON.parse(cleanContent);
+        const aiRecommendation = JSON.parse(cleanContent);
+        
+        // Construir objeto completo com placeholders para campos não usados
+        recommendation = {
+          careerName: `Perfil ${aiRecommendation.riasec.top1}`, // Placeholder para tracking
+          justification: "", // Não usado na UI
+          salary: "", // Não usado na UI
+          examDate: "", // Não usado na UI
+          workplaces: [], // Não usado na UI
+          workRoutine: "", // Não usado na UI
+          subjects: [], // Não usado na UI
+          examFrequency: "", // Não usado na UI
+          riasec: aiRecommendation.riasec // ✅ Único campo realmente usado
+        };
       } catch (parseError) {
         console.error('Failed to parse AI response:', aiContent);
         throw new Error('Invalid AI response format');
