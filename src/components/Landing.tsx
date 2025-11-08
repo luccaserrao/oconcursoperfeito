@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { ArrowRight, CheckCircle2, Clock, Users, Award, Target, Heart, Star, Brain, Shield, TrendingUp, X } from "lucide-react";
 import { useState } from "react";
 import mariaPersona from "@/assets/maria-persona.jpg";
+import joaoPersona from "@/assets/joao-persona.jpg";
 import {
   Accordion,
   AccordionContent,
@@ -177,8 +178,8 @@ export const Landing = ({ onStart }: LandingProps) => {
 
                 <Card className="p-6 hover:shadow-[var(--shadow-elevated)] transition-all duration-300">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
-                      <span className="text-2xl">👨‍💼</span>
+                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-accent/20">
+                      <img src={joaoPersona} alt="João, 28 anos" className="w-full h-full object-cover" />
                     </div>
                     <div>
                       <p className="font-bold">João, 28 anos</p>
