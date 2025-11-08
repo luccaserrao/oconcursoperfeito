@@ -119,8 +119,8 @@ export const Results = ({
       <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-destructive/90 to-destructive/70 backdrop-blur-sm shadow-lg">
         <div className="container mx-auto px-4 py-2 flex items-center justify-center gap-2 text-white text-sm md:text-base">
           <Lock className="w-4 h-4" />
-          <span className="font-medium">Seus dados expiram em:</span>
-          <CountdownTimer initialMinutes={5} />
+          <span className="font-medium">Oferta especial expira em:</span>
+          <CountdownTimer initialMinutes={120} />
         </div>
       </div>
 

@@ -24,16 +24,24 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
 
   // Load saved progress on mount
   useEffect(() => {
+    console.log(`📚 Total de perguntas no quiz: ${quizQuestions.length}`);
+    
     const saved = localStorage.getItem('quiz_progress');
     if (saved) {
       try {
         const { currentQuestion: savedQ, answers: savedA } = JSON.parse(saved);
-        if (savedQ > 0) {
+        if (savedQ > 0 && savedQ < quizQuestions.length) {
+          console.log(`♻️ Restaurando progresso: pergunta ${savedQ + 1}/${quizQuestions.length}`);
           setCurrentQuestion(savedQ);
           setAnswers(savedA);
+        } else {
+          // Limpar localStorage corrompido
+          console.warn('⚠️ Progresso inválido detectado, limpando localStorage');
+          localStorage.removeItem('quiz_progress');
         }
       } catch (e) {
-        console.error("Failed to load saved progress:", e);
+        console.error("❌ Falha ao carregar progresso salvo:", e);
+        localStorage.removeItem('quiz_progress');
       }
     }
     trackEvent('quiz_started');
@@ -56,6 +64,8 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
 
   // Get motivational message based on progress
   const getMotivationalMessage = () => {
+    console.log(`💬 Mostrando mensagem para pergunta ${currentQuestion + 1}/${quizQuestions.length}`);
+    
     // Pergunta 30 (última)
     if (currentQuestion === 29) {
       return "🏆 Última pergunta! A próxima tela vai revelar seu perfil vocacional.";
@@ -77,7 +87,12 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
   };
 
   const handleNext = () => {
-    if (!selectedOption) return;
+    if (!selectedOption) {
+      console.warn('⚠️ Nenhuma opção selecionada');
+      return;
+    }
+
+    console.log(`✅ Respondendo pergunta ${currentQuestion + 1}/${quizQuestions.length}`);
 
     const newAnswers = [
       ...answers,
@@ -91,10 +106,12 @@ export const Quiz = ({ onComplete, onBack }: QuizProps) => {
     setSelectedOption(null);
 
     if (currentQuestion === quizQuestions.length - 1) {
+      console.log(`🎉 Quiz completado! Total de respostas: ${newAnswers.length}`);
       localStorage.removeItem('quiz_progress');
       trackEvent('quiz_completed');
       onComplete(newAnswers);
     } else {
+      console.log(`➡️ Avançando para pergunta ${currentQuestion + 2}/${quizQuestions.length}`);
       setCurrentQuestion(currentQuestion + 1);
     }
   };
