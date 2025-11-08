@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Footer } from "@/components/Footer";
 import { ArrowRight, CheckCircle2, Clock, Users, Award, Target, Heart, Star, Brain, Shield, TrendingUp, X } from "lucide-react";
 import { useState } from "react";
+import mariaPersona from "@/assets/maria-persona.jpg";
 import {
   Accordion,
   AccordionContent,
@@ -159,8 +160,8 @@ export const Landing = ({ onStart }: LandingProps) => {
               <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                 <Card className="p-6 hover:shadow-[var(--shadow-elevated)] transition-all duration-300">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                      <span className="text-2xl">👩‍🎓</span>
+                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/20">
+                      <img src={mariaPersona} alt="Maria, 21 anos" className="w-full h-full object-cover" />
                     </div>
                     <div>
                       <p className="font-bold">Maria, 21 anos</p>
