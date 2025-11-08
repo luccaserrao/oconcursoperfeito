@@ -24,8 +24,26 @@ import {
   Target,
   TrendingUp,
   MessageCircle,
-  AlertTriangle
+  AlertTriangle,
+  Lightbulb,
+  Scale,
+  Dna,
+  Coins,
+  Globe,
+  Award,
+  Brain,
+  Clock,
+  Users,
+  Zap
 } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { trackEvent, trackCupomWhatsappClick } from "@/lib/analytics";
 
 interface ResultsProps {
@@ -253,6 +271,239 @@ export const Results = ({
             </div>
           </div>
 
+          {/* ============= 💡 POR QUE ESTE TESTE VALE R$25 ============= */}
+          <div className="mb-12 animate-fade-in">
+            <Card className="p-8 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-amber-500/10 border-2 border-amber-500/30">
+              <div className="flex items-center gap-3 mb-6">
+                <Lightbulb className="w-8 h-8 text-amber-500" />
+                <h2 className="text-2xl md:text-3xl font-bold">
+                  💡 Por que este teste vale R$25?
+                </h2>
+              </div>
+              
+              <div className="space-y-4 text-muted-foreground leading-relaxed">
+                <p>
+                  A maioria dos testes gratuitos mostra apenas seu tipo de personalidade. Este aqui vai além: analisa seu perfil RIASEC e combina com carreiras e concursos que realmente se encaixam no seu estilo de trabalho.
+                </p>
+                <p>
+                  Você não paga apenas por um resultado — recebe um plano de ação personalizado, um cronograma de estudos e cargos recomendados com base em dados reais do mercado público brasileiro.
+                </p>
+                <p className="font-semibold text-foreground">
+                  Por R$25, você economiza tempo, evita estudar para o concurso errado e ganha clareza sobre onde concentrar seus esforços.
+                </p>
+              </div>
+            </Card>
+          </div>
+
+          {/* ============= ⚖️ O QUE FAZ DIFERENTE DOS OUTROS ============= */}
+          <div className="mb-12 animate-fade-in">
+            <Card className="p-8 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-blue-500/10 border-2 border-blue-500/30">
+              <div className="flex items-center gap-3 mb-6">
+                <Scale className="w-8 h-8 text-blue-500" />
+                <h2 className="text-2xl md:text-3xl font-bold">
+                  ⚖️ O que faz diferente dos outros
+                </h2>
+              </div>
+              
+              <div className="space-y-4 text-muted-foreground leading-relaxed">
+                <p>
+                  Nosso diferencial é que cruzamos seus dados RIASEC com suas preferências de trabalho em concursos públicos. Isso mostra quais carreiras e cargos públicos combinam com você e inclui um plano de estudos prático para alcançar seus objetivos.
+                </p>
+                <div className="bg-primary/10 rounded-lg p-6 border-l-4 border-primary">
+                  <p className="font-semibold text-foreground mb-2">
+                    📊 Contexto do Mercado Brasileiro
+                  </p>
+                  <p>
+                    No Brasil existem mais de <span className="font-bold text-foreground">10 mil concursos públicos</span> realizados todos os anos, em níveis municipal, estadual e federal.
+                  </p>
+                </div>
+                <p>
+                  Escolher o concurso certo, alinhado ao seu perfil, é o que define quem progride rápido e quem desiste no meio do caminho. Nosso sistema analisa o perfil dos cargos que mais se repetem nos concursos com os melhores salários e estabilidade de emprego, indicando caminhos de maior potencial.
+                </p>
+              </div>
+            </Card>
+          </div>
+
+          {/* ============= 🧬 SOBRE O MÉTODO RIASEC ============= */}
+          <div className="mb-12 animate-fade-in">
+            <Card className="p-8 bg-gradient-to-br from-purple-500/10 via-indigo-500/5 to-purple-500/10 border-2 border-purple-500/30">
+              <div className="flex items-center gap-3 mb-6">
+                <Dna className="w-8 h-8 text-purple-500" />
+                <h2 className="text-2xl md:text-3xl font-bold">
+                  🧬 Sobre o método
+                </h2>
+              </div>
+              
+              <div className="space-y-4 text-muted-foreground leading-relaxed">
+                <div className="flex items-center gap-2 mb-4">
+                  <Badge className="bg-green-500/20 text-green-700 border-green-500/30 px-4 py-1.5">
+                    <Award className="w-4 h-4 mr-2" />
+                    Validado Cientificamente
+                  </Badge>
+                </div>
+                
+                <p>
+                  O teste é baseado no modelo <span className="font-bold text-foreground">RIASEC</span>, criado pelo psicólogo John L. Holland (Universidade Johns Hopkins) e usado há décadas por centros de carreira e universidades do mundo todo.
+                </p>
+                <p>
+                  O RIASEC identifica seus principais interesses profissionais e mostra onde você tende a ter melhor desempenho.
+                </p>
+                <p className="font-semibold text-foreground">
+                  Nosso sistema aprimora esse método cruzando seus resultados com carreiras públicas brasileiras e com o perfil dos cargos que mais aparecem nos concursos com os melhores salários e estabilidade de emprego.
+                </p>
+              </div>
+            </Card>
+          </div>
+
+          {/* ============= 🌟 DIFERENCIAIS EXCLUSIVOS ============= */}
+          <div className="mb-12 animate-fade-in">
+            <Card className="p-8 bg-gradient-to-br from-primary/10 to-accent/10 border-2 border-primary/30">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl md:text-3xl font-bold mb-2">
+                  🌟 Diferenciais Exclusivos
+                </h2>
+                <p className="text-muted-foreground">
+                  Recursos únicos que transformam seu resultado em ação
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  { icon: Award, title: "Base científica validada", desc: "Método RIASEC internacional" },
+                  { icon: Target, title: "Personalizado para BR", desc: "Foco em concursos públicos" },
+                  { icon: Brain, title: "Cruzamento inteligente", desc: "Perfil + oportunidades reais" },
+                  { icon: DollarSign, title: "Faixas salariais", desc: "Médias atualizadas do mercado" },
+                  { icon: Calendar, title: "Plano 30/60/90 dias", desc: "Cronograma estruturado" },
+                  { icon: TrendingUp, title: "Frequência de editais", desc: "Probabilidade real" },
+                  { icon: Zap, title: "Resultado imediato", desc: "Acesso instantâneo" },
+                  { icon: Users, title: "Suporte direto", desc: "WhatsApp disponível" }
+                ].map((item, idx) => (
+                  <div 
+                    key={idx} 
+                    className="flex flex-col items-center text-center p-4 bg-background/50 rounded-lg border border-border hover:shadow-lg transition-all"
+                    style={{ animationDelay: `${idx * 50}ms` }}
+                  >
+                    <item.icon className="w-8 h-8 text-primary mb-3" />
+                    <h4 className="font-bold text-sm mb-1">{item.title}</h4>
+                    <p className="text-xs text-muted-foreground">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+
+          {/* ============= 💵 INVESTIMENTO E BENEFÍCIO ============= */}
+          <div className="mb-12 animate-fade-in">
+            <Card className="p-8 bg-gradient-to-br from-yellow-500/10 via-amber-500/5 to-yellow-500/10 border-2 border-yellow-500/30">
+              <div className="flex items-center gap-3 mb-6">
+                <Coins className="w-8 h-8 text-yellow-600" />
+                <h2 className="text-2xl md:text-3xl font-bold">
+                  💵 Investimento e Benefício
+                </h2>
+              </div>
+              
+              <div className="space-y-4 text-muted-foreground leading-relaxed">
+                <p>
+                  O teste custa <span className="font-bold text-foreground text-xl">R$25</span>, um valor simbólico perto do que ele entrega.
+                </p>
+                <p>
+                  Foi criado para ser acessível, mas com nível de qualidade profissional.
+                </p>
+                <p className="font-semibold text-foreground">
+                  Em vez de perder tempo com testes genéricos, aqui você recebe uma análise feita sob medida para sua realidade e seu objetivo.
+                </p>
+                
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-6 pt-6 border-t">
+                  <div className="text-center p-3 bg-background/50 rounded-lg">
+                    <p className="text-2xl font-bold text-foreground">R$25</p>
+                    <p className="text-xs">Nosso teste</p>
+                  </div>
+                  <div className="text-center p-3 bg-muted/30 rounded-lg opacity-60">
+                    <p className="text-2xl font-bold">R$30</p>
+                    <p className="text-xs">Hambúrguer</p>
+                  </div>
+                  <div className="text-center p-3 bg-muted/30 rounded-lg opacity-60">
+                    <p className="text-2xl font-bold">R$40</p>
+                    <p className="text-xs">Streaming</p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* ============= 📊 COMPARATIVO COM OUTROS TESTES ============= */}
+          <div className="mb-12 animate-fade-in">
+            <Card className="p-8 bg-card border-2 border-primary/20">
+              <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+                📊 Comparativo com outros testes
+              </h2>
+              
+              {/* Versão Desktop - Tabela */}
+              <div className="hidden md:block overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="font-bold">Teste</TableHead>
+                      <TableHead className="font-bold">Foco</TableHead>
+                      <TableHead className="font-bold">Resultado Entregue</TableHead>
+                      <TableHead className="font-bold">Personalização</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow className="opacity-60">
+                      <TableCell className="font-medium">MBTI / 16personalities</TableCell>
+                      <TableCell>Personalidade</TableCell>
+                      <TableCell>Tipo psicológico (ex: INTJ, ENFP)</TableCell>
+                      <TableCell>Genérico, sem plano</TableCell>
+                    </TableRow>
+                    <TableRow className="opacity-60">
+                      <TableCell className="font-medium">GPTs gratuitos</TableCell>
+                      <TableCell>Curiosidade</TableCell>
+                      <TableCell>Respostas automáticas sem base científica</TableCell>
+                      <TableCell>Sem plano de ação</TableCell>
+                    </TableRow>
+                    <TableRow className="bg-primary/10 border-2 border-primary font-bold">
+                      <TableCell className="font-bold text-primary">RIASEC + Concursos (nosso)</TableCell>
+                      <TableCell className="text-primary">Carreira pública</TableCell>
+                      <TableCell className="text-primary">Cargo ideal + cronograma + plano de ação</TableCell>
+                      <TableCell className="text-primary">Totalmente personalizado</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Versão Mobile - Cards */}
+              <div className="md:hidden space-y-4">
+                <div className="p-4 bg-muted/30 rounded-lg opacity-60 border">
+                  <p className="font-bold mb-2">MBTI / 16personalities</p>
+                  <div className="text-sm space-y-1">
+                    <p><span className="font-semibold">Foco:</span> Personalidade</p>
+                    <p><span className="font-semibold">Resultado:</span> Tipo psicológico</p>
+                    <p><span className="font-semibold">Personalização:</span> Genérico</p>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-muted/30 rounded-lg opacity-60 border">
+                  <p className="font-bold mb-2">GPTs gratuitos</p>
+                  <div className="text-sm space-y-1">
+                    <p><span className="font-semibold">Foco:</span> Curiosidade</p>
+                    <p><span className="font-semibold">Resultado:</span> Respostas automáticas</p>
+                    <p><span className="font-semibold">Personalização:</span> Sem plano</p>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary">
+                  <p className="font-bold text-primary mb-2">✅ RIASEC + Concursos (nosso)</p>
+                  <div className="text-sm space-y-1">
+                    <p><span className="font-semibold">Foco:</span> Carreira pública</p>
+                    <p><span className="font-semibold">Resultado:</span> Cargo + cronograma + plano</p>
+                    <p><span className="font-semibold">Personalização:</span> <span className="text-primary font-bold">Totalmente personalizado</span></p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+
           {/* ============= 3️⃣ PRÉVIA VISUAL DO RELATÓRIO COMPLETO (COM BLUR) ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-primary/30 relative overflow-hidden">
@@ -430,11 +681,11 @@ export const Results = ({
                   <AccordionTrigger className="text-left">
                     <span className="flex items-center gap-2">
                       <MessageCircle className="w-5 h-5 text-primary" />
-                      Isso é melhor que teste gratuito?
+                      Por que pagar R$25 se há testes gratuitos?
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    Sim, aqui você recebe um plano real de ação baseado no seu perfil.
+                    Porque aqui você recebe um plano de ação prático e cargos reais do serviço público que combinam com você. Não é só teoria - é um caminho completo com cronograma de estudos e materiais específicos.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -442,11 +693,11 @@ export const Results = ({
                   <AccordionTrigger className="text-left">
                     <span className="flex items-center gap-2">
                       <MessageCircle className="w-5 h-5 text-primary" />
-                      Em quanto tempo recebo?
+                      O método é confiável?
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    Logo após o pagamento, o relatório é liberado automaticamente.
+                    Sim. Baseado na teoria RIASEC, criada por John L. Holland e usada em universidades e órgãos de RH no mundo todo há décadas. Nosso diferencial é adaptar isso para o mercado de concursos públicos brasileiros.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -454,11 +705,11 @@ export const Results = ({
                   <AccordionTrigger className="text-left">
                     <span className="flex items-center gap-2">
                       <MessageCircle className="w-5 h-5 text-primary" />
-                      Posso acessar depois?
+                      Recebo o resultado na hora?
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    Sim, você pode baixar e consultar quando quiser.
+                    Sim. O relatório completo é liberado automaticamente logo após a confirmação do pagamento.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -466,11 +717,35 @@ export const Results = ({
                   <AccordionTrigger className="text-left">
                     <span className="flex items-center gap-2">
                       <MessageCircle className="w-5 h-5 text-primary" />
+                      Posso acessar depois?
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    Sim, você pode baixar o relatório e consultar quando quiser. Recomendamos salvar uma cópia.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-5">
+                  <AccordionTrigger className="text-left">
+                    <span className="flex items-center gap-2">
+                      <MessageCircle className="w-5 h-5 text-primary" />
+                      Isso é melhor que teste gratuito?
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    Sim, aqui você recebe um plano real de ação baseado no seu perfil específico, não apenas um tipo de personalidade genérico.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-6">
+                  <AccordionTrigger className="text-left">
+                    <span className="flex items-center gap-2">
+                      <MessageCircle className="w-5 h-5 text-primary" />
                       E meus dados?
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    Ficam guardados por 5 minutos e são apagados depois, por segurança.
+                    Ficam guardados por 5 minutos e são excluídos automaticamente depois, por segurança.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
@@ -498,6 +773,30 @@ export const Results = ({
               <p className="text-xs text-destructive font-semibold">
                 ⏰ Cupom válido por 24h, após isso o desconto expira.
               </p>
+            </Card>
+          </div>
+
+          {/* ============= 🌍 COMPARATIVO INTERNACIONAL ============= */}
+          <div className="mb-12 animate-fade-in">
+            <Card className="p-6 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 border border-blue-500/20">
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                <div className="flex items-center gap-3">
+                  <Globe className="w-6 h-6 text-blue-500 flex-shrink-0" />
+                  <div>
+                    <p className="font-bold text-sm md:text-base">
+                      🌍 Comparativo Internacional
+                    </p>
+                    <p className="text-xs md:text-sm text-muted-foreground">
+                      Testes internacionais RIASEC custam US$20 (~R$110). O nosso: <span className="font-bold text-primary">R$25</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                    4x mais barato
+                  </Badge>
+                </div>
+              </div>
             </Card>
           </div>
 
