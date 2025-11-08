@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import { PaidContent } from "./pages/PaidContent";
 import AdminPayments from "./pages/AdminPayments";
 import AdminUsers from "./pages/AdminUsers";
+import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminLogin from "./pages/AdminLogin";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/admin/reset-password" element={<ResetPassword />} />
           <Route path="/admin/payments" element={<AdminPayments />} />
           <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

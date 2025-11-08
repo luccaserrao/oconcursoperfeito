@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, XCircle, Copy, ExternalLink, RefreshCw, Users } from "lucide-react";
+import { CheckCircle2, XCircle, Copy, ExternalLink, RefreshCw, Users, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -205,10 +205,16 @@ const AdminPayments = () => {
           <h1 className="text-3xl font-bold">Painel de Pagamentos</h1>
           <p className="text-muted-foreground">Gerenciar Mercado Pago e pedidos</p>
         </div>
-        <Button variant="outline" onClick={() => navigate('/admin/users')}>
-          <Users className="w-4 h-4 mr-2" />
-          Ver Usuários
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => navigate('/admin/analytics')}>
+            <BarChart3 className="w-4 h-4 mr-2" />
+            Analytics
+          </Button>
+          <Button variant="outline" onClick={() => navigate('/admin/users')}>
+            <Users className="w-4 h-4 mr-2" />
+            Ver Usuários
+          </Button>
+        </div>
       </div>
 
       <Card>

@@ -30,6 +30,9 @@ verify_jwt = true
 [functions.list-users]
 verify_jwt = true
 
+[functions.get-analytics]
+verify_jwt = true
+
 [functions.send-welcome-email]
 verify_jwt = false
 
