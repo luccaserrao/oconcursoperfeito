@@ -94,7 +94,7 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
       onClick={handleClick}
       disabled={isLoading}
       size="lg"
-      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-base md:text-lg py-6 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+      className="group h-auto w-full rounded-full bg-gradient-to-r from-[#7c3aed] via-[#6366f1] to-[#0ea5e9] py-6 text-base font-semibold text-white shadow-[0_24px_55px_-20px_rgba(76,29,149,0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_32px_65px_-18px_rgba(14,165,233,0.65)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200/60 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-lg"
     >
       {isLoading ? (
         <span className="flex items-center justify-center">
@@ -102,9 +102,9 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
           Processando...
         </span>
       ) : (
-        <span className="flex items-center justify-center whitespace-nowrap">
-          <CreditCard className="mr-2 w-5 h-5 flex-shrink-0" />
-          <span className="truncate">Pagar R$ {amount} com Mercado Pago</span>
+        <span className="flex items-center justify-center whitespace-nowrap text-center">
+          <CreditCard className="mr-2 h-5 w-5 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
+          <span className="truncate">Garanta meu plano completo por R$ {amount}</span>
         </span>
       )}
     </Button>

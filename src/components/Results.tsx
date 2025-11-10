@@ -102,11 +102,7 @@ export const Results = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // A/B Test para CTA text
-  const ctaVariant = Math.random() > 0.5 ? 'A' : 'B';
-  const ctaText = ctaVariant === 'A' 
-    ? "Quero meu plano completo agora (R$25)" 
-    : "Desbloquear relatório profissional (R$25)";
+  const ctaText = "Garanta seu plano de estudos agora e saia na frente!";
 
   const handleWhatsAppClick = () => {
     trackCupomWhatsappClick();
@@ -127,9 +123,12 @@ export const Results = ({
       {/* ============= CTA FLUTUANTE LATERAL (DESKTOP) ============= */}
       {showFloatingCta && (
         <div className="hidden md:block fixed right-4 top-1/2 -translate-y-1/2 z-40 animate-slide-in-right">
-          <div className="bg-gradient-to-br from-primary to-accent p-4 rounded-lg shadow-2xl max-w-xs">
-            <p className="text-white font-bold text-center mb-3">
-              Desbloqueie seu plano completo!
+          <div className="max-w-xs rounded-lg bg-gradient-to-br from-primary to-accent p-4 shadow-2xl">
+            <p className="mb-3 text-center text-sm font-semibold uppercase tracking-tight text-white/80">
+              Oferta relâmpago
+            </p>
+            <p className="mb-3 text-center text-white text-lg font-bold leading-snug">
+              {ctaText}
             </p>
             <MercadoPagoButton
               userName={userName}
@@ -654,8 +653,8 @@ export const Results = ({
               <Card className="p-6 bg-gradient-to-r from-primary to-accent text-primary-foreground">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                   <div>
-                    <p className="text-xl font-bold mb-1">Ainda não desbloqueou seu plano?</p>
-                    <p className="text-sm opacity-90">Aproveite enquanto seus dados ainda estão disponíveis!</p>
+                    <p className="text-xl font-bold mb-1">{ctaText}</p>
+                    <p className="text-sm opacity-90">Aproveite o desconto de lançamento enquanto seu resultado está quente.</p>
                   </div>
                   <MercadoPagoButton
                     userName={userName}
