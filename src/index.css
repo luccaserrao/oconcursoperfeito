@@ -2,6 +2,73 @@
 @tailwind components;
 @tailwind utilities;
 
+/* === LAYOUT GERAL === */
+.quiz-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  padding: 10px 16px;
+  box-sizing: border-box;
+}
+
+/* === BARRA DE PROGRESSO === */
+.progress-section {
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+/* === PERGUNTA E ALTERNATIVAS === */
+.question-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  max-height: 70vh;
+}
+
+.question-text {
+  font-size: clamp(1rem, 1.1vw, 1.2rem);
+  font-weight: 600;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.likert-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.likert-option {
+  flex: 1 1 80px;
+  min-width: 80px;
+  max-width: 100px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* === BOTÃO PRÓXIMA === */
+.next-button {
+  width: 80%;
+  max-width: 280px;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  align-self: center;
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */

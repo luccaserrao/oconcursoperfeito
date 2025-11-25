@@ -258,7 +258,7 @@ export const Results = ({
                   <div className="flex gap-1 mb-3">
                     {[...Array(5)].map((_, j) => <Star key={j} className="w-4 h-4 fill-primary text-primary" />)}
                   </div>
-                  <p className="text-sm text-muted-foreground mb-4 italic leading-relaxed">
+                  <p className="text-sm text-muted-foreground mb-4 italic leading-relaxed break-words">
                     "{testimonial.text}"
                   </p>
                   <div className="border-t pt-3">
@@ -828,7 +828,7 @@ export const Results = ({
       </div>
 
       {/* CTA Sticky Mobile (Bottom) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-r from-primary to-accent p-4 shadow-2xl">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-r from-primary to-accent p-4 pb-[calc(env(safe-area-inset-bottom,0px)+16px)] shadow-2xl">
         <MercadoPagoButton
           userName={userName}
           userEmail={userEmail}
@@ -842,3 +842,4 @@ export const Results = ({
     </>
   );
 };
+// mobile-conversion-note: sticky purchase CTA and timer present; safe-area padding handled in Landing.

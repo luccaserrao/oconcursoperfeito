@@ -1,349 +1,164 @@
-import { QuizQuestion } from "@/types/quiz";
+﻿import { QuizQuestion } from "@/types/quiz";
+
+const LIKERT_OPTIONS = [
+  "Discordo totalmente",
+  "Discordo",
+  "Neutro",
+  "Concordo",
+  "Concordo totalmente",
+];
 
 export const quizQuestions: QuizQuestion[] = [
-  // ===== RIASEC - 5 PERGUNTAS (ESCALA LIKERT) =====
-  {
-    id: "riasec_1",
-    question: "Você prefere resolver problemas práticos com suas próprias mãos do que lidar com pessoas?",
-    type: "likert",
-    options: [
-      "Discordo totalmente",
-      "Discordo",
-      "Neutro",
-      "Concordo",
-      "Concordo totalmente"
-    ]
-  },
-  {
-    id: "riasec_2",
-    question: "Você gosta de pesquisar, entender como as coisas funcionam e encontrar soluções lógicas?",
-    type: "likert",
-    options: [
-      "Discordo totalmente",
-      "Discordo",
-      "Neutro",
-      "Concordo",
-      "Concordo totalmente"
-    ]
-  },
-  {
-    id: "riasec_3",
-    question: "Você se sente mais realizado criando, desenhando ou inovando ideias?",
-    type: "likert",
-    options: [
-      "Discordo totalmente",
-      "Discordo",
-      "Neutro",
-      "Concordo",
-      "Concordo totalmente"
-    ]
-  },
-  {
-    id: "riasec_4",
-    question: "Você gosta de ensinar, orientar pessoas e se comunicar?",
-    type: "likert",
-    options: [
-      "Discordo totalmente",
-      "Discordo",
-      "Neutro",
-      "Concordo",
-      "Concordo totalmente"
-    ]
-  },
-  {
-    id: "riasec_5",
-    question: "Prefere seguir regras claras e trabalhar com organização e processos definidos?",
-    type: "likert",
-    options: [
-      "Discordo totalmente",
-      "Discordo",
-      "Neutro",
-      "Concordo",
-      "Concordo totalmente"
-    ]
-  },
-  
-  // ===== PERGUNTAS ORIGINAIS (20 PERGUNTAS) =====
+  // ===== PARTE 1: Perfil RIASEC (15 perguntas - LIKERT) =====
+  { id: "riasec_1", type: "likert", question: "Você prefere resolver problemas práticos com suas próprias mãos do que lidar com pessoas?", options: LIKERT_OPTIONS },
+  { id: "riasec_2", type: "likert", question: "Você gosta de pesquisar, entender como as coisas funcionam e encontrar soluções lógicas?", options: LIKERT_OPTIONS },
+  { id: "riasec_3", type: "likert", question: "Você se sente mais realizado criando, desenhando ou inovando ideias?", options: LIKERT_OPTIONS },
+  { id: "riasec_4", type: "likert", question: "Você gosta de ensinar, orientar pessoas e se comunicar?", options: LIKERT_OPTIONS },
+  { id: "riasec_5", type: "likert", question: "Prefere seguir regras claras e trabalhar com organização e processos definidos?", options: LIKERT_OPTIONS },
+  { id: "riasec_6", type: "likert", question: "Prefiro aprender fazendo, colocando a mão na massa em vez de apenas ouvir explicações.", options: LIKERT_OPTIONS },
+  { id: "riasec_7", type: "likert", question: "Gosto de entender o motivo por trás das coisas e resolver problemas usando raciocínio lógico.", options: LIKERT_OPTIONS },
+  { id: "riasec_8", type: "likert", question: "Sinto prazer em criar algo novo, diferente ou original — mesmo que as pessoas não entendam de imediato.", options: LIKERT_OPTIONS },
+  { id: "riasec_9", type: "likert", question: "Fico feliz quando consigo ajudar alguém a compreender algo ou se sentir melhor com o que ensinei.", options: LIKERT_OPTIONS },
+  { id: "riasec_10", type: "likert", question: "Gosto de influenciar pessoas e inspirar outros a acreditarem em uma ideia ou projeto.", options: LIKERT_OPTIONS },
+  { id: "riasec_11", type: "likert", question: "Gosto de trabalhar ao ar livre ou com ferramentas/equipamentos.", options: LIKERT_OPTIONS },
+  { id: "riasec_12", type: "likert", question: "Curto analisar dados, buscar padrões e tirar conclusões.", options: LIKERT_OPTIONS },
+  { id: "riasec_13", type: "likert", question: "Prefiro ter liberdade e autonomia para criar e experimentar soluções.", options: LIKERT_OPTIONS },
+  { id: "riasec_14", type: "likert", question: "Sinto satisfação em orientar, escutar e oferecer suporte direto às pessoas.", options: LIKERT_OPTIONS },
+  { id: "riasec_15", type: "likert", question: "Gosto de organizar planilhas, checklists e documentos para manter tudo em ordem.", options: LIKERT_OPTIONS },
+
+  // ===== PARTE 2: Escolha do Concurso Ideal (9 perguntas - MULTIPLE CHOICE) =====
   {
     id: "q1",
-    question: "Qual é o seu nível de escolaridade atual?",
     type: "multiple-choice",
+    question: "Qual é o seu nível de escolaridade atual?",
     options: [
       "Ensino Fundamental completo ou em andamento",
       "Ensino Médio completo ou em andamento",
       "Ensino Superior completo ou em andamento",
-      "Pós-graduação (especialização, mestrado ou doutorado)"
-    ]
+      "Pós-graduação (especialização, mestrado ou doutorado)",
+    ],
   },
   {
     id: "q2",
-    question: "Você prefere trabalhar mais com:",
     type: "multiple-choice",
+    question: "Você prefere trabalhar mais com:",
     options: [
       "Atendimento ao público e relacionamento interpessoal",
       "Análise de documentos e processos administrativos",
       "Fiscalização e aplicação de normas",
       "Ensino e desenvolvimento de pessoas",
-      "Saúde e cuidado com pessoas"
-    ]
+      "Saúde e cuidado com pessoas",
+    ],
   },
   {
     id: "q3",
-    question: "Em relação ao salário, você busca uma faixa inicial de:",
     type: "multiple-choice",
-    options: [
-      "R$ 2.000 a R$ 4.000",
-      "R$ 4.000 a R$ 8.000",
-      "R$ 8.000 a R$ 15.000",
-      "Acima de R$ 15.000"
-    ]
-  },
-  {
-    id: "q4",
-    question: "Quanto tempo você pode dedicar aos estudos por semana?",
-    type: "multiple-choice",
-    options: [
-      "Menos de 10 horas",
-      "10 a 20 horas",
-      "20 a 30 horas",
-      "Mais de 30 horas (dedicação exclusiva)"
-    ]
-  },
-  {
-    id: "q5",
-    question: "Você tem mais facilidade com:",
-    type: "multiple-choice",
-    options: [
-      "Matérias de Humanas (Português, Direito, História)",
-      "Matérias de Exatas (Matemática, Raciocínio Lógico, Estatística)",
-      "Matérias Técnicas específicas (Informática, Contabilidade, Engenharia)",
-      "Tenho facilidade equilibrada em todas as áreas"
-    ]
-  },
-  {
-    id: "q6",
     question: "Qual ambiente de trabalho você prefere?",
-    type: "multiple-choice",
     options: [
       "Escritório administrativo com rotina estável",
       "Trabalho externo com deslocamentos e fiscalização",
       "Ambiente hospitalar ou de saúde",
       "Instituição de ensino (escola, universidade)",
-      "Órgãos de segurança pública"
-    ]
+      "Órgãos de segurança pública",
+    ],
   },
   {
-    id: "q7",
-    question: "Você se sente mais confortável em cargos que exigem:",
+    id: "q4",
     type: "multiple-choice",
-    options: [
-      "Trabalho em equipe e colaboração constante",
-      "Autonomia e trabalho individual",
-      "Liderança e tomada de decisões",
-      "Execução de tarefas técnicas especializadas"
-    ]
-  },
-  {
-    id: "q8",
-    question: "Qual é a sua disponibilidade para mudança de cidade?",
-    type: "multiple-choice",
-    options: [
-      "Prefiro vagas apenas na minha cidade",
-      "Aceito vagas em cidades próximas (mesma região)",
-      "Aceito vagas em qualquer lugar do meu estado",
-      "Tenho disponibilidade para todo o Brasil"
-    ]
-  },
-  {
-    id: "q9",
     question: "Você tem experiência ou formação em qual área?",
-    type: "multiple-choice",
     options: [
       "Área da Saúde (Enfermagem, Medicina, Odontologia, etc.)",
       "Área Jurídica (Direito)",
-      "Área Administrativa (Administração, Contabilidade, Gestão)",
+      "Área Administrativa",
       "Área de Engenharia ou Tecnologia",
       "Área de Educação",
-      "Não tenho formação específica ainda"
-    ]
+      "Não tenho formação específica ainda",
+    ],
   },
   {
-    id: "q10",
-    question: "Qual é o seu principal objetivo ao passar em um concurso?",
+    id: "q5",
     type: "multiple-choice",
+    question: "Qual é o seu principal objetivo ao passar em um concurso?",
     options: [
       "Estabilidade financeira e segurança no emprego",
       "Alto salário e possibilidade de crescimento",
       "Contribuir com a sociedade e fazer diferença",
-      "Qualidade de vida e equilíbrio trabalho-vida pessoal"
-    ]
+      "Qualidade de vida e equilíbrio trabalho-vida pessoal",
+    ],
   },
   {
-    id: "q11",
-    question: "Você se interessa por cargos que envolvem:",
+    id: "q6",
     type: "multiple-choice",
+    question: "Em relação ao salário, qual faixa inicial você busca?",
     options: [
-      "Investigação e análise de crimes",
-      "Fiscalização tributária e financeira",
-      "Assistência social e políticas públicas",
-      "Planejamento e gestão de projetos",
-      "Nenhuma dessas atividades específicas"
-    ]
+      "R$ 2.000 a R$ 4.000",
+      "R$ 4.000 a R$ 8.000",
+      "R$ 8.000 a R$ 15.000",
+      "Acima de R$ 15.000",
+    ],
   },
   {
-    id: "q12",
-    question: "Qual nível de concorrência você está disposto a enfrentar?",
+    id: "q7",
     type: "multiple-choice",
+    question: "Você está disposto a mudar de cidade para alcançar o cargo ideal?",
     options: [
-      "Prefiro concursos com menor concorrência (mais chances)",
-      "Aceito concorrência moderada",
-      "Estou disposto a enfrentar alta concorrência por um cargo melhor",
-      "Concorrência não é um fator decisivo para mim"
-    ]
+      "Prefiro vagas apenas na minha cidade",
+      "Aceito vagas em cidades próximas (mesma região)",
+      "Aceito vagas em qualquer lugar do meu estado",
+      "Tenho disponibilidade total para mudança",
+    ],
   },
   {
-    id: "q13",
-    question: "Você prefere concursos com provas que incluem:",
+    id: "q8",
     type: "multiple-choice",
-    options: [
-      "Apenas prova objetiva (múltipla escolha)",
-      "Prova objetiva + discursiva",
-      "Prova objetiva + discursiva + prova de títulos",
-      "Não me importo com o formato"
-    ]
-  },
-  {
-    id: "q14",
-    question: "Em relação à jornada de trabalho, você prefere:",
-    type: "multiple-choice",
+    question: "Em relação à jornada de trabalho, você prefere carga horária fixa ou escalas de plantão?",
     options: [
       "20 a 30 horas semanais",
       "40 horas semanais (período integral)",
       "Regime de plantão (escala de trabalho)",
-      "Não tenho preferência específica"
-    ]
+      "Não tenho preferência específica",
+    ],
   },
   {
-    id: "q15",
-    question: "Qual a sua idade atual?",
+    id: "q9",
     type: "multiple-choice",
+    question: "Você tem interesse em carreiras com porte de arma ou funções de segurança?",
     options: [
-      "18 a 25 anos",
-      "26 a 35 anos",
-      "36 a 45 anos",
-      "Acima de 45 anos"
-    ]
+      "Sim, tenho interesse em carreiras policiais",
+      "Tenho interesse em segurança, mas em cargos administrativos",
+      "Não tenho interesse",
+    ],
   },
+
+  // ===== PARTE 3: Preparação e Interesse no Produto (3 perguntas - MULTIPLE CHOICE) =====
   {
-    id: "q16",
-    question: "Você tem interesse em cargos que exigem porte de arma?",
+    id: "q10",
     type: "multiple-choice",
-    options: [
-      "Sim, tenho interesse em carreiras policiais/militares",
-      "Talvez, dependendo do cargo",
-      "Não tenho interesse"
-    ]
-  },
-  {
-    id: "q17",
-    question: "Como você lida com pressão e prazos apertados?",
-    type: "multiple-choice",
-    options: [
-      "Prefiro ambientes com menos pressão e rotina mais tranquila",
-      "Lido bem com pressão moderada",
-      "Funciono melhor sob pressão e desafios constantes"
-    ]
-  },
-  {
-    id: "q18",
-    question: "Você sabia que candidatos que estudam com auxílio de Inteligência Artificial têm até 3x mais chances de aprovação?",
-    type: "multiple-choice",
-    options: [
-      "Sim, já sabia disso",
-      "Não sabia, mas faz sentido",
-      "Não acredito muito nisso"
-    ]
-  },
-  {
-    id: "q19",
     question: "Como você avalia sua preparação hoje para o concurso ideal?",
-    type: "multiple-choice",
     options: [
       "Estou começando agora e me sinto perdido",
       "Já estudo há um tempo, mas sem direção clara",
-      "Tenho um plano sólido de estudos"
-    ]
+      "Tenho um plano sólido de estudos",
+    ],
   },
   {
-    id: "q20",
-    question: "Se existisse um guia personalizado com IA, mostrando o que mais cai na prova e um plano de estudo feito sob medida, por apenas R$50, você:",
+    id: "q11",
     type: "multiple-choice",
+    question: "Você sabia que candidatos que estudam com auxílio de Inteligência Artificial têm até 3x mais chances de aprovação?",
+    options: [
+      "Sim, já sabia disso",
+      "Não sabia, mas faz sentido",
+      "Não acredito muito nisso",
+    ],
+  },
+  {
+    id: "q12",
+    type: "multiple-choice",
+    question: "Se existe um guia personalizado com IA, mostrando o que mais cai na prova e um plano de estudo feito sob medida por apenas R$50, você:",
     options: [
       "Investiria agora para aumentar minhas chances",
       "Gostaria de saber mais antes de decidir",
-      "Não investiria no momento"
-    ]
+      "Não compraria no momento",
+    ],
   },
-
-  // ===== NOVAS 5 PERGUNTAS RIASEC =====
-  {
-    id: "riasec_6",
-    question: "Prefiro aprender fazendo, colocando a mão na massa em vez de apenas ouvir explicações.",
-    type: "likert",
-    options: [
-      "Discordo totalmente",
-      "Discordo",
-      "Neutro",
-      "Concordo",
-      "Concordo totalmente"
-    ]
-  },
-  {
-    id: "riasec_7",
-    question: "Gosto de entender o motivo por trás das coisas e resolver problemas usando raciocínio lógico.",
-    type: "likert",
-    options: [
-      "Discordo totalmente",
-      "Discordo",
-      "Neutro",
-      "Concordo",
-      "Concordo totalmente"
-    ]
-  },
-  {
-    id: "riasec_8",
-    question: "Sinto prazer em criar algo novo, diferente ou original — mesmo que as pessoas não entendam de imediato.",
-    type: "likert",
-    options: [
-      "Discordo totalmente",
-      "Discordo",
-      "Neutro",
-      "Concordo",
-      "Concordo totalmente"
-    ]
-  },
-  {
-    id: "riasec_9",
-    question: "Fico feliz quando consigo ajudar alguém a compreender algo ou se sentir melhor com o que ensinei.",
-    type: "likert",
-    options: [
-      "Discordo totalmente",
-      "Discordo",
-      "Neutro",
-      "Concordo",
-      "Concordo totalmente"
-    ]
-  },
-  {
-    id: "riasec_10",
-    question: "Gosto de influenciar pessoas e inspirar outros a acreditarem em uma ideia ou projeto.",
-    type: "likert",
-    options: [
-      "Discordo totalmente",
-      "Discordo",
-      "Neutro",
-      "Concordo",
-      "Concordo totalmente"
-    ]
-  }
 ];

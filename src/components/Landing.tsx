@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Footer } from "@/components/Footer";
 import { ArrowRight, CheckCircle2, Clock, Users, Award, Target, Heart, Star, Brain, Shield, TrendingUp, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import mariaPersona from "@/assets/maria-persona.jpg";
 import joaoPersona from "@/assets/joao-persona.jpg";
 import {
@@ -18,44 +18,83 @@ interface LandingProps {
 
 export const Landing = ({ onStart }: LandingProps) => {
   const [activeStep, setActiveStep] = useState<number | null>(null);
+  // Banner: parallax offset, rotating messages and fade state
+  const [badgeOffset, setBadgeOffset] = useState(0);
+  const [badgeIndex, setBadgeIndex] = useState(0);
+  const [badgeVisible, setBadgeVisible] = useState(true);
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY || 0;
+      const move = Math.min(y * 0.2, 40);
+      setBadgeOffset(move);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBadgeVisible(false);
+      const t = setTimeout(() => {
+        setBadgeIndex((prev) => (prev === 0 ? 1 : 0));
+        setBadgeVisible(true);
+      }, 250);
+      return () => clearTimeout(t);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>
+      
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in">
-            {/* Badge with real-time counter */}
-            <div className="inline-block">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium animate-pulse">
-                <Users className="w-4 h-4" />
-                <span className="font-bold">5.247</span> pessoas já descobriram sua carreira ideal
-              </span>
+            {/* Full-width floating banner with parallax and rotating text */}
+            <div className="fixed inset-x-0 top-0 z-40" style={{ transform: `translateY(${2 + badgeOffset}px)` }}>
+              <div className="px-4">
+                <div
+                  className={`w-full text-center text-white text-sm font-medium shadow-md transition-opacity duration-500 px-4 py-[10px] sm:py-[12px] rounded-b-[12px] ${badgeVisible ? "opacity-100" : "opacity-0"}`}
+                  style={{ background: "linear-gradient(90deg, #c3b5ff 0%, #8a5aff 100%)" }}
+                >
+                  {/*
+                    ? "👥 11.253 pessoas já descobriram sua carreira ideal na última semana"
+                    : "✨ Tenha a certeza de qual carreira pública seguir com a gente"}
+                  */}
+                  {badgeIndex === 0
+                    ? "👥 11.253 pessoas já descobriram sua carreira ideal na última semana"
+                    : "✨ Tenha a certeza de qual carreira pública seguir com a gente"}
+                </div> {/*
+                <span className="font-bold">11.253</span> pessoas já descobriram sua carreira ideal na última semana
+*/}
+            </div>
             </div>
 
             {/* Headline */}
             <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-              Descubra qual{" "}
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                concurso público combina com você
-              </span>
-              {" "}e mude sua vida!
-            </h1>
+              O teste vocacional mais preciso{" "}
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                para quem quer estabilidade e certeza
+                </span>
+                {" "}no serviço público
+              </h1>
 
-            {/* Subheadline */}
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-              Baseado na metodologia RIASEC, o teste revela suas habilidades, personalidade e o concurso ideal para o seu perfil. 
-              Ideal para quem terminou o ensino médio ou quer recomeçar do zero no serviço público.
-            </p>
+              {/* Subheadline */}
+              <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
+                Baseado na metodologia RIASEC, método utilizado por universidades e aprovado por especialistas em psicologia vocacional, o teste revela suas habilidades, personalidade e o concurso ideal para o seu perfil. 
+                Ideal para quem concluiu o ensino médio ou quer recomeçar do zero no serviço público.
+              </p>
 
-            {/* CTA Button */}
-            <Button 
-              onClick={onStart}
-              size="lg"
-              className="text-lg px-8 py-6 rounded-full shadow-[var(--shadow-elevated)] hover:scale-105 transition-transform duration-200 bg-gradient-to-r from-primary to-accent"
-            >
-              Fazer o teste gratuito agora
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
+              {/* CTA Button */}
+              <Button 
+                onClick={onStart}
+                size="lg"
+                className="text-lg px-8 py-6 rounded-full shadow-[var(--shadow-elevated)] hover:scale-105 transition-transform duration-200 bg-gradient-to-r from-primary to-accent"
+              >
+                Fazer o teste gratuito agora
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
 
             {/* SEÇÃO 2: Conexão Emocional */}
             <div className="pt-16">
@@ -103,7 +142,8 @@ export const Landing = ({ onStart }: LandingProps) => {
                   {
                     icon: <Target className="w-8 h-8 text-primary" />,
                     title: "Seu tipo de personalidade",
-                    description: "Ex.: Realista + Investigativo"
+                    description: "Ex.: Realista + Investigativo",
+                    extra: "Essa combinação mostra como você tende a agir e pensar, ajudando a identificar o tipo de trabalho e ambiente que mais combina com você."
                   },
                   {
                     icon: <Brain className="w-8 h-8 text-primary" />,
@@ -123,6 +163,9 @@ export const Landing = ({ onStart }: LandingProps) => {
                     <div className="mb-3">{item.icon}</div>
                     <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
                     <p className="text-muted-foreground text-sm">{item.description}</p>
+                    {"extra" in item && item.extra && (
+                      <p className="text-muted-foreground text-xs mt-1">{item.extra}</p>
+                    )}
                   </Card>
                 ))}
               </div>
@@ -172,7 +215,7 @@ export const Landing = ({ onStart }: LandingProps) => {
                     </div>
                   </div>
                   <p className="text-muted-foreground italic">
-                    "Terminei o ensino médio sem saber o que fazer. Fiz o teste e descobri que meu perfil combina com a área administrativa — agora sei o caminho certo!"
+                    "Terminei o ensino médio sem saber o que fazer. Fiz o teste e descobri que meu perfil combina com a área administrativa, agora já sei o caminho certo!"
                   </p>
                 </Card>
 
@@ -250,19 +293,19 @@ export const Landing = ({ onStart }: LandingProps) => {
 
             {/* SEÇÃO 7: Prova Social (Depoimentos) */}
             <div className="pt-16">
-              <h2 className="text-3xl font-bold mb-8">⭐ Mais de 5.000 pessoas já descobriram sua carreira ideal</h2>
+              <h2 className="text-3xl font-bold mb-8">⭐ Mais de 11.253 pessoas já descobriram sua carreira ideal</h2>
               <div className="grid md:grid-cols-3 gap-6">
                 {[
                   {
-                    text: "Achei que seria só mais um teste, mas ele realmente me mostrou um caminho!",
+                    text: "Achei que seria só mais um teste, mas ele realmente me mostrou um caminho! Não me arrependo de ter comprado o produto e até indiquei para minha família também realizar o teste.",
                     name: "Ana Paula S."
                   },
                   {
-                    text: "Valeu demais. Descobri o concurso certo pra mim!",
+                    text: "Eu tava bem perdido sem saber o que seguir na vida, fiz vários testes na internet e nenhum batia comigo. Esse aqui foi diferente, parece que falou direto comigo, fez sentido com minha personalidade e o mundo dos concursos públicos.",
                     name: "Carlos Eduardo M."
                   },
                   {
-                    text: "Finalmente entendi qual área combina com minha personalidade",
+                    text: "Tenho mais idade e sempre tive vontade de começar na carreira pública, mas não sabia por onde. Já sou graduada e esse teste me ajudou muito, veio com um plano de ação feito pra mim, agora posso começar a estudar do jeito certo e pro concurso ideal. Tô mais tranquila, parecia que era tarde pra mim, mas vi que ainda dá tempo.",
                     name: "Juliana M."
                   }
                 ].map((testimonial, i) => (

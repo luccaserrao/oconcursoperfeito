@@ -21,20 +21,20 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
   const handleClick = async () => {
     // Prevenir cliques múltiplos
     if (isLoading) {
-      console.log("⚠️ Button already processing, ignoring click");
+      console.log("Button already processing, ignoring click");
       return;
     }
     
     try {
       setIsLoading(true);
-      console.log("🚀 Starting payment process");
+      console.log("Starting payment process");
       
       // Track CTA Desbloqueio Click
       trackCtaDesbloqueioClick(location);
       
       // Track begin_checkout for Google Ads
       trackBeginCheckout(amount);
-      console.log("📊 Google Ads: begin_checkout tracked");
+      console.log("Google Ads: begin_checkout tracked");
       
       // Track Facebook Pixel - InitiateCheckout
       if (typeof window !== 'undefined' && (window as any).fbq) {
@@ -44,7 +44,7 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
           content_name: 'Pacote Completo de Preparação',
           content_category: 'Concursos Públicos'
         });
-        console.log("📊 Facebook Pixel: InitiateCheckout tracked");
+        console.log("Facebook Pixel: InitiateCheckout tracked");
       }
       
       toast({
@@ -56,29 +56,29 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
       if (productId) body.product_id = productId;
       if (amount) body.amount = amount;
 
-      console.log("📦 Request body:", body);
+      console.log("Request body:", body);
 
       const { data, error } = await supabase.functions.invoke('createPreference', {
         body
       });
 
-      console.log("📡 Response:", { data, error });
+      console.log("Response:", { data, error });
 
       if (error) {
-        console.error("❌ Error from createPreference:", error);
+        console.error("Error from createPreference:", error);
         throw error;
       }
 
       if (data?.init_point) {
-        console.log("✅ Redirecting to:", data.init_point);
+        console.log("Redirecting to:", data.init_point);
         // Manter loading ativo até o redirecionamento completar
         window.location.href = data.init_point;
       } else {
-        console.error("❌ No init_point in response");
+        console.error("No init_point in response");
         throw new Error('No init_point returned');
       }
     } catch (error) {
-      console.error('❌ Payment error:', error);
+      console.error('Payment error:', error);
       setIsLoading(false); // Só desabilita loading em caso de erro
       
       toast({
@@ -94,7 +94,8 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
       onClick={handleClick}
       disabled={isLoading}
       size="lg"
-      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-base md:text-lg py-6 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+      aria-label={`Pagar R$ ${amount} com segurança pelo Mercado Pago`}
+      className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-base md:text-lg py-5 md:py-6 disabled:opacity-50 disabled:cursor-not-allowed transition-all rounded-full shadow-[var(--shadow-elevated)]"
     >
       {isLoading ? (
         <span className="flex items-center justify-center">
@@ -104,9 +105,10 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
       ) : (
         <span className="flex items-center justify-center whitespace-nowrap">
           <CreditCard className="mr-2 w-5 h-5 flex-shrink-0" />
-          <span className="truncate">Pagar R$ {amount} com Mercado Pago</span>
+          <span className="truncate">Pagar R$ {amount} — acesso imediato</span>
         </span>
       )}
     </Button>
   );
 };
+
