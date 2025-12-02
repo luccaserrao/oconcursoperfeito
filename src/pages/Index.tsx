@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Landing } from "@/components/Landing";
 import { PreparationScreen } from "@/components/PreparationScreen";
-import { LoadingScreen } from "@/components/LoadingScreen";
 import { Quiz } from "@/components/Quiz";
 import { EmailCapture } from "@/components/EmailCapture";
 import { Results } from "@/components/Results";
@@ -10,7 +9,7 @@ import { QuizAnswer, CareerRecommendation } from "@/types/quiz";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 
-type Step = "landing" | "preparation" | "loading" | "quiz" | "email" | "results" | "error";
+type Step = "landing" | "preparation" | "quiz" | "email" | "results" | "error";
 
 const Index = () => {
   const [currentStep, setCurrentStep] = useState<Step>("landing");
@@ -27,11 +26,6 @@ const Index = () => {
 
   const handlePrepareQuiz = () => {
     trackEvent('quiz_preparation_completed');
-    setCurrentStep("loading");
-  };
-
-  const handleLoadingComplete = () => {
-    trackEvent('quiz_loading_completed');
     setCurrentStep("quiz");
   };
 
@@ -159,7 +153,6 @@ const Index = () => {
     <>
       {currentStep === "landing" && <Landing onStart={handleStartQuiz} />}
       {currentStep === "preparation" && <PreparationScreen onStart={handlePrepareQuiz} />}
-      {currentStep === "loading" && <LoadingScreen onComplete={handleLoadingComplete} />}
       {currentStep === "quiz" && (
         <Quiz onComplete={handleQuizComplete} onBack={handleBackToLanding} />
       )}

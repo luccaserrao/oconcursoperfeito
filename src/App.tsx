@@ -17,6 +17,7 @@ import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 import Obrigado from "./pages/Obrigado";
 
+
 const queryClient = new QueryClient();
 
 const ScrollToTop = () => {
@@ -55,4 +56,3 @@ const App = () => (
 );
 
 export default App;
-
