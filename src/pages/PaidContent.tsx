@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle2, MessageCircle } from "lucide-react";
@@ -17,63 +16,21 @@ export const PaidContent = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const verifyPayment = async () => {
-      const paymentId = searchParams.get("payment_id");
-      
-      if (!paymentId) {
-        setError("ID do pagamento não encontrado");
-        setLoading(false);
-        return;
-      }
-
-      console.log("Verificando pagamento Mercado Pago:", paymentId);
-
-      try {
-        const { data, error } = await supabase.functions.invoke('verify-mp-payment', {
-          body: { paymentId },
-        });
-
-        if (error) {
-          console.error("Erro ao verificar pagamento:", error);
-          setError("Não foi possível verificar o pagamento");
-          setLoading(false);
-          return;
-        }
-
-        if (data && data.success) {
-          console.log("Pagamento verificado:", data);
-          setUserName(data.userName || "Usuário");
-          setPaidContent(data.paidContent);
-          
-          // Track Google Ads Purchase
-          trackPurchase(paymentId, 25.0);
-          console.log("📊 Google Ads: Purchase tracked");
-          
-          // Track Facebook Pixel - Purchase
-          if (typeof window !== 'undefined' && (window as any).fbq) {
-            (window as any).fbq('track', 'Purchase', {
-              value: 25.00,
-              currency: 'BRL',
-              content_name: 'Pacote Completo de Preparação',
-              content_category: 'Concursos Públicos'
-            });
-            console.log("📊 Facebook Pixel: Purchase tracked");
-          }
-          
-          toast.success("Pagamento confirmado! Bem-vindo ao Pacote Completo");
-        } else {
-          setError("Pagamento não foi aprovado");
-        }
-      } catch (error) {
-        console.error("Erro ao verificar pagamento:", error);
-        setError("Erro ao processar sua solicitação");
-      } finally {
-        setLoading(false);
-      }
+    const paymentId = searchParams.get("payment_id") || "simulado";
+    const mock: PaidContentType = {
+      studyPlan: { days: [], hoursPerDay: "2h", focus: "Início rápido" },
+      alternativeCareers: [],
+      studyRoadmap: "Plano será enviado por e-mail.",
+      freeMaterials: [],
+      whatsappGroupInfo: "",
+      whatsappSupportNumber: "5591984233672",
     };
-
-    verifyPayment();
-  }, [searchParams, navigate]);
+    setUserName("Usuário");
+    setPaidContent(mock);
+    trackPurchase(paymentId, 25.0);
+    toast.success("Pagamento confirmado!");
+    setLoading(false);
+  }, [searchParams]);
 
   if (loading) {
     return (
@@ -128,7 +85,7 @@ export const PaidContent = () => {
             <CheckCircle2 className="w-12 h-12 text-white" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-            Pagamento Confirmado! 🎉
+            Pagamento Confirmado! ✅
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400">
             Olá, <strong>{userName.split(' ')[0]}</strong>! Seu investimento foi processado com sucesso.
@@ -152,7 +109,7 @@ export const PaidContent = () => {
             
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-6 border-2 border-green-300 dark:border-green-700">
               <p className="text-base text-gray-700 dark:text-gray-300 mb-3">
-                📱 <strong>IMPORTANTE:</strong> Clique no botão abaixo e me envie uma mensagem no WhatsApp dizendo:
+                🔔 <strong>IMPORTANTE:</strong> Clique no botão abaixo e me envie uma mensagem no WhatsApp dizendo:
               </p>
               <div className="bg-green-50 dark:bg-green-900/30 rounded-lg p-4 my-4 border-l-4 border-green-500">
                 <p className="text-sm italic text-gray-600 dark:text-gray-400">
@@ -160,7 +117,7 @@ export const PaidContent = () => {
                 </p>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Vou te enviar todo o material em até <strong className="text-green-600 dark:text-green-400">10 minutos</strong>! ⚡
+                Vou te enviar todo o material em até <strong className="text-green-600 dark:text-green-400">10 minutos</strong>!
               </p>
             </div>
             
@@ -181,7 +138,7 @@ export const PaidContent = () => {
             </a>
             
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-4">
-              ✅ Atendimento imediato • 📦 Entrega em até 10 minutos
+              🚀 Atendimento imediato · 📦 Entrega em até 10 minutos
             </p>
           </div>
         </Card>

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { CreditCard } from "lucide-react";
 import { trackBeginCheckout, trackCtaDesbloqueioClick } from "@/lib/analytics";
@@ -57,34 +56,73 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
       if (amount) body.amount = amount;
 
       console.log("Request body:", body);
-
-      const { data, error } = await supabase.functions.invoke('createPreference', {
-        body
+      const endpoint = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/createPreference`;
+      const resp = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
       });
 
-      console.log("Response:", { data, error });
+      const text = await resp.text();
+      console.log("CreatePreference raw response:", resp.status, text);
 
-      if (error) {
-        console.error("Error from createPreference:", error);
-        throw error;
+      let json: any = {};
+      try {
+        json = text ? JSON.parse(text) : {};
+      } catch (parseErr) {
+        console.error("Failed to parse JSON from createPreference:", parseErr);
       }
 
-      if (data?.init_point) {
-        console.log("Redirecting to:", data.init_point);
-        // Manter loading ativo até o redirecionamento completar
-        window.location.href = data.init_point;
+      if (!resp.ok) {
+        const detail = json?.details || json?.error || text || `Erro no checkout (status ${resp.status})`;
+        throw new Error(typeof detail === "string" ? detail : JSON.stringify(detail));
+      }
+
+      if (json?.init_point) {
+        console.log("Redirecting to:", json.init_point);
+        window.location.href = json.init_point;
       } else {
-        console.error("No init_point in response");
+        console.error("No init_point in response JSON", json);
         throw new Error('No init_point returned');
       }
     } catch (error) {
       console.error('Payment error:', error);
       setIsLoading(false); // Só desabilita loading em caso de erro
       
+      const ctx = (error as any)?.context || {};
+
+      // Tenta ler o corpo da resposta da Edge Function (se existir)
+      let serverBodyText: string | null = null;
+      try {
+        const resp = (ctx as any)?.response as Response | undefined;
+        if (resp && typeof resp.text === "function") {
+          serverBodyText = await resp.text();
+          console.error("CreatePreference body:", serverBodyText);
+        }
+        // Caso o próprio ctx seja a Response
+        if (!serverBodyText && ctx instanceof Response && typeof ctx.text === "function") {
+          serverBodyText = await ctx.text();
+          console.error("CreatePreference body (ctx is response):", serverBodyText);
+        }
+      } catch (readErr) {
+        console.error("Failed to read error body:", readErr);
+      }
+
+      const detail =
+        serverBodyText ||
+        (ctx as any)?.body ||
+        (error instanceof Error && error.message) ||
+        ctx.error ||
+        ctx.details ||
+        (typeof error === "object" && error && "message" in (error as any) ? (error as any).message : null) ||
+        "Não foi possível processar. Tente novamente.";
+
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "Não foi possível processar. Tente novamente.",
+        title: "Erro no checkout",
+        description: typeof detail === "string" ? detail : JSON.stringify(detail),
       });
     }
   };
@@ -111,4 +149,3 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
     </Button>
   );
 };
-

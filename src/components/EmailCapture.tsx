@@ -8,42 +8,30 @@ import { Loader2, Sparkles } from "lucide-react";
 import { trackConversion } from "@/lib/analytics";
 
 interface EmailCaptureProps {
-  onSubmit: (name: string, email: string, whatsapp: string) => Promise<void>;
+  onSubmit: (name: string, email: string) => Promise<void>;
 }
 
 export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ name?: string; email?: string; whatsapp?: string; terms?: string }>({});
-
-  const formatWhatsApp = (value: string) => {
-    const numbers = value.replace(/\D/g, '');
-    if (numbers.length <= 2) return numbers;
-    if (numbers.length <= 7) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
-    if (numbers.length <= 11) return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
-    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
-  };
+  const [errors, setErrors] = useState<{ name?: string; email?: string; terms?: string }>({});
 
   const validateForm = () => {
-    const newErrors: { name?: string; email?: string; whatsapp?: string; terms?: string } = {};
+    const newErrors: { name?: string; email?: string; terms?: string } = {};
 
-    if (!name.trim()) {
+    const trimmedName = name.trim();
+    if (!trimmedName) {
       newErrors.name = "Por favor, informe seu nome";
+    } else if (trimmedName.length < 2) {
+      newErrors.name = "Nome muito curto (mín. 2 caracteres)";
     }
 
     if (!email.trim()) {
       newErrors.email = "Por favor, informe seu e-mail";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       newErrors.email = "Por favor, informe um e-mail válido";
-    }
-
-    if (!whatsapp.trim()) {
-      newErrors.whatsapp = "Por favor, informe seu WhatsApp";
-    } else if (whatsapp.replace(/\D/g, '').length < 11) {
-      newErrors.whatsapp = "WhatsApp deve ter 11 dígitos (DDD + número)";
     }
 
     if (!acceptedTerms) {
@@ -63,20 +51,19 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
     try {
       // Track Google Ads Lead Conversion
       trackConversion('AW-400922729/LFG4CLCi_7IbEOmwlr8B');
-      console.log("📊 Google Ads: Lead conversion tracked");
+      console.log("✅ Google Ads: Lead conversion tracked");
       
       // Track Facebook Pixel Lead
       if (typeof window !== 'undefined' && (window as any).fbq) {
         (window as any).fbq('track', 'Lead', {
           content_name: 'Quiz Email Capture'
         });
-        console.log("📊 Facebook Pixel: Lead tracked");
+        console.log("✅ Facebook Pixel: Lead tracked");
       }
       
       await onSubmit(
         name.trim(), 
-        email.trim().toLowerCase(), 
-        whatsapp.replace(/\D/g, '')
+        email.trim().toLowerCase()
       );
     } catch (error) {
       setLoading(false);
@@ -92,10 +79,10 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
               <Sparkles className="w-8 h-8 text-white" />
             </div>
             <h2 className="text-2xl md:text-3xl font-bold mb-2">
-              🎁 Último Passo para Sua Recomendação!
+              🔒 Último passo para liberar sua recomendação
             </h2>
             <p className="text-muted-foreground">
-              Enviaremos seu resultado por email + WhatsApp para você não perder
+              Liberamos seu resultado na tela e enviamos no e-mail para você não perder.
             </p>
             <div className="flex flex-wrap justify-center gap-2 mt-3 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">✅ 100% gratuito</span>
@@ -133,28 +120,6 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
               {errors.email && (
                 <p className="text-sm text-destructive">{errors.email}</p>
               )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="whatsapp">
-                WhatsApp
-              </Label>
-              <Input
-                id="whatsapp"
-                type="tel"
-                placeholder="(91) 98423-3672"
-                value={whatsapp}
-                onChange={(e) => setWhatsapp(formatWhatsApp(e.target.value))}
-                className={errors.whatsapp ? "border-destructive" : ""}
-                maxLength={15}
-                required
-              />
-              {errors.whatsapp && (
-                <p className="text-sm text-destructive">{errors.whatsapp}</p>
-              )}
-              <p className="text-xs text-muted-foreground">
-                📱 Enviaremos sua recomendação por WhatsApp para você não perder!
-              </p>
             </div>
 
             {/* LGPD Checkbox */}
@@ -199,7 +164,7 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
             </Button>
 
             <p className="text-xs text-center text-muted-foreground">
-              🔒 Seus dados estão 100% seguros. Não compartilhamos com ninguém.
+              🔐 Seus dados são usados só para gerar e enviar seu resultado.
             </p>
           </form>
         </Card>

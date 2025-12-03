@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CareerRecommendation } from "@/types/quiz";
+import { CareerRecommendation, RiasecResult } from "@/types/quiz";
 import { MercadoPagoButton } from "./MercadoPagoButton";
 import { CountdownTimer } from "./CountdownTimer";
 import { Footer } from "./Footer";
@@ -51,27 +51,38 @@ interface ResultsProps {
   userName: string;
   userEmail: string;
   quizResponseId?: string;
+  riasecFallback?: RiasecResult;
 }
 
 export const Results = ({
   recommendation,
   userName,
   userEmail,
-  quizResponseId
+  quizResponseId,
+  riasecFallback
 }: ResultsProps) => {
   const [showFloatingCta, setShowFloatingCta] = useState(false);
   const [showScrollCta, setShowScrollCta] = useState(false);
+  const [ctaVariant] = useState<'A' | 'B'>(() => {
+    if (typeof window === "undefined") return "A";
+    const stored = window.localStorage.getItem("cta_variant");
+    if (stored === "A" || stored === "B") return stored;
+    const variant = Math.random() > 0.5 ? "A" : "B";
+    window.localStorage.setItem("cta_variant", variant);
+    return variant;
+  });
   
   // Extrair dados RIASEC
-  const riasecData = recommendation.riasec || {
+  const riasecData = recommendation.riasec || riasecFallback || {
     top1: "Realista",
     top2: "Investigativo",
-    habilidades: ["organizada", "comunicativa", "lógica", "criativa", "persistente"],
-    habilidade_destaque: "práticas e objetivas",
+    habilidades: ["organizada", "comunicativa", "logica", "criativa", "persistente"],
+    habilidade_destaque: "praticas e objetivas",
     contexto_profissional: "organizar processos e resolver problemas complexos"
   };
 
   const firstName = userName.split(' ')[0];
+  const shortJustification = (recommendation.justification?.split(".")[0] || "").trim();
 
   // Track page view
   useEffect(() => {
@@ -79,6 +90,10 @@ export const Results = ({
       career: recommendation.careerName
     });
   }, [recommendation.careerName]);
+
+  useEffect(() => {
+    trackEvent('cta_variant_assigned', { variant: ctaVariant });
+  }, [ctaVariant]);
 
   // Scroll tracking for CTAs
   useEffect(() => {
@@ -102,8 +117,6 @@ export const Results = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // A/B Test para CTA text
-  const ctaVariant = Math.random() > 0.5 ? 'A' : 'B';
   const ctaText = ctaVariant === 'A' 
     ? "Quero meu plano completo agora (R$25)" 
     : "Desbloquear relatório profissional (R$25)";
@@ -117,10 +130,10 @@ export const Results = ({
     <>
       {/* ============= TIMER FIXO NO TOPO ============= */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-destructive/90 to-destructive/70 backdrop-blur-sm shadow-lg">
-        <div className="container mx-auto px-4 py-2 flex items-center justify-center gap-2 text-white text-sm md:text-base">
+        <div className="container mx-auto px-4 py-2 flex items-center justify-center gap-2 text-white text-sm md:text-base text-center">
           <Lock className="w-4 h-4" />
-          <span className="font-medium">Oferta especial expira em:</span>
-          <CountdownTimer initialMinutes={120} />
+          <span className="font-medium">Oferta especial expira e seus dados são apagados em:</span>
+          <CountdownTimer initialMinutes={5} />
         </div>
       </div>
 
@@ -156,6 +169,31 @@ export const Results = ({
                 Este é um recorte do seu potencial. Abaixo veja como transformar isso em um plano real de ação e estudo.
               </p>
             </div>
+
+            <Card className="p-6 bg-card border-2 border-primary/20 mb-8">
+              <div className="flex flex-col gap-2 text-left">
+                <Badge variant="outline" className="w-fit bg-primary/10 text-primary border-primary/30">Cargo indicado agora</Badge>
+                <p className="text-xl font-bold text-foreground">{recommendation.careerName}</p>
+                {shortJustification && (
+                  <p className="text-sm text-muted-foreground">
+                    Por que você: {shortJustification}.
+                  </p>
+                )}
+                <div className="grid md:grid-cols-2 gap-3 pt-3">
+                  <div className="flex items-start gap-2 text-sm">
+                    <CheckCircle2 className="w-4 h-4 text-primary mt-0.5" />
+                    <span>Rotina alinhada ao seu perfil: {recommendation.workRoutine}</span>
+                  </div>
+                  <div className="flex items-start gap-2 text-sm">
+                    <Calendar className="w-4 h-4 text-primary mt-0.5" />
+                    <span>Próximo edital / janela: {recommendation.examDate || "projeção em andamento"}</span>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground pt-2">
+                  🔒 Detalhes completos de salário, plano de estudos e materiais são liberados no upgrade (R$25).
+                </p>
+              </div>
+            </Card>
 
             {/* 3 Cards: Forças, Áreas, O que evitar */}
             <div className="grid md:grid-cols-3 gap-6 mb-8">
@@ -213,12 +251,12 @@ export const Results = ({
               </Card>
             </div>
 
-            {/* Aviso de Segurança */}
+            {/* Aviso de Seguranca */}
             <Card className="p-6 bg-destructive/10 border-2 border-destructive/30">
               <div className="flex items-center justify-center gap-2 text-destructive">
                 <Lock className="w-5 h-5" />
                 <p className="text-sm font-semibold">
-                  🔒 Por segurança, seus dados ficam guardados por 5 minutos e depois são excluídos automaticamente.
+                  Por seguranca, seus dados ficam guardados por 5 minutos e depois sao excluidos automaticamente.
                 </p>
               </div>
             </Card>
@@ -230,28 +268,28 @@ export const Results = ({
               💬 Quem já fez o upgrade, descobriu o caminho certo!
             </h2>
             
-            <div className="grid md:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-3 gap-6">
               {[
                 {
                   name: "Carla Pereira",
                   location: "SP",
                   course: "cursando administração (4º período)",
                   date: "06/11/25",
-                  text: "Eu já tinha feito vários testes gratuitos e nenhum fazia sentido, resolvi pagar os 25 reais e valeu demais, o relatório mostrou o concurso ideal pra mim, e ainda vem com um plano de estudo que me deixou animada pra começar logo."
+                  text: "O relatório liberou 'Técnico Administrativo TJ-SP' pra mim. Vi salário, rotina e um plano de 30 dias que fez sentido. Não precisei ficar adivinhando edital."
                 },
                 {
                   name: "Lucas Andrade",
                   location: "MG",
                   course: "formado em direito",
                   date: "21/09/25",
-                  text: "Eu tava perdido, sem saber qual carreira seguir, fiz o quiz e o relatório completo me deu uma clareza absurda, agora sei exatamente qual caminho seguir e onde focar, gostei muito do professor de IA e do cronograma de estudos que veio junto."
+                  text: "Eu tinha medo de estar mirando errado. O upgrade mostrou 'Analista MPU', justificou com meu perfil Investigativo/Social e já trouxe matérias mais cobradas. Paguei 25 e parei de perder tempo."
                 },
                 {
                   name: "Amanda Souza",
                   location: "PE",
                   course: "estudante de enfermagem",
                   date: "11/08/25",
-                  text: "Achei que seria só mais um teste qualquer, mas esse aqui entrega de verdade, os 25 reais valeram cada centavo, recomendo pra quem quer saber o que seguir sem ficar perdido."
+                  text: "Ele indicou 'Enfermeira SAMU Recife' com faixa salarial e frequência de edital. O plano veio mastigado, só segui. Valeu mais que uma pizza."
                 }
               ].map((testimonial, index) => (
                 <Card key={index} className="p-6 border-2 border-primary/10 animate-fade-in hover:shadow-lg transition-shadow">
@@ -745,7 +783,7 @@ export const Results = ({
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    Ficam guardados por 5 minutos e são excluídos automaticamente depois, por segurança.
+                    Ficam guardados por 5 minutos e são excluídos automaticamente depois, 🔒 Por segurança, seus dados ficam guardados por 5 minutos e depois são excluídos automaticamente.a.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
@@ -843,3 +881,13 @@ export const Results = ({
   );
 };
 // mobile-conversion-note: sticky purchase CTA and timer present; safe-area padding handled in Landing.
+
+
+
+
+
+
+
+
+
+

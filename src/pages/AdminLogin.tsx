@@ -1,92 +1,13 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-
 const AdminLogin = () => {
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Login realizado",
-        description: "Redirecionando...",
-      });
-
-      navigate('/admin/payments');
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Erro ao fazer login",
-        description: error.message || "Verifique suas credenciais",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>🔐 Acesso Admin</CardTitle>
-          <CardDescription>Entre com suas credenciais</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="admin@exemplo.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Entrando..." : "Entrar"}
-            </Button>
-            <div className="text-center mt-4">
-              <Link 
-                to="/admin/forgot-password" 
-                className="text-sm text-muted-foreground hover:text-primary transition-colors"
-              >
-                Esqueceu sua senha?
-              </Link>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="max-w-md w-full bg-card border rounded-lg p-8 text-center space-y-4">
+        <h1 className="text-2xl font-bold">Área administrativa desativada</h1>
+        <p className="text-muted-foreground">
+          O backend do Supabase foi removido. Se precisar de uma nova área admin,
+          configure uma API própria na Vercel ou outro provedor de auth.
+        </p>
+      </div>
     </div>
   );
 };

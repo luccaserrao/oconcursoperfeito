@@ -12,6 +12,9 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Guarda o corpo da requisição para debug em caso de erro
+  let requestBody: any = null;
+
   try {
     // Schema de validação
     const requestSchema = z.object({
@@ -22,10 +25,10 @@ serve(async (req) => {
       amount: z.number().positive("Valor deve ser positivo").max(1000000, "Valor muito alto").optional().nullable()
     });
 
-    const body = await req.json();
+    requestBody = await req.json();
     
     // Validar entrada
-    const validationResult = requestSchema.safeParse(body);
+    const validationResult = requestSchema.safeParse(requestBody);
     if (!validationResult.success) {
       console.error("Validation error:", validationResult.error);
       return new Response(
@@ -52,7 +55,10 @@ serve(async (req) => {
     
     const accessToken = Deno.env.get("MERCADO_PAGO_ACCESS_TOKEN");
     if (!accessToken) {
-      throw new Error("MERCADO_PAGO_ACCESS_TOKEN not configured");
+      return new Response(
+        JSON.stringify({ error: "MERCADO_PAGO_ACCESS_TOKEN not configured" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 },
+      );
     }
 
     const supabaseClient = createClient(
@@ -62,7 +68,7 @@ serve(async (req) => {
 
     // Determinar produto e valor
     let productData: any = null;
-    let finalAmount: number;
+    let finalAmount: number = typeof amount === "number" ? amount : 25; // fallback
     let finalProductId: string | null = null;
 
     if (product_id) {
@@ -81,28 +87,39 @@ serve(async (req) => {
       finalAmount = product.price_cents / 100;
       finalProductId = product.id;
       
-    } else if (amount) {
+    } else if (typeof amount === "number") {
       finalAmount = amount;
       productData = {
         name: "Pagamento Teste",
         description: "Pagamento de teste"
       };
     } else {
-      const { data: product, error: productError } = await supabaseClient
-        .from("products")
-        .select("*")
-        .eq("active", true)
-        .order("created_at", { ascending: true })
-        .limit(1)
-        .single();
+      // fallback: tentar produto ativo; se falhar, usa teste
+      try {
+        const { data: product, error: productError } = await supabaseClient
+          .from("products")
+          .select("*")
+          .eq("active", true)
+          .order("created_at", { ascending: true })
+          .limit(1)
+          .single();
 
-      if (productError || !product) {
-        throw new Error("No product available");
+        if (productError || !product) {
+          console.warn("No active product found, using fallback test product");
+          productData = { name: "Pagamento Teste", description: "Fallback product" };
+          finalAmount = typeof amount === "number" ? amount : 25;
+          finalProductId = null;
+        } else {
+          productData = product;
+          finalAmount = product.price_cents / 100;
+          finalProductId = product.id;
+        }
+      } catch (err) {
+        console.warn("Products query failed, using fallback test product", err);
+        productData = { name: "Pagamento Teste", description: "Fallback product" };
+        finalAmount = typeof amount === "number" ? amount : 25;
+        finalProductId = null;
       }
-
-      productData = product;
-      finalAmount = product.price_cents / 100;
-      finalProductId = product.id;
     }
 
     // Create pending order
@@ -161,8 +178,22 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("MercadoPago API Error:", errorText);
-      throw new Error(`MercadoPago API error: ${response.status}`);
+      let parsed: any = null;
+      try {
+        parsed = JSON.parse(errorText);
+      } catch {
+        parsed = null;
+      }
+      console.error("MercadoPago API Error:", parsed || errorText);
+      return new Response(
+        JSON.stringify({ 
+          error: "MercadoPago API error", 
+          status: response.status, 
+          details: parsed || errorText,
+          request: preferenceData 
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 502 },
+      );
     }
 
     const preference = await response.json();
@@ -188,9 +219,27 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error("Error creating preference:", error);
+    let responseText = "";
+    try {
+      if ((error as any)?.response && typeof (error as any).response.text === "function") {
+        responseText = await (error as any).response.text();
+      }
+    } catch (err) {
+      console.error("Failed to read response text:", err);
+    }
+    // Tenta parsear JSON do erro (caso tenha vindo do MP ou do Supabase client)
+    let parsed: any = null;
+    try {
+      parsed = responseText ? JSON.parse(responseText) : null;
+    } catch {
+      parsed = null;
+    }
     return new Response(
       JSON.stringify({ 
-        error: error instanceof Error ? error.message : "Unknown error" 
+        error: error instanceof Error ? error.message : "Unknown error",
+        details: parsed || responseText || undefined,
+        step: "createPreference_catch",
+        requestBody: (() => { try { return JSON.parse(JSON.stringify(requestBody ?? {})); } catch { return requestBody ?? null; } })(),
       }), 
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -1,6 +1,6 @@
-﻿import { QuizQuestion } from "@/types/quiz";
+import { QuizQuestion, RiasecType } from "@/types/quiz";
 
-const LIKERT_OPTIONS = [
+export const LIKERT_OPTIONS = [
   "Discordo totalmente",
   "Discordo",
   "Neutro",
@@ -8,25 +8,62 @@ const LIKERT_OPTIONS = [
   "Concordo totalmente",
 ];
 
-export const quizQuestions: QuizQuestion[] = [
-  // ===== PARTE 1: Perfil RIASEC (15 perguntas - LIKERT) =====
-  { id: "riasec_1", type: "likert", question: "Você prefere resolver problemas práticos com suas próprias mãos do que lidar com pessoas?", options: LIKERT_OPTIONS },
-  { id: "riasec_2", type: "likert", question: "Você gosta de pesquisar, entender como as coisas funcionam e encontrar soluções lógicas?", options: LIKERT_OPTIONS },
-  { id: "riasec_3", type: "likert", question: "Você se sente mais realizado criando, desenhando ou inovando ideias?", options: LIKERT_OPTIONS },
-  { id: "riasec_4", type: "likert", question: "Você gosta de ensinar, orientar pessoas e se comunicar?", options: LIKERT_OPTIONS },
-  { id: "riasec_5", type: "likert", question: "Prefere seguir regras claras e trabalhar com organização e processos definidos?", options: LIKERT_OPTIONS },
-  { id: "riasec_6", type: "likert", question: "Prefiro aprender fazendo, colocando a mão na massa em vez de apenas ouvir explicações.", options: LIKERT_OPTIONS },
-  { id: "riasec_7", type: "likert", question: "Gosto de entender o motivo por trás das coisas e resolver problemas usando raciocínio lógico.", options: LIKERT_OPTIONS },
-  { id: "riasec_8", type: "likert", question: "Sinto prazer em criar algo novo, diferente ou original — mesmo que as pessoas não entendam de imediato.", options: LIKERT_OPTIONS },
-  { id: "riasec_9", type: "likert", question: "Fico feliz quando consigo ajudar alguém a compreender algo ou se sentir melhor com o que ensinei.", options: LIKERT_OPTIONS },
-  { id: "riasec_10", type: "likert", question: "Gosto de influenciar pessoas e inspirar outros a acreditarem em uma ideia ou projeto.", options: LIKERT_OPTIONS },
-  { id: "riasec_11", type: "likert", question: "Gosto de trabalhar ao ar livre ou com ferramentas/equipamentos.", options: LIKERT_OPTIONS },
-  { id: "riasec_12", type: "likert", question: "Curto analisar dados, buscar padrões e tirar conclusões.", options: LIKERT_OPTIONS },
-  { id: "riasec_13", type: "likert", question: "Prefiro ter liberdade e autonomia para criar e experimentar soluções.", options: LIKERT_OPTIONS },
-  { id: "riasec_14", type: "likert", question: "Sinto satisfação em orientar, escutar e oferecer suporte direto às pessoas.", options: LIKERT_OPTIONS },
-  { id: "riasec_15", type: "likert", question: "Gosto de organizar planilhas, checklists e documentos para manter tudo em ordem.", options: LIKERT_OPTIONS },
+// 30 perguntas RIASEC (5 por tipo) para perfis equilibrados e personalizados
+const riasecQuestions: Array<{ id: string; question: string; riasecType: RiasecType }> = [
+  // Realista (R)
+  { id: "riasec_r1", riasecType: "Realista", question: "Você gosta de realizar atividades práticas, como consertar objetos quebrados ou fazer pequenos reparos em casa?" },
+  { id: "riasec_r2", riasecType: "Realista", question: "Você sente interesse em operar máquinas, ferramentas ou equipamentos mecânicos por conta própria?" },
+  { id: "riasec_r3", riasecType: "Realista", question: "Você gosta de trabalhar em ambientes externos, como jardins, obras ou espaços ao ar livre?" },
+  { id: "riasec_r4", riasecType: "Realista", question: "Desmontar equipamentos, entender suas peças e montar novamente é algo que chama sua atenção?" },
+  { id: "riasec_r5", riasecType: "Realista", question: "Você se sente confortável em fazer reparos elétricos simples, como trocar tomadas ou instalar lâmpadas?" },
 
-  // ===== PARTE 2: Escolha do Concurso Ideal (9 perguntas - MULTIPLE CHOICE) =====
+  // Investigativo (I)
+  { id: "riasec_i1", riasecType: "Investigativo", question: "Você sente prazer em resolver problemas matemáticos, cálculos ou desafios numéricos?" },
+  { id: "riasec_i2", riasecType: "Investigativo", question: "Você gosta de ler sobre descobertas científicas, avanços da medicina ou novas tecnologias?" },
+  { id: "riasec_i3", riasecType: "Investigativo", question: "Fazer pesquisas, analisar informações e investigar causas e efeitos te interessa?" },
+  { id: "riasec_i4", riasecType: "Investigativo", question: "Você gosta de descobrir como as coisas funcionam desmontando, estudando ou observando processos?" },
+  { id: "riasec_i5", riasecType: "Investigativo", question: "Trabalhar com bancos de dados, estatísticas ou gráficos é algo que desperta o seu interesse?" },
+
+  // Artístico (A)
+  { id: "riasec_a1", riasecType: "Artístico", question: "Você gosta de criar desenhos, ilustrações, pinturas ou qualquer forma de arte visual?" },
+  { id: "riasec_a2", riasecType: "Artístico", question: "Escrever textos, histórias, poesias ou roteiros é algo que te envolve e estimula sua criatividade?" },
+  { id: "riasec_a3", riasecType: "Artístico", question: "Expressar ideias de forma criativa, original e fora do padrão é natural para você?" },
+  { id: "riasec_a4", riasecType: "Artístico", question: "Tocar instrumentos, compor músicas ou participar de atividades musicais te agrada?" },
+  { id: "riasec_a5", riasecType: "Artístico", question: "Criar designs, layouts, artes digitais ou conteúdos visuais te deixa animado?" },
+
+  // Social (S)
+  { id: "riasec_s1", riasecType: "Social", question: "Você gosta de ensinar outras pessoas, explicar temas e ajudar alguém a aprender?" },
+  { id: "riasec_s2", riasecType: "Social", question: "Ajudar pessoas com dificuldades, oferecendo apoio e orientação, te traz satisfação?" },
+  { id: "riasec_s3", riasecType: "Social", question: "Você gosta de dar conselhos, ouvir problemas e orientar amigos ou colegas?" },
+  { id: "riasec_s4", riasecType: "Social", question: "Trabalhar em equipe, colaborar com pessoas e criar um ambiente harmonioso te motiva?" },
+  { id: "riasec_s5", riasecType: "Social", question: "Cuidar do bem-estar de outras pessoas, seja emocional ou físico, é algo que você valoriza?" },
+
+  // Empreendedor (E)
+  { id: "riasec_e1", riasecType: "Empreendedor", question: "Você gosta de liderar grupos, coordenar pessoas ou tomar decisões importantes?" },
+  { id: "riasec_e2", riasecType: "Empreendedor", question: "Assumir responsabilidade e ser o responsável final por um projeto te motiva?" },
+  { id: "riasec_e3", riasecType: "Empreendedor", question: "Vender produtos, ideias, serviços ou persuadir outras pessoas é algo que você faz bem?" },
+  { id: "riasec_e4", riasecType: "Empreendedor", question: "Você gosta de assumir riscos calculados para alcançar resultados maiores?" },
+  { id: "riasec_e5", riasecType: "Empreendedor", question: "Planejar metas, criar estratégias e pensar no futuro te empolga?" },
+
+  // Convencional (C)
+  { id: "riasec_c1", riasecType: "Convencional", question: "Você gosta de organizar documentos, manter arquivos e deixar tudo fácil de encontrar?" },
+  { id: "riasec_c2", riasecType: "Convencional", question: "Seguir regras, procedimentos e rotinas claras te traz segurança e tranquilidade?" },
+  { id: "riasec_c3", riasecType: "Convencional", question: "Trabalhar com planilhas, sistemas ou processos administrativos te parece confortável?" },
+  { id: "riasec_c4", riasecType: "Convencional", question: "Manter o ambiente limpo, organizado e padronizado é algo que você considera importante?" },
+  { id: "riasec_c5", riasecType: "Convencional", question: "Você não se incomoda com tarefas repetitivas e prefere atividades estruturadas?" },
+];
+
+const likertQuestions: QuizQuestion[] = riasecQuestions.map((q) => ({
+  ...q,
+  type: "likert",
+  options: LIKERT_OPTIONS,
+}));
+
+export const quizQuestions: QuizQuestion[] = [
+  // ===== PARTE 1: Perfil RIASEC (30 perguntas - LIKERT) =====
+  ...likertQuestions,
+
+  // ===== PARTE 2: Escolha do Concurso Ideal (5 perguntas - MULTIPLE CHOICE) =====
   {
     id: "q1",
     type: "multiple-choice",
@@ -84,81 +121,6 @@ export const quizQuestions: QuizQuestion[] = [
       "Alto salário e possibilidade de crescimento",
       "Contribuir com a sociedade e fazer diferença",
       "Qualidade de vida e equilíbrio trabalho-vida pessoal",
-    ],
-  },
-  {
-    id: "q6",
-    type: "multiple-choice",
-    question: "Em relação ao salário, qual faixa inicial você busca?",
-    options: [
-      "R$ 2.000 a R$ 4.000",
-      "R$ 4.000 a R$ 8.000",
-      "R$ 8.000 a R$ 15.000",
-      "Acima de R$ 15.000",
-    ],
-  },
-  {
-    id: "q7",
-    type: "multiple-choice",
-    question: "Você está disposto a mudar de cidade para alcançar o cargo ideal?",
-    options: [
-      "Prefiro vagas apenas na minha cidade",
-      "Aceito vagas em cidades próximas (mesma região)",
-      "Aceito vagas em qualquer lugar do meu estado",
-      "Tenho disponibilidade total para mudança",
-    ],
-  },
-  {
-    id: "q8",
-    type: "multiple-choice",
-    question: "Em relação à jornada de trabalho, você prefere carga horária fixa ou escalas de plantão?",
-    options: [
-      "20 a 30 horas semanais",
-      "40 horas semanais (período integral)",
-      "Regime de plantão (escala de trabalho)",
-      "Não tenho preferência específica",
-    ],
-  },
-  {
-    id: "q9",
-    type: "multiple-choice",
-    question: "Você tem interesse em carreiras com porte de arma ou funções de segurança?",
-    options: [
-      "Sim, tenho interesse em carreiras policiais",
-      "Tenho interesse em segurança, mas em cargos administrativos",
-      "Não tenho interesse",
-    ],
-  },
-
-  // ===== PARTE 3: Preparação e Interesse no Produto (3 perguntas - MULTIPLE CHOICE) =====
-  {
-    id: "q10",
-    type: "multiple-choice",
-    question: "Como você avalia sua preparação hoje para o concurso ideal?",
-    options: [
-      "Estou começando agora e me sinto perdido",
-      "Já estudo há um tempo, mas sem direção clara",
-      "Tenho um plano sólido de estudos",
-    ],
-  },
-  {
-    id: "q11",
-    type: "multiple-choice",
-    question: "Você sabia que candidatos que estudam com auxílio de Inteligência Artificial têm até 3x mais chances de aprovação?",
-    options: [
-      "Sim, já sabia disso",
-      "Não sabia, mas faz sentido",
-      "Não acredito muito nisso",
-    ],
-  },
-  {
-    id: "q12",
-    type: "multiple-choice",
-    question: "Se existe um guia personalizado com IA, mostrando o que mais cai na prova e um plano de estudo feito sob medida por apenas R$50, você:",
-    options: [
-      "Investiria agora para aumentar minhas chances",
-      "Gostaria de saber mais antes de decidir",
-      "Não compraria no momento",
     ],
   },
 ];

@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { quizQuestions } from "@/data/quizQuestions";
-import { QuizAnswer } from "@/types/quiz";
+import { QuizAnswer, RiasecResult } from "@/types/quiz";
 import { trackEvent } from "@/lib/analytics";
+import { calculateRiasecScores } from "@/lib/riasec";
 
 interface QuizProps {
-  onComplete: (answers: QuizAnswer[]) => void;
+  onComplete: (answers: QuizAnswer[], riasecResult: RiasecResult) => void;
   onBack: () => void;
 }
 
@@ -72,14 +73,18 @@ export const Quiz = ({ onComplete }: QuizProps) => {
       return;
     }
 
+    const riasecResult = calculateRiasecScores(answers, quizQuestions);
+
     const normalizedAnswers: QuizAnswer[] = quizQuestions.map((q) => ({
+      id: q.id,
       question: q.question,
       answer: answers[q.id],
+      riasecType: q.riasecType,
     }));
 
     localStorage.removeItem("quiz_progress");
     trackEvent("quiz_completed");
-    onComplete(normalizedAnswers);
+    onComplete(normalizedAnswers, riasecResult);
   };
 
   const buttonLabel = isLastPage ? "Finalizar" : "Próxima";

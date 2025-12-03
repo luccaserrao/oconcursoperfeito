@@ -1,13 +1,37 @@
+export type RiasecType = "Realista" | "Investigativo" | "Artístico" | "Social" | "Empreendedor" | "Convencional";
+
 export interface QuizQuestion {
   id: string;
   question: string;
   options: string[];
   type?: "likert" | "multiple-choice";
+  riasecType?: RiasecType;
 }
 
 export interface QuizAnswer {
   question: string;
   answer: string;
+  id?: string;
+  riasecType?: RiasecType;
+}
+
+export interface RiasecScores {
+  Realista: number;
+  Investigativo: number;
+  Artístico: number;
+  Social: number;
+  Empreendedor: number;
+  Convencional: number;
+}
+
+export interface RiasecResult {
+  top1: RiasecType;
+  top2: RiasecType;
+  scores?: RiasecScores;
+  habilidades?: string[];
+  habilidade_destaque?: string;
+  contexto_profissional?: string;
+  descricao_personalizada?: string;
 }
 
 export interface CareerRecommendation {
@@ -19,22 +43,7 @@ export interface CareerRecommendation {
   workRoutine: string;
   subjects: string[];
   examFrequency: string;
-  riasec?: {
-    top1: string;
-    top2: string;
-    scores?: {
-      Realista: number;
-      Investigativo: number;
-      Artístico: number;
-      Social: number;
-      Empreendedor: number;
-      Convencional: number;
-    };
-    habilidades: string[];
-    habilidade_destaque: string;
-    contexto_profissional: string;
-    descricao_personalizada?: string;
-  };
+  riasec?: RiasecResult;
 }
 
 export interface PaidContent {
