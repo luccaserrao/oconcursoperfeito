@@ -1,7 +1,5 @@
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   const secret = process.env.PUSHINPAY_SECRET_WEBHOOK_TOKEN;
-
-  // Conferir assinatura do PushinPay
   const incoming = req.headers["x-pushinpay-token"];
 
   if (incoming !== secret) {
@@ -14,6 +12,7 @@ export default async function handler(req, res) {
     console.log("Pagamento recebido:", body);
 
     return res.status(200).json({ ok: true });
+
   } catch (err) {
     console.error("Erro no webhook:", err);
     return res.status(500).json({ error: "Erro interno" });
