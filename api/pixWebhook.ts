@@ -1,26 +1,21 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
+export default async function handler(req, res) {
+  const secret = process.env.PUSHINPAY_SECRET_WEBHOOK_TOKEN;
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+  // Conferir assinatura do PushinPay
+  const incoming = req.headers["x-pushinpay-token"];
+
+  if (incoming !== secret) {
+    return res.status(401).json({ error: "Token inválido" });
   }
 
-  const webhookHeader = req.headers["x-pushinpay-token"];
-  const webhookToken = Array.isArray(webhookHeader) ? webhookHeader[0] : webhookHeader;
-  const expectedToken = process.env.PUSHINPAY_TOKEN;
+  try {
+    const body = JSON.parse(req.body || "{}");
 
-  if (!expectedToken) {
-    return res.status(500).json({ error: "Webhook token not configured" });
+    console.log("Pagamento recebido:", body);
+
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error("Erro no webhook:", err);
+    return res.status(500).json({ error: "Erro interno" });
   }
-
-  if (webhookToken !== expectedToken) {
-    return res.status(401).json({ error: "Invalid webhook token" });
-  }
-
-  console.log("PIX payment webhook received", {
-    headers: req.headers,
-    body: req.body,
-  });
-
-  return res.status(200).json({ received: true });
 }
