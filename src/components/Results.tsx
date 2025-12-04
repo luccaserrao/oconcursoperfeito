@@ -132,7 +132,7 @@ export const Results = ({
       <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-destructive/90 to-destructive/70 backdrop-blur-sm shadow-lg">
         <div className="container mx-auto px-4 py-2 flex items-center justify-center gap-2 text-white text-sm md:text-base text-center">
           <Lock className="w-4 h-4" />
-          <span className="font-medium">Oferta especial expira e seus dados são apagados em:</span>
+          <span className="font-medium">Oferta garantida por 5 minutos (R$25 com pagamento seguro):</span>
           <CountdownTimer initialMinutes={5} />
         </div>
       </div>
@@ -251,12 +251,16 @@ export const Results = ({
               </Card>
             </div>
 
-            {/* Aviso de Seguranca */}
-            <Card className="p-6 bg-destructive/10 border-2 border-destructive/30">
-              <div className="flex items-center justify-center gap-2 text-destructive">
-                <Lock className="w-5 h-5" />
-                <p className="text-sm font-semibold">
-                  Por seguranca, seus dados ficam guardados por 5 minutos e depois sao excluidos automaticamente.
+            {/* Pagamento seguro e garantia */}
+            <Card className="p-6 bg-primary/5 border-2 border-primary/20">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-primary">
+                <div className="inline-flex items-center gap-2">
+                  <Lock className="w-5 h-5" />
+                  <Shield className="w-5 h-5" />
+                  <span className="text-sm font-semibold">Pagamento seguro via Mercado Pago + garantia de 7 dias.</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Usamos seus dados apenas para gerar e entregar o relatorio. Pode solicitar remocao a qualquer momento.
                 </p>
               </div>
             </Card>
@@ -620,27 +624,31 @@ export const Results = ({
             </Card>
           </div>
 
-          {/* ============= 4️⃣ OFERTA (UPSELL NATURAL) ============= */}
+          {/* ============= 4?? OFERTA (UPSELL NATURAL) ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-amber-500/5 to-orange-500/5 border-2 border-primary/30">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl md:text-4xl font-bold mb-4">
-                  Pronto pra sair do genérico e ter um plano sob medida?
+              <div className="text-center mb-8 space-y-2">
+                <h2 className="text-2xl md:text-4xl font-bold">
+                  Desbloqueie o plano completo por R$25
                 </h2>
                 <p className="text-lg text-muted-foreground">
-                  Por menos que um hambúrguer (R$25) você recebe o caminho completo.
+                  Menos que 1 mes de cursinho (R$150+) e com garantia de satisfacao.
                 </p>
+                <div className="inline-flex items-center gap-2 text-xs uppercase tracking-wide text-primary font-semibold bg-primary/10 border border-primary/30 px-3 py-1 rounded-full">
+                  <Sparkles className="w-4 h-4" />
+                  Bonus: checklist de edital + mini plano imediato
+                </div>
               </div>
 
-              {/* Lista de benefícios */}
+              {/* Lista de beneficios */}
               <div className="grid md:grid-cols-2 gap-4 mb-8">
                 {[
                   { icon: Target, text: "Cargo recomendado e justificativa do seu perfil" },
-                  { icon: DollarSign, text: "Faixa salarial inicial e com progressão" },
-                  { icon: Calendar, text: "Probabilidade do próximo edital" },
+                  { icon: DollarSign, text: "Faixa salarial inicial e com progressao" },
+                  { icon: Calendar, text: "Probabilidade do proximo edital" },
                   { icon: BookOpen, text: "Plano de estudos 30/60/90 dias" },
-                  { icon: Sparkles, text: "Materiais práticos e checklist" },
-                  { icon: TrendingUp, text: "Acesso imediato ao relatório" }
+                  { icon: Sparkles, text: "Materiais praticos e checklist" },
+                  { icon: TrendingUp, text: "Acesso imediato ao relatorio" }
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-start gap-3 p-3 bg-background/50 rounded-lg">
                     <item.icon className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
@@ -649,39 +657,62 @@ export const Results = ({
                 ))}
               </div>
 
-              {/* Preço e Garantia */}
-              <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-lg p-6 mb-6 text-center border-2 border-amber-500/20">
-                <p className="text-4xl font-bold text-amber-600 mb-1">
+              {/* Preco, ancoragem e garantia */}
+              <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-lg p-6 mb-6 text-center border-2 border-amber-500/20 space-y-3">
+                <p className="text-4xl font-bold text-amber-600">
                   R$ 25<span className="text-xl">,00</span>
                 </p>
-                <p className="text-sm text-muted-foreground mb-4">(pagamento único)</p>
-                
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 text-green-600 rounded-full text-sm font-bold mb-4">
+                <p className="text-sm text-muted-foreground">(pagamento unico · acesso imediato)</p>
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 text-green-600 rounded-full text-sm font-bold">
                   <Shield className="w-4 h-4" />
-                  Se não te ajudar, devolvemos o valor em até 7 dias
+                  Garantia 7 dias ou seu dinheiro de volta
+                </div>
+                <div className="text-sm text-foreground font-semibold">
+                  Referencia: cursinho 1 mes custa R$150+ · aqui voce paga 6x menos
                 </div>
               </div>
 
-              {/* CTA Principal */}
-              <div className="mb-4">
-                <MercadoPagoButton
-                  userName={userName}
-                  userEmail={userEmail}
-                  quizResponseId={quizResponseId}
-                  amount={25}
-                  location="main_offer"
-                />
-              </div>
+              {/* Social proof + CTA */}
+              <div className="grid lg:grid-cols-[2fr,1fr] gap-6 items-center">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold">
+                      <Star className="w-4 h-4" />
+                      4.8/5 por 1.240 concurseiros
+                    </div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold">
+                      <Users className="w-4 h-4" />
+                      Pagamento seguro Mercado Pago
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3 text-sm">
+                    <div className="flex-1 rounded-lg border bg-background/60 p-3">
+                      <div className="flex items-center gap-2 text-primary font-semibold text-xs">
+                        <Sparkles className="w-4 h-4" /> Tamires, aprovada em pre-analise
+                      </div>
+                      <p className="text-muted-foreground mt-1">"Paguei os 25 e recebi um passo a passo de estudo sem enrolacao."</p>
+                    </div>
+                    <div className="flex-1 rounded-lg border bg-background/60 p-3">
+                      <div className="flex items-center gap-2 text-primary font-semibold text-xs">
+                        <Sparkles className="w-4 h-4" /> Diego, PF administrativa
+                      </div>
+                      <p className="text-muted-foreground mt-1">"Valeu mais que 1 mes de cursinho. Checklist e cronograma em minutos."</p>
+                    </div>
+                  </div>
+                </div>
 
-              {/* Ícones de Confiança */}
-              <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground flex-wrap">
-                <span className="flex items-center gap-2">
-                  <Shield className="w-4 h-4" />
-                  Conexão segura
-                </span>
-                <span>💳 Cartão</span>
-                <span>🔵 Pix</span>
-                <span>💚 Mercado Pago</span>
+                <div className="space-y-3">
+                  <MercadoPagoButton
+                    userName={userName}
+                    userEmail={userEmail}
+                    quizResponseId={quizResponseId}
+                    amount={25}
+                    location="main_offer"
+                  />
+                  <p className="text-xs text-muted-foreground text-center">
+                    Pix, cartao ou saldo Mercado Pago · conexao segura com criptografia.
+                  </p>
+                </div>
               </div>
             </Card>
           </div>
@@ -693,7 +724,7 @@ export const Results = ({
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                   <div>
                     <p className="text-xl font-bold mb-1">Ainda não desbloqueou seu plano?</p>
-                    <p className="text-sm opacity-90">Aproveite enquanto seus dados ainda estão disponíveis!</p>
+                    <p className="text-sm opacity-90">Oferta de R$25 ativa por tempo limitado, com garantia de 7 dias.</p>
                   </div>
                   <MercadoPagoButton
                     userName={userName}
@@ -783,7 +814,7 @@ export const Results = ({
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    Ficam guardados por 5 minutos e são excluídos automaticamente depois, 🔒 Por segurança, seus dados ficam guardados por 5 minutos e depois são excluídos automaticamente.a.
+                    Usamos apenas para gerar e entregar seu relatorio. Pagamento processado pelo Mercado Pago e voce pode solicitar remocao a qualquer momento (LGPD).
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

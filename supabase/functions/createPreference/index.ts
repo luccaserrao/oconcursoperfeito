@@ -122,6 +122,9 @@ serve(async (req) => {
       }
     }
 
+    // Normalizar valor final
+    finalAmount = Number.isFinite(finalAmount) && finalAmount > 0 ? Number(finalAmount) : 25;
+
     // Create pending order
     const { data: order, error: orderError } = await supabaseClient
       .from("orders")
@@ -143,6 +146,9 @@ serve(async (req) => {
 
     console.log('Order created:', order.id);
 
+    const originHeader = req.headers.get("origin");
+    const baseUrl = originHeader || Deno.env.get("FRONTEND_URL") || "https://oconcursoperfeito.com";
+
     const preferenceData = {
       items: [
         {
@@ -158,12 +164,12 @@ serve(async (req) => {
         email: userEmail,
       },
       back_urls: {
-        success: `${req.headers.get("origin")}/paid-content?payment_id={payment_id}`,
-        failure: `${req.headers.get("origin")}/?canceled=true`,
-        pending: `${req.headers.get("origin")}/?pending=true`,
+        success: `${baseUrl}/paid-content?payment_id={payment_id}`,
+        failure: `${baseUrl}/?canceled=true`,
+        pending: `${baseUrl}/?pending=true`,
       },
       auto_return: "approved",
-      external_reference: order.id,
+      external_reference: String(order.id),
       notification_url: `${Deno.env.get("SUPABASE_URL")}/functions/v1/mp-webhook`,
     };
 
