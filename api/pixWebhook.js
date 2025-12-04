@@ -1,4 +1,4 @@
-export default async function handler(req: any, res: any) {
+export default async function handler(req, res) {
   const secret = process.env.PUSHINPAY_SECRET_WEBHOOK_TOKEN;
   const incoming = req.headers["x-pushinpay-token"];
 
@@ -12,7 +12,6 @@ export default async function handler(req: any, res: any) {
     console.log("Pagamento recebido:", body);
 
     return res.status(200).json({ ok: true });
-
   } catch (err) {
     console.error("Erro no webhook:", err);
     return res.status(500).json({ error: "Erro interno" });
