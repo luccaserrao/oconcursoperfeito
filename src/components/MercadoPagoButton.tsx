@@ -1,63 +1,59 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { CreditCard } from "lucide-react";
+import { CreditCard, Copy, Check } from "lucide-react";
 import { trackBeginCheckout, trackCtaDesbloqueioClick } from "@/lib/analytics";
 
 interface MercadoPagoButtonProps {
   userName: string;
   userEmail: string;
   quizResponseId?: string;
-  productId?: string;
   amount?: number;
   location?: string;
 }
 
-export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, productId, amount = 25, location = 'unknown' }: MercadoPagoButtonProps) => {
+interface PixData {
+  qrCodeImage?: string;
+  copyPaste?: string;
+}
+
+export const MercadoPagoButton = ({
+  userName,
+  userEmail,
+  quizResponseId,
+  amount = 25,
+  location = "unknown",
+}: MercadoPagoButtonProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [pixData, setPixData] = useState<PixData | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const handleClick = async () => {
-    // Prevenir cliques múltiplos
     if (isLoading) {
-      console.log("Button already processing, ignoring click");
       return;
     }
-    
+
     try {
       setIsLoading(true);
-      console.log("Starting payment process");
-      
-      // Track CTA Desbloqueio Click
+      setCopied(false);
+
       trackCtaDesbloqueioClick(location);
-      
-      // Track begin_checkout for Google Ads
       trackBeginCheckout(amount);
-      console.log("Google Ads: begin_checkout tracked");
-      
-      // Track Facebook Pixel - InitiateCheckout
-      if (typeof window !== 'undefined' && (window as any).fbq) {
-        (window as any).fbq('track', 'InitiateCheckout', {
-          value: amount,
-          currency: 'BRL',
-          content_name: 'Pacote Completo de Preparação',
-          content_category: 'Concursos Públicos'
-        });
-        console.log("Facebook Pixel: InitiateCheckout tracked");
-      }
-      
+
       toast({
-        title: "Processando...",
-        description: "Preparando seu checkout",
+        title: "Gerando PIX...",
+        description: "Estamos criando seu QR Code",
       });
 
-      const body: any = { userName, userEmail, quizResponseId };
-      if (productId) body.product_id = productId;
-      if (amount) body.amount = amount;
+      const body: Record<string, string | number | undefined> = {
+        userName,
+        userEmail,
+        quizResponseId,
+        amount,
+      };
 
-      console.log("Request body:", body);
-      const endpoint = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/createPreference`;
-      const resp = await fetch(endpoint, {
+      const resp = await fetch("/api/createPix", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,58 +61,30 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
         body: JSON.stringify(body),
       });
 
-      const text = await resp.text();
-      console.log("CreatePreference raw response:", resp.status, text);
-
-      let json: any = {};
-      try {
-        json = text ? JSON.parse(text) : {};
-      } catch (parseErr) {
-        console.error("Failed to parse JSON from createPreference:", parseErr);
-      }
+      const json = await resp.json();
 
       if (!resp.ok) {
-        const detail = json?.details || json?.error || text || `Erro no checkout (status ${resp.status})`;
+        const detail = json?.details || json?.error || `Erro no checkout (status ${resp.status})`;
         throw new Error(typeof detail === "string" ? detail : JSON.stringify(detail));
       }
 
-      if (json?.init_point) {
-        console.log("Redirecting to:", json.init_point);
-        window.location.href = json.init_point;
-      } else {
-        console.error("No init_point in response JSON", json);
-        throw new Error('No init_point returned');
-      }
+      setPixData({
+        qrCodeImage: json.qrCodeImage,
+        copyPaste: json.copyPaste,
+      });
+
+      toast({
+        title: "PIX gerado!",
+        description: "Use o QR Code ou copia-e-cola abaixo",
+      });
     } catch (error) {
-      console.error('Payment error:', error);
-      setIsLoading(false); // Só desabilita loading em caso de erro
-      
-      const ctx = (error as any)?.context || {};
-
-      // Tenta ler o corpo da resposta da Edge Function (se existir)
-      let serverBodyText: string | null = null;
-      try {
-        const resp = (ctx as any)?.response as Response | undefined;
-        if (resp && typeof resp.text === "function") {
-          serverBodyText = await resp.text();
-          console.error("CreatePreference body:", serverBodyText);
-        }
-        // Caso o próprio ctx seja a Response
-        if (!serverBodyText && ctx instanceof Response && typeof ctx.text === "function") {
-          serverBodyText = await ctx.text();
-          console.error("CreatePreference body (ctx is response):", serverBodyText);
-        }
-      } catch (readErr) {
-        console.error("Failed to read error body:", readErr);
-      }
-
+      console.error("Payment error:", error);
       const detail =
-        serverBodyText ||
-        (ctx as any)?.body ||
         (error instanceof Error && error.message) ||
-        ctx.error ||
-        ctx.details ||
-        (typeof error === "object" && error && "message" in (error as any) ? (error as any).message : null) ||
+        (typeof error === "string" && error) ||
+        (typeof error === "object" && error && "message" in error
+          ? String((error as { message?: unknown }).message)
+          : null) ||
         "Não foi possível processar. Tente novamente.";
 
       toast({
@@ -124,28 +92,90 @@ export const MercadoPagoButton = ({ userName, userEmail, quizResponseId, product
         title: "Erro no checkout",
         description: typeof detail === "string" ? detail : JSON.stringify(detail),
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const handleCopy = async () => {
+    if (!pixData?.copyPaste) return;
+    try {
+      await navigator.clipboard.writeText(pixData.copyPaste);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Copy failed", error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao copiar",
+        description: "Tente copiar manualmente o código",
+      });
+    }
+  };
+
+  const qrCodeSrc = pixData?.qrCodeImage?.startsWith("data:")
+    ? pixData.qrCodeImage
+    : pixData?.qrCodeImage
+      ? `data:image/png;base64,${pixData.qrCodeImage}`
+      : undefined;
+
   return (
-    <Button
-      onClick={handleClick}
-      disabled={isLoading}
-      size="lg"
-      aria-label={`Pagar R$ ${amount} com segurança pelo Mercado Pago`}
-      className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-base md:text-lg py-5 md:py-6 disabled:opacity-50 disabled:cursor-not-allowed transition-all rounded-full shadow-[var(--shadow-elevated)]"
-    >
-      {isLoading ? (
-        <span className="flex items-center justify-center">
-          <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-          Processando...
-        </span>
-      ) : (
-        <span className="flex items-center justify-center whitespace-nowrap">
-          <CreditCard className="mr-2 w-5 h-5 flex-shrink-0" />
-          <span className="truncate">Pagar R$ {amount} — acesso imediato</span>
-        </span>
+    <div className="w-full space-y-3">
+      <Button
+        onClick={handleClick}
+        disabled={isLoading}
+        size="lg"
+        aria-label={`Pagar R$ ${amount} com segurança via PIX`}
+        className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white text-base md:text-lg py-5 md:py-6 disabled:opacity-50 disabled:cursor-not-allowed transition-all rounded-full shadow-[var(--shadow-elevated)]"
+      >
+        {isLoading ? (
+          <span className="flex items-center justify-center">
+            <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            Processando...
+          </span>
+        ) : (
+          <span className="flex items-center justify-center whitespace-nowrap">
+            <CreditCard className="mr-2 w-5 h-5 flex-shrink-0" />
+            <span className="truncate">Gerar PIX de R$ {amount}</span>
+          </span>
+        )}
+      </Button>
+
+      {pixData && (
+        <div className="w-full rounded-lg border bg-card p-4 shadow-sm">
+          <p className="font-semibold mb-3">Pague escaneando ou copiando o código:</p>
+          {qrCodeSrc && (
+            <div className="flex justify-center mb-3">
+              <img
+                src={qrCodeSrc}
+                alt="QR Code PIX"
+                className="w-48 h-48 rounded-md border"
+              />
+            </div>
+          )}
+          {pixData.copyPaste && (
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Copia e cola PIX</p>
+              <div className="flex flex-col gap-2">
+                <div className="rounded-md bg-muted p-3 text-sm break-all">
+                  {pixData.copyPaste}
+                </div>
+                <Button variant="secondary" size="sm" onClick={handleCopy} className="self-start">
+                  {copied ? (
+                    <span className="flex items-center gap-2 text-emerald-700">
+                      <Check className="h-4 w-4" /> Copiado!
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <Copy className="h-4 w-4" /> Copiar código
+                    </span>
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       )}
-    </Button>
+    </div>
   );
 };
