@@ -115,6 +115,7 @@ export default async function handler(req, res) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(payload),
@@ -134,6 +135,20 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error("Erro ao ler resposta da PushinPay:", error);
     return res.status(500).json({ error: "Nao foi possivel ler a resposta da PushinPay" });
+  }
+
+  if (contentType.includes("text/html")) {
+    const preview =
+      typeof pushinpayData === "string" ? pushinpayData.slice(0, 300) : JSON.stringify(pushinpayData).slice(0, 300);
+    console.error("PushinPay retornou HTML (provavel URL errada ou bloqueio):", {
+      status: pushinpayResponse.status,
+      url: rawUrl,
+      preview,
+    });
+    return res.status(502).json({
+      error: "PushinPay retornou HTML (verifique PUSHINPAY_BASE_URL / PATH ou bloqueio de WAF)",
+      details: preview,
+    });
   }
 
   if (!pushinpayResponse.ok) {
