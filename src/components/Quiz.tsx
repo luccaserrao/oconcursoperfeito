@@ -29,7 +29,12 @@ export const Quiz = ({ onComplete }: QuizProps) => {
     return quizQuestions.slice(start, start + pageSize);
   }, [currentPage, pageSize]);
 
-  const pageComplete = visibleQuestions.every((q) => answers[q.id]);
+  // Para textos livres, não bloquear avanço se o usuário não digitar (opcional),
+  // mas preferimos usar o valor se fornecido.
+  const pageComplete = visibleQuestions.every((q) => {
+    if (q.type === "text") return true;
+    return Boolean(answers[q.id]);
+  });
   const isLastPage = currentPage === totalPages - 1;
 
   const microBanners = [
@@ -77,6 +82,10 @@ export const Quiz = ({ onComplete }: QuizProps) => {
   useEffect(() => {
     localStorage.setItem("quiz_progress", JSON.stringify({ answers }));
   }, [answers]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentPage]);
 
   const handleSelect = (id: string, answer: string) => {
     setAnswers((prev) => ({ ...prev, [id]: answer }));
