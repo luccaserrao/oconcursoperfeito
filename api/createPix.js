@@ -4,13 +4,12 @@ export default async function handler(req, res) {
   }
 
   const token = process.env.PUSHINPAY_TOKEN;
-  const baseUrl = process.env.PUSHINPAY_BASE_URL || "https://api.pushinpay.com.br";
+
+  const url = "https://api.pushinpay.com/v1/checkout/create";
 
   if (!token) {
-    return res.status(500).json({ error: "PUSHINPAY_TOKEN não está configurado" });
+    return res.status(500).json({ error: "PUSHINPAY_TOKEN não configurado" });
   }
-
-  const url = `${baseUrl}/api/pix/cashIn`;
 
   try {
     const response = await fetch(url, {
@@ -21,26 +20,27 @@ export default async function handler(req, res) {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        // R$ 25,00 -> 2500 centavos
-        value: 2500,
-        webhook_url: "https://futuroperfeito.com.br/api/pixWebhook",
+        transactionAmount: 25.00,
+        description: "Compra de relatório profissional",
+        externalReference: "pedido-123",
+        paymentMethods: ["pix"]
       }),
     });
 
     const data = await response.json();
 
-    // Se a API responder erro, repassa o erro pra tela
     if (!response.ok) {
-      console.error("Erro da PushinPay:", data);
-      return res.status(response.status).json({
-        error: "Erro na PushinPay",
+      return res.status(400).json({
+        error: "Erro da PushinPay",
         details: data,
       });
     }
 
     return res.status(200).json(data);
   } catch (err) {
-    console.error("Erro ao chamar PushinPay:", err);
-    return res.status(500).json({ error: "Falha ao conectar com a PushinPay" });
+    console.error("Erro ao conectar:", err);
+    return res.status(500).json({
+      error: "Falha ao conectar ao servidor PushinPay",
+    });
   }
 }
