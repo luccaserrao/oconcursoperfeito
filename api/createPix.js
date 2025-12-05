@@ -93,10 +93,14 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "PUSHINPAY_BASE_URL invalida", details: error?.message });
   }
 
-  const value = numericAmount.toFixed(2);
+  const valueInCents = Math.round(numericAmount * 100);
+
+  if (valueInCents < 50) {
+    return res.status(400).json({ error: "Valor do PIX deve ser no minimo 0.50 (50 centavos)" });
+  }
 
   const payload = {
-    value, // campo exigido pelo endpoint /api/pix/cashIn
+    value: valueInCents, // inteiro em centavos, conforme requisito da API
     description: "Relatorio vocacional",
     reference_id: quizResponseId || `quiz-${Date.now()}`,
     customer: {
