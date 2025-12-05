@@ -83,6 +83,9 @@ export const Results = ({
 
   const firstName = userName.split(' ')[0];
   const shortJustification = (recommendation.justification?.split(".")[0] || "").trim();
+  const top1Score = riasecData.scores?.[riasecData.top1] ?? 90;
+  const top2Score = riasecData.scores?.[riasecData.top2] ?? 78;
+  const heroCopy = riasecData.descricao_personalizada || "Se este recorte gratuito ja faz sentido, o plano completo (R$25) destrava salario, cronograma e cargos que combinam com seu estilo.";
 
   // Track page view
   useEffect(() => {
@@ -158,115 +161,141 @@ export const Results = ({
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 pt-20 pb-12">
         <div className="container mx-auto px-4 max-w-6xl">
         
-          {/* ============= 1️⃣ HERO - RESULTADO GRATUITO (R.I.A.S.E.C.) ============= */}
-          <div className="mb-12 animate-fade-in">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                {firstName}, seu perfil RIASEC predominante é: {riasecData.top1}
-              </h1>
-              
-              <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                Este é um recorte do seu potencial. Abaixo veja como transformar isso em um plano real de ação e estudo.
-              </p>
-              {riasecData.descricao_personalizada && (
-                <p className="text-sm md:text-base text-foreground max-w-3xl mx-auto leading-relaxed">
-                  {riasecData.descricao_personalizada}
-                </p>
-              )}
-            </div>
-
-            <Card className="p-6 bg-card border-2 border-primary/20 mb-8">
-              <div className="flex flex-col gap-2 text-left">
-                <Badge variant="outline" className="w-fit bg-primary/10 text-primary border-primary/30">Cargo indicado agora</Badge>
-                <p className="text-xl font-bold text-foreground">{recommendation.careerName}</p>
-                {shortJustification && (
-                  <p className="text-sm text-muted-foreground">
-                    Por que você: {shortJustification}.
-                  </p>
-                )}
-                <div className="grid md:grid-cols-2 gap-3 pt-3">
-                  <div className="flex items-start gap-2 text-sm">
-                    <CheckCircle2 className="w-4 h-4 text-primary mt-0.5" />
-                    <span>Rotina alinhada ao seu perfil: {recommendation.workRoutine}</span>
-                  </div>
-                  <div className="flex items-start gap-2 text-sm">
-                    <Calendar className="w-4 h-4 text-primary mt-0.5" />
-                    <span>Próximo edital / janela: {recommendation.examDate || "projeção em andamento"}</span>
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground pt-2">
-                  🔒 Detalhes completos de salário, plano de estudos e materiais são liberados no upgrade (R$25).
-                </p>
+          {/* ============= HERO + IDENTIDADE RIASEC (MOBILE FIRST) ============= */}
+          <div className="mb-14 animate-fade-in">
+            <div className="text-center mb-8 space-y-3">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wide">
+                Diagnostico gratuito pronto - se isso convence gratis, imagine por R$25
               </div>
-            </Card>
+              <h1 className="text-3xl md:text-5xl font-bold leading-tight">
+                {firstName}, seu DNA RIASEC e: {riasecData.top1} <span className="text-primary">+ {riasecData.top2}</span>
+              </h1>
+              <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                {heroCopy}
+              </p>
+            </div>
 
-            {/* 3 Cards: Forças, Áreas, O que evitar */}
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <div className="grid gap-4 lg:grid-cols-[1.1fr,1fr]">
+              <Card className="p-6 bg-card border-2 border-primary/20">
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-wrap gap-2 text-xs uppercase font-semibold">
+                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">perfil hibrido top2</Badge>
+                    <Badge variant="outline" className="bg-muted text-foreground">alta correspondencia de respostas</Badge>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-xl font-bold">Seu mapa de identidade {riasecData.top1} com toque {riasecData.top2}</p>
+                    <p className="text-sm text-muted-foreground">Densidade de sinais fortes apontou que voce rende mais quando combina {riasecData.habilidade_destaque}.</p>
+                  </div>
+                  <div className="space-y-3">
+                    {[{ label: riasecData.top1, value: top1Score, tone: "primary" }, { label: riasecData.top2, value: top2Score, tone: "accent" }].map((item) => (
+                      <div key={item.label} className="space-y-1">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="font-semibold">{item.label}</span>
+                          <span className="text-muted-foreground">{item.value}% sinais</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+                          <div
+                            className={`h-full ${item.tone === "primary" ? "bg-primary" : "bg-accent"}`}
+                            style={{ width: `${item.value}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="grid gap-2 sm:grid-cols-2 text-sm">
+                    <div className="flex items-start gap-2">
+                      <Sparkles className="w-4 h-4 text-primary mt-0.5" />
+                      <span>{recommendation.careerName}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Target className="w-4 h-4 text-primary mt-0.5" />
+                      <span>{shortJustification || "Roteiro inicial baseado no seu par RIASEC top2."}</span>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
               <Card className="p-6 bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-primary/20">
-                <div className="flex items-center gap-2 mb-4">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                  <h3 className="font-bold text-lg">Forças principais</h3>
+                <div className="flex items-center gap-2 mb-3">
+                  <Zap className="w-5 h-5 text-primary" />
+                  <h3 className="font-bold text-lg">Roteiro imediato (gratis)</h3>
                 </div>
-                <ul className="space-y-2 text-sm">
-                  {riasecData.habilidades.slice(0, 3).map((hab, idx) => (
-                    <li key={idx} className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                      <span className="capitalize">{hab}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-
-              <Card className="p-6 bg-gradient-to-br from-accent/5 to-primary/5 border-2 border-accent/20">
-                <div className="flex items-center gap-2 mb-4">
-                  <Target className="w-5 h-5 text-accent" />
-                  <h3 className="font-bold text-lg">Áreas onde você tende a performar melhor</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold text-foreground">Forcas principais</p>
+                    <ul className="space-y-2 text-sm">
+                      {riasecData.habilidades.slice(0, 3).map((hab, idx) => (
+                        <li key={idx} className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                          <span className="capitalize">{hab}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold text-foreground">Onde voce brilha</p>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-center gap-2">
+                        <Target className="w-4 h-4 text-primary flex-shrink-0" />
+                        <span>{riasecData.contexto_profissional}</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Target className="w-4 h-4 text-primary flex-shrink-0" />
+                        <span>Tarefas que exigem {riasecData.habilidade_destaque}</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold text-foreground">Evite desperdicio</p>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" />
+                        <span>Funcoes muito rotineiras ou repetitivas</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" />
+                        <span>Ambientes que nao valorizam sua criatividade</span>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-accent flex-shrink-0" />
-                    <span>{riasecData.contexto_profissional}</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-accent flex-shrink-0" />
-                    <span>Tarefas que exigem {riasecData.habilidade_destaque}</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-accent flex-shrink-0" />
-                    <span>Ambientes que valorizam suas qualidades</span>
-                  </li>
-                </ul>
-              </Card>
-
-              <Card className="p-6 bg-gradient-to-br from-destructive/5 to-orange-500/5 border-2 border-destructive/20">
-                <div className="flex items-center gap-2 mb-4">
-                  <AlertTriangle className="w-5 h-5 text-destructive" />
-                  <h3 className="font-bold text-lg">O que evitar</h3>
+                <div className="mt-4 text-xs text-muted-foreground">
+                  Este e o aperitivo gratuito. O upgrade entrega salario, cronograma 30/60/90 e cargos mais aderentes ao seu DNA.
                 </div>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" />
-                    <span>Funções muito rotineiras ou repetitivas</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" />
-                    <span>Ambientes que não valorizam sua criatividade</span>
-                  </li>
-                </ul>
               </Card>
             </div>
 
-            {/* Pagamento seguro e garantia */}
-            <Card className="p-6 bg-primary/5 border-2 border-primary/20">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-primary">
-                <div className="inline-flex items-center gap-2">
-                  <Lock className="w-5 h-5" />
-                  <Shield className="w-5 h-5" />
-                  <span className="text-sm font-semibold">Pagamento seguro via Mercado Pago + garantia de 7 dias.</span>
+            <Card className="p-6 mt-6 bg-primary/5 border-2 border-primary/30">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div className="space-y-2">
+                  <div className="inline-flex items-center gap-2 text-xs uppercase tracking-wide text-primary font-semibold bg-primary/10 border border-primary/30 px-3 py-1 rounded-full">
+                    <Sparkles className="w-4 h-4" />
+                    Se isso faz sentido, destrave o resto
+                  </div>
+                  <p className="text-xl font-bold">Plano completo por R$25</p>
+                  <p className="text-sm text-muted-foreground max-w-2xl">
+                    Veja faixa salarial, probabilidade de edital, cronograma de estudos 30/60/90 e checklist pronto. Garantia de 7 dias.
+                  </p>
+                  <div className="flex flex-wrap gap-2 text-xs text-foreground">
+                    <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Pagamento seguro Mercado Pago</Badge>
+                    <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Relatorio imediato</Badge>
+                    <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">+ Prova social 4.8/5</Badge>
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Usamos seus dados apenas para gerar e entregar o relatorio. Pode solicitar remocao a qualquer momento.
-                </p>
+                <div className="w-full lg:w-auto space-y-2">
+                  <MercadoPagoButton
+                    userName={userName}
+                    userEmail={userEmail}
+                    quizResponseId={quizResponseId}
+                    amount={25}
+                    location="hero_upgrade"
+                  />
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Lock className="w-4 h-4 text-primary" />
+                    <Shield className="w-4 h-4 text-primary" />
+                    <span>Garantia de 7 dias. Sem perguntas.</span>
+                  </div>
+                </div>
               </div>
             </Card>
           </div>
@@ -917,6 +946,7 @@ export const Results = ({
   );
 };
 // mobile-conversion-note: sticky purchase CTA and timer present; safe-area padding handled in Landing.
+
 
 
 
