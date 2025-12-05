@@ -93,9 +93,10 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "PUSHINPAY_BASE_URL invalida", details: error?.message });
   }
 
+  const value = numericAmount.toFixed(2);
+
   const payload = {
-    amount: numericAmount.toFixed(2),
-    currency: "BRL",
+    value, // campo exigido pelo endpoint /api/pix/cashIn
     description: "Relatorio vocacional",
     reference_id: quizResponseId || `quiz-${Date.now()}`,
     customer: {
