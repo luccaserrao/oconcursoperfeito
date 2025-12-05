@@ -1,29 +1,39 @@
-import { supabase } from "./supabaseClient";
+const { supabase } = require("./supabaseclient");
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Método não permitido" });
-  }
+module.exports = async (req, res) => {
+  try {
+    if (req.method !== "POST") {
+      res.status(405).json({ error: "Método não permitido" });
+      return;
+    }
 
-  const { user_name, user_email, riasec_json, answers_json } = req.body;
+    const { user_name, user_email, riasec_json, answers_json } = req.body;
 
-  const { data, error } = await supabase
-    .from("quiz_responses")
-    .insert([
-      {
+    if (!user_name || !user_email) {
+      res.status(400).json({ error: "Nome e email obrigatórios." });
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("quiz_responses")
+      .insert({
         user_name,
         user_email,
         riasec_json,
         answers_json,
-      },
-    ])
-    .select()
-    .single();
+      })
+      .select()
+      .single();
 
-  if (error) {
-    console.error("Erro ao salvar quiz:", error);
-    return res.status(500).json({ error: "Erro ao salvar quiz" });
+    if (error) {
+      console.error("Supabase insert error:", error);
+      res.status(500).json({ error: "Erro ao salvar no Supabase." });
+      return;
+    }
+
+    res.status(200).json({ success: true, id: data.id });
+  } catch (err) {
+    console.error("Server error:", err);
+    res.status(500).json({ error: "Erro interno do servidor." });
   }
-
-  return res.status(200).json({ quiz_response: data });
-}
+};
