@@ -168,6 +168,11 @@ export const Results = ({
               <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                 Este é um recorte do seu potencial. Abaixo veja como transformar isso em um plano real de ação e estudo.
               </p>
+              {riasecData.descricao_personalizada && (
+                <p className="text-sm md:text-base text-foreground max-w-3xl mx-auto leading-relaxed">
+                  {riasecData.descricao_personalizada}
+                </p>
+              )}
             </div>
 
             <Card className="p-6 bg-card border-2 border-primary/20 mb-8">

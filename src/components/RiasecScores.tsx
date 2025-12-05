@@ -7,12 +7,12 @@ interface RiasecScoresProps {
 }
 
 const riasecDescriptions: Record<string, string> = {
-  Realista: "Práticas, objetivas, trabalho manual/técnico",
-  Investigativo: "Analíticas, curiosas, resolução de problemas",
-  Artístico: "Criativas, expressivas, arte e design",
-  Social: "Empáticas, comunicativas, ajudar pessoas",
-  Empreendedor: "Persuasivas, líderes, negociação",
-  Convencional: "Organizadas, detalhistas, procedimentos",
+  Realista: "Execução prática, foco em resultados tangíveis e ambientes concretos.",
+  Investigativo: "Análise profunda, curiosidade e busca por causas e dados.",
+  Artístico: "Criatividade aplicada, expressão original e pensamento divergente.",
+  Social: "Conexão com pessoas, facilitação, ensino e apoio.",
+  Empreendedor: "Influência, liderança estratégica e tomada de decisão.",
+  Convencional: "Organização, consistência e atenção a processos claros.",
 };
 
 export const RiasecScores = ({ scores }: RiasecScoresProps) => {
@@ -24,17 +24,17 @@ export const RiasecScores = ({ scores }: RiasecScoresProps) => {
 
   return (
     <Card className="p-6 bg-card border border-border">
-      <h4 className="font-semibold mb-4">🔎 Seu Perfil RIASEC Completo</h4>
+      <h4 className="font-semibold mb-4">Seu Perfil RIASEC (30 perguntas iniciais)</h4>
       <p className="text-sm text-muted-foreground mb-6">
         Baseado nas suas respostas, aqui está a distribuição do seu perfil vocacional:
       </p>
-      
+
       <div className="space-y-4">
         {sortedScores.map(({ type, score }, index) => (
           <div key={type}>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <span className={`font-semibold ${index < 2 ? 'text-primary' : 'text-muted-foreground'}`}>
+                <span className={`font-semibold ${index < 2 ? "text-primary" : "text-muted-foreground"}`}>
                   {type}
                 </span>
                 {index < 2 && (
