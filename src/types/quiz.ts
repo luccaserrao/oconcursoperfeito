@@ -3,9 +3,11 @@ export type RiasecType = "Realista" | "Investigativo" | "Artístico" | "Social" 
 export interface QuizQuestion {
   id: string;
   question: string;
-  options: string[];
-  type?: "likert" | "multiple-choice";
+  options?: string[];
+  type?: "likert" | "multiple-choice" | "text";
   riasecType?: RiasecType;
+  placeholder?: string;
+  helperText?: string;
 }
 
 export interface QuizAnswer {

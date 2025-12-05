@@ -83,6 +83,10 @@ export const Quiz = ({ onComplete }: QuizProps) => {
     trackEvent("quiz_option_selected", { questionId: id, answer });
   };
 
+  const handleTextChange = (id: string, value: string) => {
+    setAnswers((prev) => ({ ...prev, [id]: value }));
+  };
+
   const handleNext = () => {
     if (!pageComplete) {
       const firstUnanswered = visibleQuestions.find((q) => !answers[q.id]);
@@ -169,25 +173,41 @@ export const Quiz = ({ onComplete }: QuizProps) => {
                     <p className="text-base sm:text-lg font-semibold leading-snug">
                       {q.question}
                     </p>
-                    <div className="grid gap-2">
-                      {(q.options || []).map((opt, i) => {
-                        const selected = answers[q.id] === opt;
-                        return (
-                          <button
-                            key={i}
-                            type="button"
-                            onClick={() => handleSelect(q.id, opt)}
-                            className={`text-left w-full rounded-xl border px-4 py-3 sm:py-3.5 text-sm sm:text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 ${
-                              selected
-                                ? "border-primary bg-primary/10 text-primary"
-                                : "border-border bg-background hover:bg-muted/70"
-                            }`}
-                          >
-                            {opt}
-                          </button>
-                        );
-                      })}
-                    </div>
+                    {q.type === "text" ? (
+                      <div className="space-y-1">
+                        <textarea
+                          value={answers[q.id] || ""}
+                          onChange={(e) => handleTextChange(q.id, e.target.value)}
+                          onBlur={(e) => trackEvent("quiz_text_answered", { questionId: q.id, length: (e.target.value || "").length })}
+                          placeholder={q.placeholder || ""}
+                          className="w-full rounded-xl border px-4 py-3 text-sm sm:text-base bg-background focus:outline-none focus:ring-2 focus:ring-primary/40"
+                          rows={2}
+                        />
+                        {q.helperText && (
+                          <p className="text-xs text-muted-foreground">{q.helperText}</p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="grid gap-2">
+                        {(q.options || []).map((opt, i) => {
+                          const selected = answers[q.id] === opt;
+                          return (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => handleSelect(q.id, opt)}
+                              className={`text-left w-full rounded-xl border px-4 py-3 sm:py-3.5 text-sm sm:text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 ${
+                                selected
+                                  ? "border-primary bg-primary/10 text-primary"
+                                  : "border-border bg-background hover:bg-muted/70"
+                              }`}
+                            >
+                              {opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
