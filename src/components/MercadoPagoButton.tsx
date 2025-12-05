@@ -30,9 +30,7 @@ export const MercadoPagoButton = ({
   const [copied, setCopied] = useState(false);
 
   const handleClick = async () => {
-    if (isLoading) {
-      return;
-    }
+    if (isLoading) return;
 
     try {
       setIsLoading(true);
@@ -43,7 +41,7 @@ export const MercadoPagoButton = ({
 
       toast({
         title: "Gerando PIX...",
-        description: "Estamos criando seu QR Code",
+        description: "Estamos criando seu QR Code e código copia e cola.",
       });
 
       const body: Record<string, string | number | undefined> = {
@@ -55,9 +53,7 @@ export const MercadoPagoButton = ({
 
       const resp = await fetch("/api/createPix", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
 
@@ -75,16 +71,14 @@ export const MercadoPagoButton = ({
 
       toast({
         title: "PIX gerado!",
-        description: "Use o QR Code ou copia-e-cola abaixo",
+        description: "Use o QR Code ou o código copia e cola abaixo.",
       });
     } catch (error) {
       console.error("Payment error:", error);
       const detail =
         (error instanceof Error && error.message) ||
         (typeof error === "string" && error) ||
-        (typeof error === "object" && error && "message" in error
-          ? String((error as { message?: unknown }).message)
-          : null) ||
+        (typeof error === "object" && error && "message" in error ? String((error as { message?: unknown }).message) : null) ||
         "Não foi possível processar. Tente novamente.";
 
       toast({
@@ -125,7 +119,7 @@ export const MercadoPagoButton = ({
         onClick={handleClick}
         disabled={isLoading}
         size="lg"
-        aria-label={`Pagar R$ ${amount} com segurança via PIX`}
+        aria-label={`Pagar R$ ${amount} com seguranca via PIX`}
         className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white text-base md:text-lg py-5 md:py-6 disabled:opacity-50 disabled:cursor-not-allowed transition-all rounded-full shadow-[var(--shadow-elevated)]"
       >
         {isLoading ? (
@@ -142,38 +136,40 @@ export const MercadoPagoButton = ({
       </Button>
 
       {pixData && (
-        <div className="w-full rounded-lg border bg-card p-4 shadow-sm">
-          <p className="font-semibold mb-3">Pague escaneando ou copiando o código:</p>
+        <div className="w-full rounded-lg border bg-card p-4 shadow-sm space-y-3">
+          <p className="font-semibold">Pague escaneando ou copiando o código:</p>
+
           {qrCodeSrc && (
-            <div className="flex justify-center mb-3">
-              <img
-                src={qrCodeSrc}
-                alt="QR Code PIX"
-                className="w-48 h-48 rounded-md border"
-              />
+            <div className="flex justify-center">
+              <img src={qrCodeSrc} alt="QR Code PIX" className="w-48 h-48 rounded-md border" />
             </div>
           )}
-          {pixData.copyPaste && (
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Copia e cola PIX</p>
-              <div className="flex flex-col gap-2">
-                <div className="rounded-md bg-muted p-3 text-sm break-all">
-                  {pixData.copyPaste}
-                </div>
-                <Button variant="secondary" size="sm" onClick={handleCopy} className="self-start">
-                  {copied ? (
-                    <span className="flex items-center gap-2 text-emerald-700">
-                      <Check className="h-4 w-4" /> Copiado!
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <Copy className="h-4 w-4" /> Copiar código
-                    </span>
-                  )}
-                </Button>
+
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">Copia e cola PIX (ideal no celular)</p>
+            <div className="flex flex-col gap-2">
+              <div className="rounded-md bg-muted p-3 text-sm break-all min-h-[64px] flex items-center">
+                {pixData.copyPaste || "Código ainda não carregou. Aguarde 1 segundo ou toque novamente em copiar."}
               </div>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleCopy}
+                className="self-start"
+                disabled={!pixData.copyPaste}
+              >
+                {copied ? (
+                  <span className="flex items-center gap-2 text-emerald-700">
+                    <Check className="h-4 w-4" /> Copiado!
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <Copy className="h-4 w-4" /> Copiar código
+                  </span>
+                )}
+              </Button>
             </div>
-          )}
+          </div>
         </div>
       )}
     </div>
