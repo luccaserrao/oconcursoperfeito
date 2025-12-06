@@ -1,16 +1,33 @@
-const { supabase } = require("./supabaseclient");
+import { supabase } from "./supabaseClient.js";
 
-module.exports = async (req, res) => {
-  try {
-    if (req.method !== "POST") {
-      res.status(405).json({ error: "Método não permitido" });
-      return;
+const parseBody = (payload) => {
+  if (!payload) return {};
+  if (typeof payload === "string") {
+    try {
+      return JSON.parse(payload);
+    } catch {
+      return {};
     }
+  }
+  return payload;
+};
 
-    const { user_name, user_email, riasec_json, answers_json } = req.body;
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Metodo nao permitido" });
+    return;
+  }
+
+  if (!supabase) {
+    res.status(500).json({ error: "Supabase credentials missing in environment." });
+    return;
+  }
+
+  try {
+    const { user_name, user_email, riasec_json, answers_json } = parseBody(req.body);
 
     if (!user_name || !user_email) {
-      res.status(400).json({ error: "Nome e email obrigatórios." });
+      res.status(400).json({ error: "Nome e email obrigatorios." });
       return;
     }
 
@@ -36,4 +53,4 @@ module.exports = async (req, res) => {
     console.error("Server error:", err);
     res.status(500).json({ error: "Erro interno do servidor." });
   }
-};
+}
