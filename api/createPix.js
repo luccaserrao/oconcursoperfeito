@@ -1,21 +1,23 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Método não permitido" });
+    return res.status(405).json({ error: "Metodo nao permitido" });
   }
 
   const token = process.env.PUSHINPAY_TOKEN;
-
-  // ENDPOINT OFICIAL QUE FUNCIONA PARA 100% DOS USUÁRIOS HOJE
   const url = "https://api.pushinpay.com.br/api/pix/cashIn";
 
   if (!token) {
-    return res.status(500).json({ error: "PUSHINPAY_TOKEN não configurado" });
+    return res.status(500).json({ error: "PUSHINPAY_TOKEN nao configurado" });
   }
 
   try {
+    const reqBody = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+    const amountNumber = Number(reqBody.amount || 25); // valor em reais
+    const valueInCents = Number.isFinite(amountNumber) && amountNumber > 0 ? Math.round(amountNumber * 100) : 2500;
+
     const body = {
-      value: 2500, // 25,00 em centavos
-      webhook_url: "https://futuroperfeito.com.br/api/pixWebhook"
+      value: valueInCents,
+      webhook_url: "https://futuroperfeito.com.br/api/pixWebhook",
     };
 
     const response = await fetch(url, {
@@ -37,8 +39,35 @@ export default async function handler(req, res) {
       });
     }
 
-    return res.status(200).json(data);
+    const qrCodeImage =
+      data?.qrCodeImage ||
+      data?.qr_code_base64 ||
+      data?.qrCodeBase64 ||
+      data?.qrCode ||
+      data?.qrcode ||
+      data?.qrcode_base64;
 
+    const copyPaste =
+      data?.copyPaste ||
+      data?.copy_and_paste ||
+      data?.pixCopiaECola ||
+      data?.copia_e_cola ||
+      data?.qrCodeText ||
+      data?.qr_code_text ||
+      data?.emv;
+
+    if (!copyPaste) {
+      return res.status(502).json({
+        error: "Resposta da PushinPay nao trouxe codigo PIX",
+        details: data,
+      });
+    }
+
+    return res.status(200).json({
+      qrCodeImage,
+      copyPaste,
+      raw: data,
+    });
   } catch (err) {
     console.error("ERRO AO CONECTAR:", err);
     return res.status(500).json({
