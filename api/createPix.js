@@ -39,13 +39,16 @@ export default async function handler(req, res) {
       });
     }
 
+    const transactionData = data?.transaction_data || data?.point_of_interaction?.transaction_data;
+
     const qrCodeImage =
       data?.qrCodeImage ||
       data?.qr_code_base64 ||
       data?.qrCodeBase64 ||
       data?.qrCode ||
       data?.qrcode ||
-      data?.qrcode_base64;
+      data?.qrcode_base64 ||
+      transactionData?.qr_code_base64;
 
     const copyPaste =
       data?.copyPaste ||
@@ -54,7 +57,10 @@ export default async function handler(req, res) {
       data?.copia_e_cola ||
       data?.qrCodeText ||
       data?.qr_code_text ||
-      data?.emv;
+      data?.emv ||
+      data?.qr_code ||
+      transactionData?.qr_code ||
+      transactionData?.qr_code_text;
 
     if (!copyPaste) {
       return res.status(502).json({
