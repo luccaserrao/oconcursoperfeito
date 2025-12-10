@@ -50,12 +50,10 @@ serve(async (req) => {
     const limitParam = Number(url.searchParams.get("limit") || "200");
     const limit = Number.isFinite(limitParam) && limitParam > 0 && limitParam <= 500 ? limitParam : 200;
 
-    // Seleciona apenas colunas confirmadas no schema legado (evita erro de coluna inexistente)
+    // Seleciona apenas as colunas reais existentes
     const { data, error } = await supabase
       .from("quiz_responses")
-      .select(
-        "id, created_at, user_name, user_email, user_whatsapp, answers_json, riasec_json, clicked_upsell, upsell_clicked_at"
-      )
+      .select("id, created_at, user_name, user_email, riasec_json, answers_json")
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -79,22 +77,18 @@ serve(async (req) => {
     }
 
     const responses = (data || []).map((row) => {
-      const name = (row as any).user_name || "";
-      const email = (row as any).user_email || "";
-      const whatsapp = (row as any).user_whatsapp ?? null;
+      const riasec = (row as any).riasec_json || null;
       const answers = (row as any).answers_json || [];
-      const ai = (row as any).riasec_json || null;
-      const riasec = ai?.riasec || null;
       return {
         id: row.id,
-        name,
-        email,
-        whatsapp,
+        name: (row as any).user_name || "",
+        email: (row as any).user_email || "",
+        whatsapp: null,
         created_at: row.created_at,
         answers,
-        ai_recommendation: ai,
-        clicked_upsell: row.clicked_upsell,
-        upsell_clicked_at: row.upsell_clicked_at,
+        ai_recommendation: riasec,
+        clicked_upsell: null,
+        upsell_clicked_at: null,
         riasec,
         riasec_top1: riasec?.top1 || null,
         riasec_top2: riasec?.top2 || null,
