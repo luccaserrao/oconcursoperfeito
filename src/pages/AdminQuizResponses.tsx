@@ -27,6 +27,7 @@ type QuizResponse = {
   whatsapp?: string | null;
   created_at: string;
   answers?: QuizAnswer[];
+  raw_answers?: unknown;
   ai_recommendation?: Record<string, unknown> | null;
   clicked_upsell?: boolean | null;
   upsell_clicked_at?: string | null;
@@ -100,12 +101,19 @@ const AdminQuizResponses = () => {
 
       return raw.map((item) => {
         const answersRaw = item.answers;
-        const normalizedAnswers: QuizAnswer[] = Array.isArray(answersRaw)
-          ? answersRaw.map((a: any) => ({
-              question: a?.question ?? "",
-              answer: a?.answer ?? "",
-            }))
-          : [];
+        let normalizedAnswers: QuizAnswer[] = [];
+
+        if (Array.isArray(answersRaw)) {
+          normalizedAnswers = answersRaw.map((a: any) => ({
+            question: a?.question ?? "",
+            answer: a?.answer ?? "",
+          }));
+        } else if (answersRaw && typeof answersRaw === "object") {
+          normalizedAnswers = Object.entries(answersRaw).map(([key, value]) => ({
+            question: String(key),
+            answer: value != null ? String(value) : "",
+          }));
+        }
 
         return {
           id: item.id,
@@ -114,6 +122,7 @@ const AdminQuizResponses = () => {
           whatsapp: item.whatsapp ?? null,
           created_at: item.created_at,
           answers: normalizedAnswers,
+          raw_answers: answersRaw,
           ai_recommendation: item.ai_recommendation || null,
           clicked_upsell: item.clicked_upsell ?? null,
           upsell_clicked_at: item.upsell_clicked_at ?? null,
@@ -192,7 +201,7 @@ const AdminQuizResponses = () => {
       name: item.name,
       email: item.email,
       created_at: item.created_at,
-      answers: item.answers || [],
+      answers: item.answers && item.answers.length ? item.answers : item.raw_answers || [],
       riasec: item.riasec || item.ai_recommendation || null,
     };
     navigator.clipboard?.writeText(JSON.stringify(payload, null, 2)).catch(() => {});
