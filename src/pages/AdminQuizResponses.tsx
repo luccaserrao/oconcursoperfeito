@@ -32,6 +32,7 @@ type QuizResponse = {
   upsell_clicked_at?: string | null;
   riasec_top1?: string | null;
   riasec_top2?: string | null;
+  riasec?: Record<string, unknown> | null;
 };
 
 const formatDate = (value: string) => {
@@ -43,6 +44,9 @@ const formatDate = (value: string) => {
 const AdminQuizResponses = () => {
   const [token, setToken] = useState("");
   const [inputToken, setInputToken] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [onlyWithAnswers, setOnlyWithAnswers] = useState(false);
+  const [onlyRecent, setOnlyRecent] = useState(false); // últimas 24h
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -115,6 +119,7 @@ const AdminQuizResponses = () => {
           upsell_clicked_at: item.upsell_clicked_at ?? null,
           riasec_top1: item.riasec_top1 || item.riasec?.top1 || null,
           riasec_top2: item.riasec_top2 || item.riasec?.top2 || null,
+          riasec: item.riasec || null,
         };
       });
     },
@@ -153,6 +158,91 @@ const AdminQuizResponses = () => {
 
     return { total, upsells, topProfiles };
   }, [data]);
+
+  const filteredData = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    const now = new Date().getTime();
+    const oneDayMs = 24 * 60 * 60 * 1000;
+
+    return (data || []).filter((item) => {
+      const matchesTerm =
+        !term ||
+        item.name.toLowerCase().includes(term) ||
+        item.email.toLowerCase().includes(term) ||
+        item.id.toLowerCase().includes(term);
+
+      const hasAnswers = (item.answers || []).length > 0;
+      const matchesAnswers = !onlyWithAnswers || hasAnswers;
+
+      const createdAtMs = new Date(item.created_at).getTime();
+      const matchesRecent = !onlyRecent || (now - createdAtMs <= oneDayMs);
+
+      return matchesTerm && matchesAnswers && matchesRecent;
+    });
+  }, [data, searchTerm, onlyWithAnswers, onlyRecent]);
+
+  const handleCopyEmail = (email: string) => {
+    if (!email) return;
+    navigator.clipboard?.writeText(email).catch(() => {});
+  };
+
+  const handleCopyAnswers = (item: QuizResponse) => {
+    const payload = {
+      id: item.id,
+      name: item.name,
+      email: item.email,
+      created_at: item.created_at,
+      answers: item.answers || [],
+      riasec: item.riasec || item.ai_recommendation || null,
+    };
+    navigator.clipboard?.writeText(JSON.stringify(payload, null, 2)).catch(() => {});
+  };
+
+  const handleExportCsv = () => {
+    const rows = filteredData.map((item) => ({
+      id: item.id,
+      name: item.name,
+      email: item.email,
+      created_at: item.created_at,
+      answers_count: item.answers?.length || 0,
+      riasec_top1: item.riasec_top1 || "",
+      riasec_top2: item.riasec_top2 || "",
+      clicked_upsell: item.clicked_upsell ? "yes" : "no",
+    }));
+
+    const header = Object.keys(rows[0] || {
+      id: "",
+      name: "",
+      email: "",
+      created_at: "",
+      answers_count: "",
+      riasec_top1: "",
+      riasec_top2: "",
+      clicked_upsell: "",
+    });
+
+    const csv = [
+      header.join(","),
+      ...rows.map((row) =>
+        header
+          .map((key) => {
+            const value = (row as any)[key] ?? "";
+            const needsQuote = typeof value === "string" && /[",\n]/.test(value);
+            const safe = String(value).replace(/"/g, '""');
+            return needsQuote ? `"${safe}"` : safe;
+          })
+          .join(",")
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "quiz_responses.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   const renderTokenGate = () => (
     <Card className="max-w-xl mx-auto">
@@ -220,8 +310,46 @@ const AdminQuizResponses = () => {
               {isFetching ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCcw className="w-4 h-4 mr-2" />}
               Atualizar
             </Button>
+            <Button variant="outline" onClick={handleExportCsv} disabled={!filteredData.length}>
+              Exportar CSV
+            </Button>
           </div>
         </div>
+
+        <Card className="p-4 space-y-3">
+          <div className="flex flex-col md:flex-row md:items-center gap-3">
+            <div className="flex-1 space-y-2">
+              <Label htmlFor="search">Buscar</Label>
+              <Input
+                id="search"
+                placeholder="Filtre por nome, email ou ID"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col md:w-56 space-y-2">
+              <Label>Filtros</Label>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  variant={onlyWithAnswers ? "default" : "outline"}
+                  onClick={() => setOnlyWithAnswers((v) => !v)}
+                  className="text-sm"
+                >
+                  {onlyWithAnswers ? "Com respostas" : "Todas"}
+                </Button>
+                <Button
+                  type="button"
+                  variant={onlyRecent ? "default" : "outline"}
+                  onClick={() => setOnlyRecent((v) => !v)}
+                  className="text-sm"
+                >
+                  Últimas 24h
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Card>
 
         {unauthorized && (
           <Card className="border-destructive/40 bg-destructive/5">
@@ -292,9 +420,9 @@ const AdminQuizResponses = () => {
           </Card>
         )}
 
-        {data?.length ? (
+        {filteredData.length ? (
           <div className="space-y-4">
-            {data.map((item) => (
+            {filteredData.map((item) => (
               <Card key={item.id} className="overflow-hidden">
                 <div className="p-6 space-y-3">
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
@@ -303,6 +431,11 @@ const AdminQuizResponses = () => {
                         <h3 className="text-lg font-semibold">{item.name || "Sem nome"}</h3>
                         <Badge variant="secondary">{item.email}</Badge>
                         {item.whatsapp && <Badge variant="outline">WhatsApp: {item.whatsapp}</Badge>}
+                        {(item.riasec_top1 || item.riasec_top2) && (
+                          <Badge variant="outline">
+                            {item.riasec_top1 || "?"} / {item.riasec_top2 || "?"}
+                          </Badge>
+                        )}
                       </div>
                       <p className="text-sm text-muted-foreground">
                         Recebido em {formatDate(item.created_at)}
@@ -316,6 +449,12 @@ const AdminQuizResponses = () => {
                             Clicou no upsell
                           </Badge>
                         )}
+                        <Button size="sm" variant="outline" onClick={() => handleCopyEmail(item.email)}>
+                          Copiar email
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => handleCopyAnswers(item)}>
+                          Copiar dados
+                        </Button>
                       </div>
                     </div>
                     <div className="text-sm text-muted-foreground text-right">
