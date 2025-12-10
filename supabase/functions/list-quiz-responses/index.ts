@@ -52,7 +52,7 @@ serve(async (req) => {
 
     const { data, error } = await supabase
       .from("quiz_responses")
-      .select("id, name, email, whatsapp, created_at, answers, ai_recommendation, clicked_upsell, upsell_clicked_at")
+      .select("*")
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -65,16 +65,21 @@ serve(async (req) => {
     }
 
     const responses = (data || []).map((row) => {
-      const ai = row.ai_recommendation as any;
+      // Suporte a esquemas antigos (user_name/user_email/answers_json) e novos (name/email/answers)
+      const name = (row as any).name || (row as any).user_name || "";
+      const email = (row as any).email || (row as any).user_email || "";
+      const whatsapp = (row as any).whatsapp ?? (row as any).user_whatsapp ?? null;
+      const answers = (row as any).answers || (row as any).answers_json || [];
+      const ai = (row as any).ai_recommendation || (row as any).riasec_json || null;
       const riasec = ai?.riasec || null;
       return {
         id: row.id,
-        name: row.name,
-        email: row.email,
-        whatsapp: row.whatsapp,
+        name,
+        email,
+        whatsapp,
         created_at: row.created_at,
-        answers: row.answers,
-        ai_recommendation: row.ai_recommendation,
+        answers,
+        ai_recommendation: ai,
         clicked_upsell: row.clicked_upsell,
         upsell_clicked_at: row.upsell_clicked_at,
         riasec,
