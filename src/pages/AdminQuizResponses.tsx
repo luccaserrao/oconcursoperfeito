@@ -65,15 +65,27 @@ const AdminQuizResponses = () => {
     queryFn: async () => {
       if (!token) return [];
 
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/list-quiz-responses?limit=200`;
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (!supabaseUrl) {
+        throw new Error("VITE_SUPABASE_URL nao configurada");
+      }
+
+      const url = `${supabaseUrl}/functions/v1/list-quiz-responses?limit=200`;
       const response = await fetch(url, {
         headers: {
           "x-admin-token": token,
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
+        if (response.status === 401) {
+          throw new Error("401: token invalido");
+        }
+        if (response.status >= 500) {
+          throw new Error(body?.error ? `500: ${body.error}` : "500: erro interno da funcao");
+        }
         const message = body?.error || "Erro ao buscar respostas";
         throw new Error(message);
       }
@@ -157,8 +169,12 @@ const AdminQuizResponses = () => {
     );
   }
 
-  const unauthorized = error?.message?.toLowerCase().includes("não autorizado") ||
+  const unauthorized =
+    error?.message?.startsWith("401") ||
+    error?.message?.toLowerCase().includes("nao autorizado") ||
+    error?.message?.toLowerCase().includes("não autorizado") ||
     error?.message?.toLowerCase().includes("token");
+  const serverError = error?.message?.startsWith("500");
 
   return (
     <div className="min-h-screen bg-muted/20 py-10 px-4">
@@ -190,6 +206,20 @@ const AdminQuizResponses = () => {
                 <p className="font-semibold">Token inválido</p>
                 <p className="text-sm text-muted-foreground">
                   Confirme o token ADMIN_DASHBOARD_TOKEN configurado na API e cole novamente.
+                </p>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {serverError && (
+          <Card className="border-orange-300/60 bg-orange-100/30">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-orange-500 mt-0.5" />
+              <div>
+                <p className="font-semibold">Erro interno</p>
+                <p className="text-sm text-muted-foreground">
+                  A Edge Function retornou 500. Tente novamente e confira os logs no Supabase se persistir.
                 </p>
               </div>
             </div>
