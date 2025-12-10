@@ -33,8 +33,17 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!supabaseUrl || !supabaseServiceRoleKey) {
+      console.error("Missing Supabase env vars", { hasUrl: !!supabaseUrl, hasKey: !!supabaseServiceRoleKey });
+      return new Response(
+        JSON.stringify({ error: "SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY ausentes" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
     const url = new URL(req.url);
@@ -48,9 +57,9 @@ serve(async (req) => {
       .limit(limit);
 
     if (error) {
-      console.error("Error fetching quiz_responses:", error);
+      console.error("Error fetching quiz_responses:", { message: error.message, details: error.details, hint: error.hint, code: error.code });
       return new Response(
-        JSON.stringify({ error: "Falha ao buscar respostas do quiz" }),
+        JSON.stringify({ error: "Falha ao buscar respostas do quiz", code: error.code, details: error.details }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
