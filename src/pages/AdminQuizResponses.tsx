@@ -92,7 +92,31 @@ const AdminQuizResponses = () => {
       }
 
       const payload = await response.json();
-      return (payload?.responses || []) as QuizResponse[];
+      const raw = (payload?.responses || []) as any[];
+
+      return raw.map((item) => {
+        const answersRaw = item.answers;
+        const normalizedAnswers: QuizAnswer[] = Array.isArray(answersRaw)
+          ? answersRaw.map((a: any) => ({
+              question: a?.question ?? "",
+              answer: a?.answer ?? "",
+            }))
+          : [];
+
+        return {
+          id: item.id,
+          name: item.name || "",
+          email: item.email || "",
+          whatsapp: item.whatsapp ?? null,
+          created_at: item.created_at,
+          answers: normalizedAnswers,
+          ai_recommendation: item.ai_recommendation || null,
+          clicked_upsell: item.clicked_upsell ?? null,
+          upsell_clicked_at: item.upsell_clicked_at ?? null,
+          riasec_top1: item.riasec_top1 || item.riasec?.top1 || null,
+          riasec_top2: item.riasec_top2 || item.riasec?.top2 || null,
+        };
+      });
     },
   });
 
