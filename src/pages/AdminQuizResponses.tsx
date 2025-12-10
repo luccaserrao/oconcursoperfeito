@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { quizQuestions } from "@/data/quizQuestions";
 import {
   Accordion,
   AccordionContent,
@@ -41,6 +42,11 @@ const formatDate = (value: string) => {
   if (Number.isNaN(date.getTime())) return value;
   return date.toLocaleString("pt-BR");
 };
+
+const questionTextMap: Record<string, string> = quizQuestions.reduce((acc, q) => {
+  acc[q.id] = q.question;
+  return acc;
+}, {} as Record<string, string>);
 
 const AdminQuizResponses = () => {
   const [token, setToken] = useState("");
@@ -105,12 +111,12 @@ const AdminQuizResponses = () => {
 
         if (Array.isArray(answersRaw)) {
           normalizedAnswers = answersRaw.map((a: any) => ({
-            question: a?.question ?? "",
+            question: questionTextMap[a?.question] || a?.question || "",
             answer: a?.answer ?? "",
           }));
         } else if (answersRaw && typeof answersRaw === "object") {
           normalizedAnswers = Object.entries(answersRaw).map(([key, value]) => ({
-            question: String(key),
+            question: questionTextMap[key] || String(key),
             answer: value != null ? String(value) : "",
           }));
         }
@@ -202,6 +208,7 @@ const AdminQuizResponses = () => {
       email: item.email,
       created_at: item.created_at,
       answers: item.answers && item.answers.length ? item.answers : item.raw_answers || [],
+      raw_answers: item.raw_answers || [],
       riasec: item.riasec || item.ai_recommendation || null,
     };
     navigator.clipboard?.writeText(JSON.stringify(payload, null, 2)).catch(() => {});
