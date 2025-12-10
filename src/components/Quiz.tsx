@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import { quizQuestions } from "@/data/quizQuestions";
 import { QuizAnswer, RiasecResult } from "@/types/quiz";
 import { trackEvent } from "@/lib/analytics";
@@ -29,7 +29,7 @@ export const Quiz = ({ onComplete }: QuizProps) => {
     return quizQuestions.slice(start, start + pageSize);
   }, [currentPage, pageSize]);
 
-  // Para textos livres, não bloquear avanço se o usuário não digitar (opcional),
+  // Para textos livres, nÃ£o bloquear avanÃ§o se o usuÃ¡rio nÃ£o digitar (opcional),
   // mas preferimos usar o valor se fornecido.
   const pageComplete = visibleQuestions.every((q) => {
     if (q.type === "text") return true;
@@ -40,22 +40,22 @@ export const Quiz = ({ onComplete }: QuizProps) => {
   const microBanners = [
     {
       title: "Plano completo liberado no final",
-      description: "Depois do diagnostico gratis, destrave opcionalmente o plano completo + checklist de edital por R$25.",
+      description: "Depois do diagnóstico grátis, destrave opcionalmente o plano completo + checklist de edital por R$25.",
       pill: "Bonus pago",
       cta: "Quero ver o plano completo",
       event: "quiz_microbanner_click_full_plan",
     },
     {
-      title: "Resultado gratis imediato",
-      description: "Mostramos seu diagnostico antes da oferta paga. Voce so paga se quiser o plano completo.",
-      pill: "Gratis primeiro",
+      title: "Resultado grátis imediato",
+      description: "Mostramos seu diagnóstico antes da oferta paga. você só paga se quiser o plano completo.",
+      pill: "grátis primeiro",
       cta: "Ver como funciona",
       event: "quiz_microbanner_click_free_first",
     },
     {
       title: "Roteiro personalizado",
-      description: "Seu perfil RIASEC vira um plano de estudos com priorizacao do que rende mais.",
-      pill: "Beneficio",
+      description: "Seu perfil RIASEC vira um plano de estudos com priorização do que rende mais.",
+      pill: "Benefício",
       cta: "Quero meu roteiro",
       event: "quiz_microbanner_click_route",
     },
@@ -127,7 +127,7 @@ export const Quiz = ({ onComplete }: QuizProps) => {
     onComplete(normalizedAnswers, riasecResult);
   };
 
-  const buttonLabel = isLastPage ? "Finalizar" : "Proxima";
+  const buttonLabel = isLastPage ? "Finalizar" : "próxima";
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -136,7 +136,7 @@ export const Quiz = ({ onComplete }: QuizProps) => {
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>Pagina {currentPage + 1} de {totalPages}</span>
             <span className="font-medium">
-              Respondidas {answeredCount}/{quizQuestions.length} · {progress.toFixed(0)}%
+              Respondidas {answeredCount}/{quizQuestions.length} Â· {progress.toFixed(0)}%
             </span>
           </div>
           <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
@@ -152,7 +152,7 @@ export const Quiz = ({ onComplete }: QuizProps) => {
             </div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border bg-muted/60">
               <ShieldCheck className="w-4 h-4 text-primary" />
-              Diagnostico gratis antes da oferta paga
+              diagnóstico grátis antes da oferta paga
             </div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border bg-muted/60">
               <Target className="w-4 h-4 text-primary" />
@@ -252,7 +252,7 @@ export const Quiz = ({ onComplete }: QuizProps) => {
       <div className="sticky bottom-0 z-20 bg-background/95 backdrop-blur border-t">
         <div className="max-w-2xl mx-auto px-4 py-3 space-y-2">
           <p className="text-xs text-muted-foreground text-center">
-            Complete a pagina para avancar. Seu diagnostico gratuito aparece ao final antes de qualquer oferta paga.
+            Complete a pagina para avancar. Seu diagnóstico gratuito aparece ao final antes de qualquer oferta paga.
           </p>
           <button
             className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md shadow-primary/20"
@@ -266,3 +266,4 @@ export const Quiz = ({ onComplete }: QuizProps) => {
     </div>
   );
 };
+

@@ -85,7 +85,7 @@ export const Results = ({
   const shortJustification = (recommendation.justification?.split(".")[0] || "").trim();
   const top1Score = riasecData.scores?.[riasecData.top1] ?? 90;
   const top2Score = riasecData.scores?.[riasecData.top2] ?? 78;
-  const heroCopy = riasecData.descricao_personalizada || "Se este recorte gratuito ja faz sentido, o plano completo (R$25) destrava salario, cronograma e cargos que combinam com seu estilo.";
+  const heroCopy = riasecData.descricao_personalizada || "Se este recorte gratuito já faz sentido, o plano completo (R$25) destrava salário, cronograma e cargos que combinam com seu estilo.";
 
   // Track page view
   useEffect(() => {
@@ -120,8 +120,8 @@ export const Results = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const ctaText = ctaVariant === 'A' 
-    ? "Quero meu plano completo agora (R$25)" 
+  const ctaText = ctaVariant === 'A'
+    ? "Quero meu plano completo agora (R$25)"
     : "Desbloquear relatório profissional (R$25)";
 
   const handleWhatsAppClick = () => {
@@ -165,7 +165,7 @@ export const Results = ({
           <div className="mb-14 animate-fade-in">
             <div className="text-center mb-8 space-y-3">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wide">
-                Diagnostico gratuito pronto - se isso convence gratis, imagine por R$25
+                diagnóstico gratuito pronto - se isso convence grátis, imagine por R$25
               </div>
               <h1 className="text-3xl md:text-5xl font-bold leading-tight">
                 {firstName}, seu DNA RIASEC e: {riasecData.top1} <span className="text-primary">+ {riasecData.top2}</span>
@@ -184,7 +184,7 @@ export const Results = ({
                   </div>
                   <div className="space-y-2">
                     <p className="text-xl font-bold">Seu mapa de identidade {riasecData.top1} com toque {riasecData.top2}</p>
-                    <p className="text-sm text-muted-foreground">Densidade de sinais fortes apontou que voce rende mais quando combina {riasecData.habilidade_destaque}.</p>
+                    <p className="text-sm text-muted-foreground">Densidade de sinais fortes apontou que você rende mais quando combina {riasecData.habilidade_destaque}.</p>
                   </div>
                   <div className="space-y-3">
                     {[{ label: riasecData.top1, value: top1Score, tone: "primary" }, { label: riasecData.top2, value: top2Score, tone: "accent" }].map((item) => (
@@ -218,7 +218,7 @@ export const Results = ({
               <Card className="p-6 bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-primary/20">
                 <div className="flex items-center gap-2 mb-3">
                   <Zap className="w-5 h-5 text-primary" />
-                  <h3 className="font-bold text-lg">Roteiro imediato (gratis)</h3>
+                  <h3 className="font-bold text-lg">Roteiro imediato (grátis)</h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
@@ -233,7 +233,7 @@ export const Results = ({
                     </ul>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-sm font-semibold text-foreground">Onde voce brilha</p>
+                    <p className="text-sm font-semibold text-foreground">Onde você brilha</p>
                     <ul className="space-y-2 text-sm">
                       <li className="flex items-center gap-2">
                         <Target className="w-4 h-4 text-primary flex-shrink-0" />
@@ -246,21 +246,21 @@ export const Results = ({
                     </ul>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-sm font-semibold text-foreground">Evite desperdicio</p>
+                    <p className="text-sm font-semibold text-foreground">Evite desperdício</p>
                     <ul className="space-y-2 text-sm">
                       <li className="flex items-center gap-2">
                         <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" />
-                        <span>Funcoes muito rotineiras ou repetitivas</span>
+                        <span>Funções muito rotineiras ou repetitivas</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" />
-                        <span>Ambientes que nao valorizam sua criatividade</span>
+                        <span>Ambientes que não valorizam sua criatividade</span>
                       </li>
                     </ul>
                   </div>
                 </div>
                 <div className="mt-4 text-xs text-muted-foreground">
-                  Este e o aperitivo gratuito. O upgrade entrega salario, cronograma 30/60/90 e cargos mais aderentes ao seu DNA.
+                  Este é o aperitivo gratuito. O upgrade entrega salário, cronograma 30/60/90 e cargos mais aderentes ao seu DNA.
                 </div>
               </Card>
             </div>
@@ -277,12 +277,13 @@ export const Results = ({
                     Veja faixa salarial, probabilidade de edital, cronograma de estudos 30/60/90 e checklist pronto. Garantia de 7 dias.
                   </p>
                   <div className="flex flex-wrap gap-2 text-xs text-foreground">
-                    <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Pagamento seguro Mercado Pago</Badge>
+                    <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary inline-flex items-center gap-2">
+                      <Lock className="w-3.5 h-3.5" />
+                      Pagamento seguro · Mercado Pago + criptografia
+                    </Badge>
                     <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Relatorio imediato</Badge>
                     <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">+ Prova social 4.8/5</Badge>
                   </div>
-                </div>
-                <div className="w-full lg:w-auto space-y-2">
                   <MercadoPagoButton
                     userName={userName}
                     userEmail={userEmail}
@@ -300,10 +301,10 @@ export const Results = ({
             </Card>
           </div>
 
-          {/* ============= 2️⃣ PROVA SOCIAL (DEPOIMENTOS REAIS) ============= */}
+          {/* ============= 2?? PROVA SOCIAL (DEPOIMENTOS REAIS) ============= */}
           <div className="mb-12 animate-fade-in">
             <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
-              💬 Quem já fez o upgrade, descobriu o caminho certo!
+              ?? Quem já fez o upgrade, descobriu o caminho certo!
             </h2>
             
               <div className="grid md:grid-cols-3 gap-6">
@@ -347,13 +348,13 @@ export const Results = ({
             </div>
           </div>
 
-          {/* ============= 💡 POR QUE ESTE TESTE VALE R$25 ============= */}
+          {/* ============= ?? POR QUE ESTE TESTE VALE R$25 ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-amber-500/10 border-2 border-amber-500/30">
               <div className="flex items-center gap-3 mb-6">
                 <Lightbulb className="w-8 h-8 text-amber-500" />
                 <h2 className="text-2xl md:text-3xl font-bold">
-                  💡 Por que este teste vale R$25?
+                  ?? Por que este teste vale R$25?
                 </h2>
               </div>
               
@@ -362,7 +363,7 @@ export const Results = ({
                   A maioria dos testes gratuitos mostra apenas seu tipo de personalidade. Este aqui vai além: analisa seu perfil RIASEC e combina com carreiras e concursos que realmente se encaixam no seu estilo de trabalho.
                 </p>
                 <p>
-                  Você não paga apenas por um resultado — recebe um plano de ação personalizado, um cronograma de estudos e cargos recomendados com base em dados reais do mercado público brasileiro.
+                  Você não paga apenas por um resultado — recebe um plano de ação personalizado, um cronograma de estudos e cargos recomendados com base em dados reais do mercado píblico brasileiro.
                 </p>
                 <p className="font-semibold text-foreground">
                   Por R$25, você economiza tempo, evita estudar para o concurso errado e ganha clareza sobre onde concentrar seus esforços.
@@ -371,26 +372,26 @@ export const Results = ({
             </Card>
           </div>
 
-          {/* ============= ⚖️ O QUE FAZ DIFERENTE DOS OUTROS ============= */}
+          {/* ============= ?? O QUE FAZ DIFERENTE DOS OUTROS ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-blue-500/10 border-2 border-blue-500/30">
               <div className="flex items-center gap-3 mb-6">
                 <Scale className="w-8 h-8 text-blue-500" />
                 <h2 className="text-2xl md:text-3xl font-bold">
-                  ⚖️ O que faz diferente dos outros
+                  ?? O que faz diferente dos outros
                 </h2>
               </div>
               
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  Nosso diferencial é que cruzamos seus dados RIASEC com suas preferências de trabalho em concursos públicos. Isso mostra quais carreiras e cargos públicos combinam com você e inclui um plano de estudos prático para alcançar seus objetivos.
+                  Nosso diferencial é que cruzamos seus dados RIASEC com suas preferências de trabalho em concursos píblicos. Isso mostra quais carreiras e cargos píblicos combinam com você e inclui um plano de estudos prático para alcançar seus objetivos.
                 </p>
                 <div className="bg-primary/10 rounded-lg p-6 border-l-4 border-primary">
                   <p className="font-semibold text-foreground mb-2">
-                    📊 Contexto do Mercado Brasileiro
+                    ?? Contexto do Mercado Brasileiro
                   </p>
                   <p>
-                    No Brasil existem mais de <span className="font-bold text-foreground">10 mil concursos públicos</span> realizados todos os anos, em níveis municipal, estadual e federal.
+                    No Brasil existem mais de <span className="font-bold text-foreground">10 mil concursos píblicos</span> realizados todos os anos, em níveis municipal, estadual e federal.
                   </p>
                 </div>
                 <p>
@@ -400,13 +401,13 @@ export const Results = ({
             </Card>
           </div>
 
-          {/* ============= 🧬 SOBRE O MÉTODO RIASEC ============= */}
+          {/* ============= ?? SOBRE O MÉTODO RIASEC ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-purple-500/10 via-indigo-500/5 to-purple-500/10 border-2 border-purple-500/30">
               <div className="flex items-center gap-3 mb-6">
                 <Dna className="w-8 h-8 text-purple-500" />
                 <h2 className="text-2xl md:text-3xl font-bold">
-                  🧬 Sobre o método
+                  ?? Sobre o método
                 </h2>
               </div>
               
@@ -425,28 +426,28 @@ export const Results = ({
                   O RIASEC identifica seus principais interesses profissionais e mostra onde você tende a ter melhor desempenho.
                 </p>
                 <p className="font-semibold text-foreground">
-                  Nosso sistema aprimora esse método cruzando seus resultados com carreiras públicas brasileiras e com o perfil dos cargos que mais aparecem nos concursos com os melhores salários e estabilidade de emprego.
+                  Nosso sistema aprimora esse método cruzando seus resultados com carreiras píblicas brasileiras e com o perfil dos cargos que mais aparecem nos concursos com os melhores salários e estabilidade de emprego.
                 </p>
               </div>
             </Card>
           </div>
 
-          {/* ============= 🌟 DIFERENCIAIS EXCLUSIVOS ============= */}
+          {/* ============= ?? DIFERENCIAIS EXCLUSIVOS ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-primary/10 to-accent/10 border-2 border-primary/30">
               <div className="text-center mb-8">
                 <h2 className="text-2xl md:text-3xl font-bold mb-2">
-                  🌟 Diferenciais Exclusivos
+                  ?? Diferenciais Exclusivos
                 </h2>
                 <p className="text-muted-foreground">
-                  Recursos únicos que transformam seu resultado em ação
+                  Recursos ínicos que transformam seu resultado em ação
                 </p>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   { icon: Award, title: "Base científica validada", desc: "Método RIASEC internacional" },
-                  { icon: Target, title: "Personalizado para BR", desc: "Foco em concursos públicos" },
+                  { icon: Target, title: "Personalizado para BR", desc: "Foco em concursos píblicos" },
                   { icon: Brain, title: "Cruzamento inteligente", desc: "Perfil + oportunidades reais" },
                   { icon: DollarSign, title: "Faixas salariais", desc: "Médias atualizadas do mercado" },
                   { icon: Calendar, title: "Plano 30/60/90 dias", desc: "Cronograma estruturado" },
@@ -468,13 +469,13 @@ export const Results = ({
             </Card>
           </div>
 
-          {/* ============= 💵 INVESTIMENTO E BENEFÍCIO ============= */}
+          {/* ============= ?? INVESTIMENTO E BENEFÍCIO ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-yellow-500/10 via-amber-500/5 to-yellow-500/10 border-2 border-yellow-500/30">
               <div className="flex items-center gap-3 mb-6">
                 <Coins className="w-8 h-8 text-yellow-600" />
                 <h2 className="text-2xl md:text-3xl font-bold">
-                  💵 Investimento e Benefício
+                  ?? Investimento e Benefício
                 </h2>
               </div>
               
@@ -496,7 +497,7 @@ export const Results = ({
                   </div>
                   <div className="text-center p-3 bg-muted/30 rounded-lg opacity-60">
                     <p className="text-2xl font-bold">R$30</p>
-                    <p className="text-xs">Hambúrguer</p>
+                    <p className="text-xs">Hambírguer</p>
                   </div>
                   <div className="text-center p-3 bg-muted/30 rounded-lg opacity-60">
                     <p className="text-2xl font-bold">R$40</p>
@@ -507,11 +508,11 @@ export const Results = ({
             </Card>
           </div>
 
-          {/* ============= 📊 COMPARATIVO COM OUTROS TESTES ============= */}
+          {/* ============= ?? COMPARATIVO COM OUTROS TESTES ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-card border-2 border-primary/20">
               <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
-                📊 Comparativo com outros testes
+                ?? Comparativo com outros testes
               </h2>
               
               {/* Versão Desktop - Tabela */}
@@ -540,7 +541,7 @@ export const Results = ({
                     </TableRow>
                     <TableRow className="bg-primary/10 border-2 border-primary font-bold">
                       <TableCell className="font-bold text-primary">RIASEC + Concursos (nosso)</TableCell>
-                      <TableCell className="text-primary">Carreira pública</TableCell>
+                      <TableCell className="text-primary">Carreira píblica</TableCell>
                       <TableCell className="text-primary">Cargo ideal + cronograma + plano de ação</TableCell>
                       <TableCell className="text-primary">Totalmente personalizado</TableCell>
                     </TableRow>
@@ -569,9 +570,9 @@ export const Results = ({
                 </div>
                 
                 <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary">
-                  <p className="font-bold text-primary mb-2">✅ RIASEC + Concursos (nosso)</p>
+                  <p className="font-bold text-primary mb-2">? RIASEC + Concursos (nosso)</p>
                   <div className="text-sm space-y-1">
-                    <p><span className="font-semibold">Foco:</span> Carreira pública</p>
+                    <p><span className="font-semibold">Foco:</span> Carreira píblica</p>
                     <p><span className="font-semibold">Resultado:</span> Cargo + cronograma + plano</p>
                     <p><span className="font-semibold">Personalização:</span> <span className="text-primary font-bold">Totalmente personalizado</span></p>
                   </div>
@@ -580,12 +581,12 @@ export const Results = ({
             </Card>
           </div>
 
-          {/* ============= 3️⃣ PRÉVIA VISUAL DO RELATÓRIO COMPLETO (COM BLUR) ============= */}
+          {/* ============= 3?? PRÉVIA VISUAL DO RELATÓRIO COMPLETO (COM BLUR) ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-primary/30 relative overflow-hidden">
               <div className="text-center mb-8">
                 <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                  📊 Prévia do Relatório Profissional Completo
+                  ?? Prévia do Relatório Profissional Completo
                 </h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
                   Desbloqueie o Relatório Profissional Completo e transforme este resultado em um plano de ação prático para conquistar seu cargo ideal.
@@ -666,7 +667,7 @@ export const Results = ({
                   Desbloqueie o plano completo por R$25
                 </h2>
                 <p className="text-lg text-muted-foreground">
-                  Menos que 1 mes de cursinho (R$150+) e com garantia de satisfacao.
+                  Menos que 1 mês de cursinho (R$150+) e com garantia de satisfação.
                 </p>
                 <div className="inline-flex items-center gap-2 text-xs uppercase tracking-wide text-primary font-semibold bg-primary/10 border border-primary/30 px-3 py-1 rounded-full">
                   <Sparkles className="w-4 h-4" />
@@ -678,11 +679,11 @@ export const Results = ({
               <div className="grid md:grid-cols-2 gap-4 mb-8">
                 {[
                   { icon: Target, text: "Cargo recomendado e justificativa do seu perfil" },
-                  { icon: DollarSign, text: "Faixa salarial inicial e com progressao" },
-                  { icon: Calendar, text: "Probabilidade do proximo edital" },
+                  { icon: DollarSign, text: "Faixa salarial inicial e com progressão" },
+                  { icon: Calendar, text: "Probabilidade do próximo edital" },
                   { icon: BookOpen, text: "Plano de estudos 30/60/90 dias" },
-                  { icon: Sparkles, text: "Materiais praticos e checklist" },
-                  { icon: TrendingUp, text: "Acesso imediato ao relatorio" }
+                  { icon: Sparkles, text: "Materiais práticos e checklist" },
+                  { icon: TrendingUp, text: "Acesso imediato ao Relatório" }
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-start gap-3 p-3 bg-background/50 rounded-lg">
                     <item.icon className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
@@ -702,11 +703,11 @@ export const Results = ({
                   Garantia 7 dias ou seu dinheiro de volta
                 </div>
                 <div className="text-sm text-foreground font-semibold">
-                  Referencia: cursinho 1 mes custa R$150+ · aqui voce paga 6x menos
+                  referência: cursinho 1 mês custa R$150+ — aqui você paga 6x menos
                 </div>
               </div>
 
-              {/* Social proof + CTA */}
+                            {/* Social proof + CTA */}
               <div className="grid lg:grid-cols-[2fr,1fr] gap-6 items-center">
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
@@ -716,21 +717,21 @@ export const Results = ({
                     </div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold">
                       <Users className="w-4 h-4" />
-                      Pagamento seguro Mercado Pago
+                      Pagamento seguro · selo Mercado Pago
                     </div>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-3 text-sm">
                     <div className="flex-1 rounded-lg border bg-background/60 p-3">
                       <div className="flex items-center gap-2 text-primary font-semibold text-xs">
-                        <Sparkles className="w-4 h-4" /> Tamires, aprovada em pre-analise
+                        <Sparkles className="w-4 h-4" /> Tamires, aprovada em pre-análise
                       </div>
-                      <p className="text-muted-foreground mt-1">"Paguei os 25 e recebi um passo a passo de estudo sem enrolacao."</p>
+                      <p className="text-muted-foreground mt-1">"Paguei os 25 e recebi um passo a passo de estudo sem enrolação."</p>
                     </div>
                     <div className="flex-1 rounded-lg border bg-background/60 p-3">
                       <div className="flex items-center gap-2 text-primary font-semibold text-xs">
                         <Sparkles className="w-4 h-4" /> Diego, PF administrativa
                       </div>
-                      <p className="text-muted-foreground mt-1">"Valeu mais que 1 mes de cursinho. Checklist e cronograma em minutos."</p>
+                      <p className="text-muted-foreground mt-1">"Valeu mais que 1 mês de cursinho. Checklist e cronograma em minutos."</p>
                     </div>
                   </div>
                 </div>
@@ -744,14 +745,14 @@ export const Results = ({
                     location="main_offer"
                   />
                   <p className="text-xs text-muted-foreground text-center">
-                    Pix, cartao ou saldo Mercado Pago · conexao segura com criptografia.
+                    Pix, cartao ou saldo Mercado Pago · conexão segura com criptografia.
                   </p>
                 </div>
               </div>
             </Card>
           </div>
 
-          {/* ============= BANNER CTA APÓS 60% DE SCROLL ============= */}
+          {/* ============= BANNER CTA APOS 60% DE SCROLL ============= */}
           {showScrollCta && (
             <div className="mb-12 animate-fade-in">
               <Card className="p-6 bg-gradient-to-r from-primary to-accent text-primary-foreground">
@@ -772,11 +773,11 @@ export const Results = ({
             </div>
           )}
 
-          {/* ============= 5️⃣ FAQ (RESPOSTAS CURTAS) ============= */}
+          {/* ============= 5?? FAQ (RESPOSTAS CURTAS) ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-card">
               <h2 className="text-2xl font-bold text-center mb-8">
-                ❓ Perguntas Frequentes
+                ? Perguntas Frequentes
               </h2>
               
               <Accordion type="single" collapsible className="w-full">
@@ -788,7 +789,7 @@ export const Results = ({
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    Porque aqui você recebe um plano de ação prático e cargos reais do serviço público que combinam com você. Não é só teoria - é um caminho completo com cronograma de estudos e materiais específicos.
+                    Porque aqui você recebe um plano de ação prático e cargos reais do serviço público que combinam com você. não é só teoria — é um caminho completo com cronograma de estudos e materiais específicos.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -796,11 +797,11 @@ export const Results = ({
                   <AccordionTrigger className="text-left">
                     <span className="flex items-center gap-2">
                       <MessageCircle className="w-5 h-5 text-primary" />
-                      O método é confiável?
+                      O método e confiavel?
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    Sim. Baseado na teoria RIASEC, criada por John L. Holland e usada em universidades e órgãos de RH no mundo todo há décadas. Nosso diferencial é adaptar isso para o mercado de concursos públicos brasileiros.
+                    Sim. Baseado na teoria RIASEC, criada por John L. Holland e usada em universidades e orgaos de RH no mundo todo há decadas. Nosso diferencial e adaptar isso para o mercado de concursos públicos brasileiros.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -832,7 +833,7 @@ export const Results = ({
                   <AccordionTrigger className="text-left">
                     <span className="flex items-center gap-2">
                       <MessageCircle className="w-5 h-5 text-primary" />
-                      Isso é melhor que teste gratuito?
+                      Isso e melhor que teste gratuito?
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
@@ -848,14 +849,14 @@ export const Results = ({
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    Usamos apenas para gerar e entregar seu relatorio. Pagamento processado pelo Mercado Pago e voce pode solicitar remocao a qualquer momento (LGPD).
+                    Usamos apenas para gerar e entregar seu relatório. Pagamento processado pelo Mercado Pago e você pode solicitar remoção a qualquer momento (LGPD).
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
             </Card>
           </div>
 
-          {/* ============= 6️⃣ CTA SECUNDÁRIO + DESCONTO VIA WHATSAPP ============= */}
+          {/* ============= 6?? CTA SECUNDÁRIO + DESCONTO VIA WHATSAPP ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-green-500/5 to-emerald-500/5 border-2 border-green-500/20 text-center">
               <h3 className="text-xl font-bold mb-4">Prefere conversar antes?</h3>
@@ -874,12 +875,12 @@ export const Results = ({
               </Button>
               
               <p className="text-xs text-destructive font-semibold">
-                ⏰ Cupom válido por 24h, após isso o desconto expira.
+                ? Cupom válido por 24h, após isso o desconto expira.
               </p>
             </Card>
           </div>
 
-          {/* ============= 🌍 COMPARATIVO INTERNACIONAL ============= */}
+          {/* ============= ?? COMPARATIVO INTERNACIONAL ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-6 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 border border-blue-500/20">
               <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -887,7 +888,7 @@ export const Results = ({
                   <Globe className="w-6 h-6 text-blue-500 flex-shrink-0" />
                   <div>
                     <p className="font-bold text-sm md:text-base">
-                      🌍 Comparativo Internacional
+                      ?? Comparativo Internacional
                     </p>
                     <p className="text-xs md:text-sm text-muted-foreground">
                       Testes internacionais RIASEC custam US$20 (~R$110). O nosso: <span className="font-bold text-primary">R$25</span>
@@ -907,7 +908,7 @@ export const Results = ({
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-r from-primary/10 to-accent/10 border-2 border-primary text-center">
               <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                🌟 Seu futuro começa com uma decisão de R$25
+                ?? Seu futuro começa com uma decisão de R$25
               </h2>
               <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
                 Você já deu o primeiro passo fazendo este teste. Agora é hora de transformar esse resultado em um plano de ação concreto.
@@ -922,7 +923,7 @@ export const Results = ({
               />
               
               <p className="text-sm text-muted-foreground mt-4">
-                ✨ Junte-se a centenas de pessoas que já descobriram seu caminho!
+                ? Junte-se a centenas de pessoas que já descobriram seu caminho!
               </p>
             </Card>
           </div>
@@ -946,6 +947,30 @@ export const Results = ({
   );
 };
 // mobile-conversion-note: sticky purchase CTA and timer present; safe-area padding handled in Landing.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

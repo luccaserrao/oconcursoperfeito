@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Landing } from "@/components/Landing";
 import { PreparationScreen } from "@/components/PreparationScreen";
 import { Quiz } from "@/components/Quiz";
@@ -45,7 +45,7 @@ const Index = () => {
     const safeName = trimmedName.length >= 2 ? trimmedName : "Concurseiro";
 
     if (!trimmedEmail) {
-      toast.error("Informe um email valido.");
+      toast.error("Informe um email válido.");
       setCurrentStep("email");
       return;
     }
@@ -55,7 +55,7 @@ const Index = () => {
     trackEvent("email_captured");
 
     try {
-      // Backend aceita no maximo 30 respostas; fatiamos para evitar 400
+      // Backend aceita no máximo 30 respostas; fatiamos para evitar 400
       const payloadAnswers = quizAnswers.slice(0, 30);
 
       const response = await fetch("/api/generate-career-recommendation", {
@@ -73,7 +73,7 @@ const Index = () => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Erro ao gerar recomendacao: ${errorText}`);
+        throw new Error(`Erro ao gerar recomendação: ${errorText}`);
       }
 
       const data = await response.json();
@@ -183,3 +183,4 @@ const Index = () => {
 };
 
 export default Index;
+

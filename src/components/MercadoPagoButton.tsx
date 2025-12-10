@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { CreditCard, Copy, Check } from "lucide-react";
@@ -57,16 +57,27 @@ export const MercadoPagoButton = ({
         body: JSON.stringify(body),
       });
 
-      const json = await resp.json();
+      const rawText = await resp.text();
+      let json: any = {};
+      try {
+        json = rawText ? JSON.parse(rawText) : {};
+      } catch (parseError) {
+        console.error("Parse error on createPix response:", parseError, rawText);
+        json = {};
+      }
 
       if (!resp.ok) {
-        const detail = json?.details || json?.error || `Erro no checkout (status ${resp.status})`;
+        const detail = json?.details || json?.error || resp.statusText || `Erro no checkout (status ${resp.status})`;
         throw new Error(typeof detail === "string" ? detail : JSON.stringify(detail));
       }
 
+      if (!json.qrCodeImage && !json.copyPaste) {
+        throw new Error("Erro ao gerar PIX. Tente novamente em instantes.");
+      }
+
       setPixData({
-        qrCodeImage: json.qrCodeImage,
-        copyPaste: json.copyPaste,
+        qrCodeImage: json.qrCodeImage || undefined,
+        copyPaste: json.copyPaste || "",
       });
 
       toast({
@@ -79,7 +90,7 @@ export const MercadoPagoButton = ({
         (error instanceof Error && error.message) ||
         (typeof error === "string" && error) ||
         (typeof error === "object" && error && "message" in error ? String((error as { message?: unknown }).message) : null) ||
-        "Não foi possível processar. Tente novamente.";
+        "não foi possível processar. Tente novamente.";
 
       toast({
         variant: "destructive",
@@ -119,7 +130,7 @@ export const MercadoPagoButton = ({
         onClick={handleClick}
         disabled={isLoading}
         size="lg"
-        aria-label={`Pagar R$ ${amount} com seguranca via PIX`}
+        aria-label={`Pagar R$ ${amount} com segurança via PIX`}
         className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white text-base md:text-lg py-5 md:py-6 disabled:opacity-50 disabled:cursor-not-allowed transition-all rounded-full shadow-[var(--shadow-elevated)]"
       >
         {isLoading ? (
@@ -175,3 +186,7 @@ export const MercadoPagoButton = ({
     </div>
   );
 };
+
+
+
+

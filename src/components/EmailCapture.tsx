@@ -36,7 +36,7 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
     if (!email.trim()) {
       newErrors.email = "Informe seu email para liberar o resultado";
     } else if (!emailRegex.test(email.trim())) {
-      newErrors.email = "Use um email valido";
+      newErrors.email = "Use um email válido";
     }
     setErrors((prev) => ({ ...prev, ...newErrors }));
     return Object.keys(newErrors).length === 0;
@@ -58,7 +58,7 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
     const trimmedEmail = email.trim().toLowerCase();
 
     if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
-      newErrors.email = "Confirme um email valido para receber o relatorio";
+      newErrors.email = "Confirme um email válido para receber o relatório";
     }
     if (!acceptedTerms) {
       newErrors.terms = "Aceite os termos (pode cancelar a qualquer momento)";
@@ -100,10 +100,10 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
                 {step === "email" ? "Etapa 1 de 2" : "Etapa 2 de 2"}
               </p>
               <h2 className="text-2xl md:text-3xl font-bold leading-snug">
-                Ultimo passo para liberar seu relatorio
+                Último passo para receber seu resultado de forma privada
               </h2>
               <p className="text-muted-foreground mt-2">
-                Mostramos o resultado agora e enviamos no email para voce ter acesso depois.
+                Mostramos o resultado agora e enviamos no seu email (e opcionalmente no WhatsApp) para você guardar sem se expor.
               </p>
             </div>
             <div className="hidden md:flex items-center gap-2 rounded-full bg-primary/10 text-primary px-3 py-1 text-sm font-semibold">
@@ -133,9 +133,9 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
               <div className="flex items-start gap-3 rounded-lg border bg-muted/50 p-3">
                 <ShieldCheck className="w-5 h-5 text-primary mt-0.5" />
                 <div>
-                  <p className="font-semibold text-sm">Dados seguros</p>
+                  <p className="font-semibold text-sm">Dados seguros e sem exposição</p>
                   <p className="text-xs text-muted-foreground">
-                    Aceite pre-marcado. Voce pode cancelar quando quiser e seguimos a LGPD.
+                    Aceite pré-marcado. Você pode cancelar quando quiser. Seguimos a LGPD e não exibimos nada em rede social.
                   </p>
                 </div>
               </div>
@@ -154,7 +154,7 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
                   </a>{" "}
                   e a{" "}
                   <a href="/privacy" target="_blank" className="text-primary underline hover:text-primary/80">
-                    Politica de Privacidade
+                    Política de Privacidade
                   </a>. Pode cancelar a qualquer momento.
                 </label>
               </div>
@@ -166,7 +166,7 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
               </Button>
 
               <p className="text-xs text-center text-muted-foreground">
-                Receba seu relatorio parcial gratis agora. Sem spam.
+                Receba seu relatório parcial grátis agora. Sem spam e sem grupos.
               </p>
             </form>
           ) : (
@@ -212,7 +212,7 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
 
               <div className="flex items-start gap-3 text-xs text-muted-foreground bg-muted/40 border rounded-lg p-3">
                 <ShieldCheck className="w-4 h-4 text-primary mt-0.5" />
-                <p>Enviamos um relatorio parcial gratis e voce pode cancelar o recebimento a qualquer momento.</p>
+                <p>Enviamos um relatório parcial grátis e você pode cancelar o recebimento a qualquer momento.</p>
               </div>
 
               <div className="flex flex-col md:flex-row gap-3">
@@ -238,7 +238,7 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 w-5 h-5 animate-spin" />
-                      Gerando sua recomendacao...
+                      Gerando sua recomendação...
                     </>
                   ) : (
                     "Liberar meu resultado agora"
@@ -253,7 +253,7 @@ export const EmailCapture = ({ onSubmit }: EmailCaptureProps) => {
               )}
 
               <p className="text-xs text-center text-muted-foreground">
-                Receba seu relatorio parcial gratis agora. Sem spam e com saida garantida.
+                Receba seu relatório parcial grátis agora. Sem spam, sem exposição e com saída garantida.
               </p>
             </form>
           )}

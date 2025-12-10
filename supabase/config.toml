@@ -30,6 +30,9 @@ verify_jwt = true
 [functions.list-users]
 verify_jwt = true
 
+[functions.list-quiz-responses]
+verify_jwt = false
+
 [functions.get-analytics]
 verify_jwt = true
 

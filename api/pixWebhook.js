@@ -11,6 +11,14 @@ const parseBody = (payload) => {
 };
 
 export default async function handler(req, res) {
+  if (req.method === "OPTIONS") {
+    return res.status(200).json({ ok: true });
+  }
+
+  if (req.method === "GET" || req.method === "HEAD") {
+    return res.status(200).json({ ok: true, message: "PIX webhook ativo" });
+  }
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Metodo nao permitido" });
   }
