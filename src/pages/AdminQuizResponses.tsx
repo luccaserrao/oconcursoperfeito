@@ -84,7 +84,7 @@ const AdminQuizResponses = () => {
           throw new Error("401: token invalido");
         }
         if (response.status >= 500) {
-          const detail = body?.error || JSON.stringify(body) || "erro interno da funcao";
+          const detail = body?.message || body?.error || body?.details || JSON.stringify(body) || "erro interno da funcao";
           throw new Error(`500: ${detail}`);
         }
         const message = body?.error || "Erro ao buscar respostas";

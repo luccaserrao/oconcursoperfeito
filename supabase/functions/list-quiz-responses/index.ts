@@ -57,9 +57,20 @@ serve(async (req) => {
       .limit(limit);
 
     if (error) {
-      console.error("Error fetching quiz_responses:", { message: error.message, details: error.details, hint: error.hint, code: error.code });
+      console.error("Error fetching quiz_responses:", {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+      });
       return new Response(
-        JSON.stringify({ error: "Falha ao buscar respostas do quiz", code: error.code, details: error.details }),
+        JSON.stringify({
+          error: "Falha ao buscar respostas do quiz",
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+        }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
