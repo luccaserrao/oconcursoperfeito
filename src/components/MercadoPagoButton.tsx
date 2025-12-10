@@ -41,7 +41,7 @@ export const MercadoPagoButton = ({
 
       toast({
         title: "Gerando PIX...",
-        description: "Estamos criando seu QR Code e código copia e cola.",
+        description: "Estamos criando seu QR Code e o código para copiar e colar.",
       });
 
       const body: Record<string, string | number | undefined> = {
@@ -82,7 +82,7 @@ export const MercadoPagoButton = ({
 
       toast({
         title: "PIX gerado!",
-        description: "Use o QR Code ou o código copia e cola abaixo.",
+        description: "Use o QR Code ou o código para copiar e colar abaixo.",
       });
     } catch (error) {
       console.error("Payment error:", error);
@@ -157,7 +157,7 @@ export const MercadoPagoButton = ({
           )}
 
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">Copia e cola PIX (ideal no celular)</p>
+            <p className="text-sm text-muted-foreground">Copie e cole (PIX ideal no celular)</p>
             <div className="flex flex-col gap-2">
               <div className="rounded-md bg-muted p-3 text-sm break-all min-h-[64px] flex items-center">
                 {pixData.copyPaste || "Código ainda não carregou. Aguarde 1 segundo ou toque novamente em copiar."}

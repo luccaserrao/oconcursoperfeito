@@ -789,7 +789,7 @@ export const Results = ({
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    Porque aqui você recebe um plano de ação prático e cargos reais do serviço público que combinam com você. não é só teoria — é um caminho completo com cronograma de estudos e materiais específicos.
+                    Porque aqui você recebe um plano de ação prático e cargos reais do serviço público que combinam com você. Não é só teoria — é um caminho completo com cronograma de estudos e materiais específicos.
                   </AccordionContent>
                 </AccordionItem>
 
