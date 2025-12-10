@@ -94,8 +94,9 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error("Unexpected error in list-quiz-responses:", error);
+    const message = error instanceof Error ? error.message : "Erro interno";
     return new Response(
-      JSON.stringify({ error: "Erro interno" }),
+      JSON.stringify({ error: message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }

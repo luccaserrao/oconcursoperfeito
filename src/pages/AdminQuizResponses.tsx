@@ -219,8 +219,8 @@ const AdminQuizResponses = () => {
               <AlertTriangle className="w-5 h-5 text-orange-500 mt-0.5" />
               <div>
                 <p className="font-semibold">Erro interno</p>
-                <p className="text-sm text-muted-foreground">
-                  A Edge Function retornou 500. Tente novamente e confira os logs no Supabase se persistir.
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {error?.message || "A Edge Function retornou 500. Confira os logs no Supabase."}
                 </p>
               </div>
             </div>
