@@ -1,0 +1,65 @@
+// Proxy local API -> Supabase Edge Function for career recommendation/quiz save
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Metodo nao permitido" });
+    return;
+  }
+
+  const supabaseUrl =
+    process.env.SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.VITE_SUPABASE_URL ||
+    "";
+  const supabaseKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_SERVICE_KEY ||
+    process.env.SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    "";
+
+  if (!supabaseUrl || !supabaseKey) {
+    res.status(500).json({ error: "Variaveis do Supabase ausentes" });
+    return;
+  }
+
+  const fnUrl = `${supabaseUrl.replace(/\/$/, "")}/functions/v1/generate-career-recommendation`;
+
+  try {
+    const body =
+      typeof req.body === "string"
+        ? req.body
+        : JSON.stringify(req.body || {});
+
+    const response = await fetch(fnUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+      },
+      body,
+    });
+
+    const text = await response.text();
+    let data;
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      data = text;
+    }
+
+    if (!response.ok) {
+      const status = Math.max(400, response.status || 500);
+      res.status(status).json({
+        error: "Erro na funcao generate-career-recommendation",
+        details: data,
+      });
+      return;
+    }
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Proxy error generate-career-recommendation:", error);
+    res.status(500).json({ error: "Erro interno ao chamar a funcao" });
+  }
+}

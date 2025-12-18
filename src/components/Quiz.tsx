@@ -189,7 +189,7 @@ export const Quiz = ({ onComplete }: QuizProps) => {
                           onChange={(e) => handleTextChange(q.id, e.target.value)}
                           onBlur={(e) => trackEvent("quiz_text_answered", { questionId: q.id, length: (e.target.value || "").length })}
                           placeholder={q.placeholder || ""}
-                          className="w-full rounded-xl border px-4 py-3 text-sm sm:text-base bg-background focus:outline-none focus:ring-2 focus:ring-primary/40"
+                          className="w-full rounded-xl border px-4 py-3 text-base sm:text-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/40"
                           rows={2}
                         />
                         {q.helperText && (
