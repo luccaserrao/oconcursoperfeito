@@ -24,20 +24,33 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { user_name, user_email, riasec_json, answers_json } = parseBody(req.body);
+    const body = parseBody(req.body);
+    const name = body.name || body.user_name;
+    const email = body.email || body.user_email;
+    const whatsapp = body.whatsapp || null;
+    const answers = body.answers || body.answers_json || [];
+    const aiRecommendation =
+      body.ai_recommendation ||
+      (body.riasec_json ? { riasec: body.riasec_json } : null);
 
-    if (!user_name || !user_email) {
+    if (!name || !email) {
       res.status(400).json({ error: "Nome e email obrigatorios." });
+      return;
+    }
+
+    if (!Array.isArray(answers) || answers.length === 0) {
+      res.status(400).json({ error: "Respostas do quiz obrigatorias." });
       return;
     }
 
     const { data, error } = await supabase
       .from("quiz_responses")
       .insert({
-        user_name,
-        user_email,
-        riasec_json,
-        answers_json,
+        name,
+        email,
+        whatsapp,
+        answers,
+        ai_recommendation: aiRecommendation || {},
       })
       .select()
       .single();

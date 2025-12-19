@@ -254,10 +254,11 @@ Retorne APENAS o JSON conforme o formato especificado.`;
     const { data: savedResponse, error: dbError } = await supabase
       .from('quiz_responses')
       .insert({
-        user_name: name,
-        user_email: email,
-        answers_json: answers,
-        riasec_json: recommendation?.riasec || null,
+        name,
+        email,
+        whatsapp: whatsapp || null,
+        answers,
+        ai_recommendation: recommendation,
       })
       .select()
       .single();

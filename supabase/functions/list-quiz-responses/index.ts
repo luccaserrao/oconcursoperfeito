@@ -53,7 +53,7 @@ serve(async (req) => {
     // Seleciona apenas as colunas reais existentes
     const { data, error } = await supabase
       .from("quiz_responses")
-      .select("id, created_at, user_name, user_email, riasec_json, answers_json")
+      .select("id, created_at, name, email, whatsapp, ai_recommendation, answers, clicked_upsell, upsell_clicked_at")
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -77,18 +77,19 @@ serve(async (req) => {
     }
 
     const responses = (data || []).map((row) => {
-      const riasec = (row as any).riasec_json || null;
-      const answers = (row as any).answers_json || [];
+      const aiRecommendation = (row as any).ai_recommendation || null;
+      const riasec = (aiRecommendation as any)?.riasec || null;
+      const answers = (row as any).answers || [];
       return {
         id: row.id,
-        name: (row as any).user_name || "",
-        email: (row as any).user_email || "",
-        whatsapp: null,
+        name: (row as any).name || "",
+        email: (row as any).email || "",
+        whatsapp: (row as any).whatsapp ?? null,
         created_at: row.created_at,
         answers,
-        ai_recommendation: riasec,
-        clicked_upsell: null,
-        upsell_clicked_at: null,
+        ai_recommendation: aiRecommendation,
+        clicked_upsell: (row as any).clicked_upsell ?? null,
+        upsell_clicked_at: (row as any).upsell_clicked_at ?? null,
         riasec,
         riasec_top1: riasec?.top1 || null,
         riasec_top2: riasec?.top2 || null,
