@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Landing } from "@/components/Landing";
 import { PreparationScreen } from "@/components/PreparationScreen";
 import { Quiz } from "@/components/Quiz";
@@ -41,11 +41,20 @@ const Index = () => {
 
   const handleEmailSubmit = async (name: string, email: string) => {
     const trimmedEmail = email.trim().toLowerCase();
-    const trimmedName = name.trim();
-    const safeName = trimmedName.length >= 2 ? trimmedName : "Concurseiro";
+    const safeName = name.trim().length >= 2 ? name.trim() : "Concurseiro";
+    const riasecPayload =
+      riasecResult ||
+      calculateRiasecScores(
+        quizAnswers.reduce<Record<string, string>>((acc, cur, idx) => {
+          const questionId = cur.id || quizQuestions[idx]?.id || `q${idx}`;
+          acc[questionId] = cur.answer;
+          return acc;
+        }, {}),
+        quizQuestions
+      );
 
     if (!trimmedEmail) {
-      toast.error("Informe um email válido.");
+      toast.error("Informe um email valido.");
       setCurrentStep("email");
       return;
     }
@@ -55,7 +64,7 @@ const Index = () => {
     trackEvent("email_captured");
 
     try {
-      // Backend aceita no máximo 30 respostas; fatiamos para evitar 400
+      // Backend aceita no maximo 30 respostas; fatiamos para evitar 400
       const payloadAnswers = quizAnswers.slice(0, 30);
 
       const response = await fetch("/api/generate-career-recommendation", {
@@ -67,24 +76,33 @@ const Index = () => {
           answers: payloadAnswers,
           name: safeName,
           email: trimmedEmail,
+          riasec: riasecPayload,
           whatsapp: "",
+          clickedUpsell: false,
         }),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Erro ao gerar recomendação: ${errorText}`);
+        throw new Error(`Erro ao salvar recomendacao: ${errorText}`);
       }
 
       const data = await response.json();
 
-      const mergedRecommendation: CareerRecommendation = {
-        ...data.recommendation,
-        riasec: data.recommendation.riasec || riasecResult || undefined,
+      const localRecommendation: CareerRecommendation = {
+        careerName: `Plano recomendado para perfil ${riasecPayload.top1}`,
+        justification: "Baseado nas suas respostas RIASEC.",
+        salary: "Em definicao",
+        examDate: "Em definicao",
+        workplaces: [],
+        workRoutine: "Plano inicial alinhado ao seu perfil.",
+        subjects: [],
+        examFrequency: "Em definicao",
+        riasec: riasecPayload,
       };
 
-      setRecommendation(mergedRecommendation);
-      setQuizResponseId(data.quizResponseId);
+      setRecommendation(localRecommendation);
+      setQuizResponseId(data?.id);
 
       // Send welcome email (do not block flow if it fails)
       try {
@@ -107,31 +125,33 @@ const Index = () => {
       toast.success("Resultado gerado com sucesso!");
     } catch (error) {
       console.error("Error generating recommendation:", error);
-      const fallbackRiasec = riasecResult || calculateRiasecScores(
-        quizAnswers.reduce<Record<string, string>>((acc, cur, idx) => {
-          const questionId = cur.id || quizQuestions[idx]?.id || `q${idx}`;
-          acc[questionId] = cur.answer;
-          return acc;
-        }, {}),
-        quizQuestions
-      );
+      const fallbackRiasec =
+        riasecPayload ||
+        calculateRiasecScores(
+          quizAnswers.reduce<Record<string, string>>((acc, cur, idx) => {
+            const questionId = cur.id || quizQuestions[idx]?.id || `q${idx}`;
+            acc[questionId] = cur.answer;
+            return acc;
+          }, {}),
+          quizQuestions
+        );
 
       const fallbackRecommendation: CareerRecommendation = {
         careerName: `Plano recomendado para perfil ${fallbackRiasec.top1}`,
-        justification: "Baseado nas suas respostas, criamos um plano preliminar enquanto geramos o relatório completo.",
-        salary: "Em definição",
-        examDate: "Em definição",
+        justification: "Baseado nas suas respostas, criamos um plano preliminar enquanto geramos o relatorio completo.",
+        salary: "Em definicao",
+        examDate: "Em definicao",
         workplaces: [],
-        workRoutine: "Rotina flexível alinhada ao seu perfil.",
+        workRoutine: "Rotina flexivel alinhada ao seu perfil.",
         subjects: [],
-        examFrequency: "Em definição",
+        examFrequency: "Em definicao",
         riasec: fallbackRiasec,
       };
 
       setRecommendation(fallbackRecommendation);
       setQuizResponseId(undefined);
       setCurrentStep("results");
-      toast.warning("Não conseguimos gerar o relatório completo agora. Mostramos um resultado parcial enquanto retomamos a geração.");
+      toast.warning("Nao conseguimos gerar o relatorio completo agora. Mostramos um resultado parcial.");
     }
   };
 
@@ -183,4 +203,5 @@ const Index = () => {
 };
 
 export default Index;
+
 

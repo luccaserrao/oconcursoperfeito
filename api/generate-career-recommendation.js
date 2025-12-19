@@ -25,10 +25,22 @@ export default async function handler(req, res) {
   const fnUrl = `${supabaseUrl.replace(/\/$/, "")}/functions/v1/generate-career-recommendation`;
 
   try {
-    const body =
-      typeof req.body === "string"
-        ? req.body
-        : JSON.stringify(req.body || {});
+    const rawBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body || {});
+    let parsed;
+    try {
+      parsed = typeof rawBody === "string" ? JSON.parse(rawBody || "{}") : rawBody || {};
+    } catch {
+      parsed = {};
+    }
+
+    const payload = {
+      name: parsed.name || parsed.user_name || "",
+      email: parsed.email || parsed.user_email || "",
+      answers: parsed.answers || parsed.answers_json || [],
+      riasec: parsed.riasec || parsed.riasec_json || null,
+      whatsapp: parsed.whatsapp || null,
+      clickedUpsell: parsed.clickedUpsell ?? parsed.clicked_upsell,
+    };
 
     const response = await fetch(fnUrl, {
       method: "POST",
@@ -37,7 +49,7 @@ export default async function handler(req, res) {
         apikey: supabaseKey,
         Authorization: `Bearer ${supabaseKey}`,
       },
-      body,
+      body: JSON.stringify(payload),
     });
 
     const text = await response.text();

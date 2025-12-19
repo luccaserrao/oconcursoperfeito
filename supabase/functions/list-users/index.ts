@@ -62,7 +62,7 @@ serve(async (req) => {
     // Fetch quiz responses
     const { data: responses, error: queryError } = await supabaseAdmin
       .from('quiz_responses')
-      .select('name, email, whatsapp, ai_recommendation, answers, created_at')
+      .select('user_name, user_email, whatsapp, riasec_json, answers_json, created_at, clicked_upsell')
       .order('created_at', { ascending: false })
       .limit(100);
 
@@ -99,14 +99,16 @@ serve(async (req) => {
       };
     };
 
-    // Process responses to extract careerName from ai_recommendation
+    // Process responses to extract careerName from riasec/ai data
     const users = responses?.map(response => {
-      const qualification = isQualifiedLead(response.answers || []);
+      const answers = (response as any).answers_json || [];
+      const riasec = (response as any).riasec_json || null;
+      const qualification = isQualifiedLead(answers);
       return {
-        name: response.name,
-        email: response.email,
-        whatsapp: response.whatsapp,
-        careerName: (response.ai_recommendation as any)?.careerName || 'N/A',
+        name: (response as any).user_name,
+        email: (response as any).user_email,
+        whatsapp: (response as any).whatsapp,
+        careerName: (riasec as any)?.top1 || 'N/A',
         created_at: response.created_at,
         isQualified: qualification.isQualified,
         qualificationScore: qualification.score

@@ -35,6 +35,12 @@ type QuizResponse = {
   riasec_top1?: string | null;
   riasec_top2?: string | null;
   riasec?: Record<string, unknown> | null;
+  paid?: {
+    paid: boolean;
+    paid_at: string | null;
+    amount: number | null;
+    order_id: string | null;
+  };
 };
 
 const formatDate = (value: string) => {
@@ -135,6 +141,7 @@ const AdminQuizResponses = () => {
           riasec_top1: item.riasec_top1 || item.riasec?.top1 || null,
           riasec_top2: item.riasec_top2 || item.riasec?.top2 || null,
           riasec: item.riasec || null,
+          paid: item.paid || { paid: false, paid_at: null, amount: null, order_id: null },
         };
       });
     },
@@ -308,29 +315,29 @@ const AdminQuizResponses = () => {
   const serverError = error?.message?.startsWith("500");
 
   return (
-    <div className="min-h-screen bg-muted/20 py-10 px-4">
-      <div className="container mx-auto max-w-6xl space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div>
-            <p className="text-sm text-muted-foreground">Painel privado</p>
-            <h1 className="text-2xl font-bold">Respostas do quiz</h1>
-            <p className="text-sm text-muted-foreground">
-              Apenas quem tem o token secreto consegue carregar estes dados.
-            </p>
+      <div className="min-h-screen bg-muted/20 py-10 px-4">
+        <div className="container mx-auto max-w-6xl space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+              <p className="text-sm text-muted-foreground">Painel privado</p>
+              <h1 className="text-2xl font-bold">Respostas do quiz</h1>
+              <p className="text-sm text-muted-foreground">
+                Apenas quem tem o token secreto consegue carregar estes dados.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={handleLogout}>
+                Trocar token
+              </Button>
+              <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
+                {isFetching ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCcw className="w-4 h-4 mr-2" />}
+                Atualizar
+              </Button>
+              <Button variant="outline" onClick={handleExportCsv} disabled={!filteredData.length}>
+                Exportar CSV
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={handleLogout}>
-              Trocar token
-            </Button>
-            <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
-              {isFetching ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCcw className="w-4 h-4 mr-2" />}
-              Atualizar
-            </Button>
-            <Button variant="outline" onClick={handleExportCsv} disabled={!filteredData.length}>
-              Exportar CSV
-            </Button>
-          </div>
-        </div>
 
         <Card className="p-4 space-y-3">
           <div className="flex flex-col md:flex-row md:items-center gap-3">
@@ -438,78 +445,102 @@ const AdminQuizResponses = () => {
 
         {filteredData.length ? (
           <div className="space-y-4">
-            {filteredData.map((item) => (
-              <Card key={item.id} className="overflow-hidden">
-                <div className="p-6 space-y-3">
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="text-lg font-semibold">{item.name || "Sem nome"}</h3>
-                        <Badge variant="secondary">{item.email}</Badge>
-                        {item.whatsapp && <Badge variant="outline">WhatsApp: {item.whatsapp}</Badge>}
-                        {(item.riasec_top1 || item.riasec_top2) && (
-                          <Badge variant="outline">
-                            {item.riasec_top1 || "?"} / {item.riasec_top2 || "?"}
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        Recebido em {formatDate(item.created_at)}
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {item.riasec_top1 && <Badge>{item.riasec_top1}</Badge>}
-                        {item.riasec_top2 && <Badge variant="outline">{item.riasec_top2}</Badge>}
-                        {item.clicked_upsell && (
-                          <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white">
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            Clicou no upsell
-                          </Badge>
-                        )}
-                        <Button size="sm" variant="outline" onClick={() => handleCopyEmail(item.email)}>
-                          Copiar email
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={() => handleCopyAnswers(item)}>
-                          Copiar dados
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="text-sm text-muted-foreground text-right">
-                      <p>ID: {item.id}</p>
-                      {item.upsell_clicked_at && (
-                        <p>Upsell em {formatDate(item.upsell_clicked_at)}</p>
-                      )}
-                    </div>
-                  </div>
+            {filteredData.map((item) => {
+              const paid = item.paid?.paid;
+              const paidAmount =
+                item.paid?.amount && Number.isFinite(item.paid.amount / 100)
+                  ? (item.paid.amount / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+                  : null;
+              const riasecTop = item.riasec_top1 || item.riasec_top2;
+              const riasecSecondary = item.riasec_top2 || item.riasec_top1;
 
-                  <Separator />
+              return (
+                <Card key={item.id} className="overflow-hidden border-border/70 shadow-sm">
+                  <div className="p-6 space-y-4">
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                      <div className="space-y-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-xl font-semibold text-foreground">{item.name || "Sem nome"}</h3>
+                          <Badge variant="secondary" className="text-xs">{item.email}</Badge>
+                          {item.whatsapp && <Badge variant="outline">WhatsApp: {item.whatsapp}</Badge>}
+                          {paid ? (
+                            <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white">
+                              <CheckCircle2 className="w-3 h-3 mr-1" /> Pago {paidAmount ? `- ${paidAmount}` : ""}
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-amber-600 border-amber-300">
+                              Aguardando pagamento
+                            </Badge>
+                          )}
+                          {item.clicked_upsell && (
+                            <Badge className="bg-blue-600 text-white">
+                              <CheckCircle2 className="w-3 h-3 mr-1" /> Clicou no upsell
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="text-sm text-muted-foreground flex flex-wrap gap-4">
+                          <span>Recebido em {formatDate(item.created_at)}</span>
+                          <span>ID: {item.id}</span>
+                          {item.paid?.paid_at && <span>Pago em {formatDate(item.paid.paid_at)}</span>}
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <Button size="sm" variant="outline" onClick={() => handleCopyEmail(item.email)}>
+                            Copiar email
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => handleCopyAnswers(item)}>
+                            Copiar dados
+                          </Button>
+                        </div>
+                      </div>
 
-                  <Accordion type="single" collapsible>
-                    <AccordionItem value="answers">
-                      <AccordionTrigger>Respostas ({item.answers?.length || 0})</AccordionTrigger>
-                      <AccordionContent>
-                        <ScrollArea className="max-h-96 pr-4">
-                          <div className="space-y-3">
-                            {(item.answers || []).map((answer, index) => (
-                              <div key={`${item.id}-${index}`} className="rounded-lg border p-3 bg-muted/30">
-                                <p className="text-sm font-semibold mb-1">
-                                  Q{index + 1}: {answer.question || "Pergunta"}
-                                </p>
-                                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                                  {answer.answer || "Sem resposta"}
-                                </p>
-                              </div>
-                            ))}
-                            {(!item.answers || item.answers.length === 0) && (
-                              <p className="text-sm text-muted-foreground">Sem respostas registradas.</p>
+                      <div className="w-full md:w-80">
+                        <Card className="p-4 bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/20">
+                          <p className="text-xs uppercase text-primary font-semibold mb-1">Perfil RIASEC</p>
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {riasecTop && <Badge className="bg-primary text-white">{riasecTop}</Badge>}
+                            {riasecSecondary && (
+                              <Badge variant="outline" className="border-primary text-primary">
+                                {riasecSecondary}
+                              </Badge>
                             )}
                           </div>
-                        </ScrollArea>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                </div>
-              </Card>
-            ))}
+                          <p className="text-xs text-muted-foreground">
+                            {item.riasec?.descricao_personalizada
+                              ? String(item.riasec.descricao_personalizada).slice(0, 180) + "..."
+                              : "Resumo de personalidade baseado nas respostas do usuário."}
+                          </p>
+                        </Card>
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <p className="font-semibold text-sm text-foreground">Respostas ({item.answers?.length || 0})</p>
+                      </div>
+                      <div className="grid gap-3">
+                        {(item.answers || []).map((answer, index) => (
+                          <Card key={`${item.id}-${index}`} className="border border-border/80 bg-card/60">
+                            <div className="p-4 space-y-2">
+                              <p className="text-sm font-semibold text-foreground">
+                                Q{index + 1}: {answer.question || "Pergunta"}
+                              </p>
+                              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                                {answer.answer || "Sem resposta"}
+                              </p>
+                            </div>
+                          </Card>
+                        ))}
+                        {(!item.answers || item.answers.length === 0) && (
+                          <p className="text-sm text-muted-foreground">Sem respostas registradas.</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              );
+            })}
           </div>
         ) : null}
       </div>

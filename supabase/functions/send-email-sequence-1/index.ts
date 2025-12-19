@@ -41,11 +41,12 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error(`Quiz response not found: ${quizError?.message}`);
     }
 
-    const { name, email, ai_recommendation } = quizResponse;
-    const recommendation = ai_recommendation as any;
-    const careerName = recommendation?.careerName || "sua carreira ideal";
-    const salary = recommendation?.salary || "competitivo";
-    const examFrequency = recommendation?.examFrequency || "";
+    const name = (quizResponse as any).user_name || (quizResponse as any).name;
+    const email = (quizResponse as any).user_email || (quizResponse as any).email;
+    const recommendation = (quizResponse as any).riasec_json || (quizResponse as any).ai_recommendation || {};
+    const careerName = (recommendation as any)?.careerName || (recommendation as any)?.top1 || "sua carreira ideal";
+    const salary = (recommendation as any)?.salary || "competitivo";
+    const examFrequency = (recommendation as any)?.examFrequency || "";
     
     // Resumir previsão de edital
     let examPreview = "próximos meses";

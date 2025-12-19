@@ -69,8 +69,8 @@ serve(async (req) => {
         JSON.stringify({
           paid: true,
           order,
-          recommendation: quizResponse.ai_recommendation,
-          userName: quizResponse.name,
+          recommendation: quizResponse.riasec_json || quizResponse.ai_recommendation,
+          userName: (quizResponse as any).user_name || (quizResponse as any).name,
         }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },

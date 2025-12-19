@@ -53,7 +53,7 @@ serve(async (req) => {
     // Seleciona apenas as colunas reais existentes
     const { data, error } = await supabase
       .from("quiz_responses")
-      .select("id, created_at, name, email, whatsapp, ai_recommendation, answers, clicked_upsell, upsell_clicked_at")
+      .select("id, created_at, user_name, user_email, answers_json, riasec_json")
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -76,23 +76,53 @@ serve(async (req) => {
       );
     }
 
-    const responses = (data || []).map((row) => {
-      const aiRecommendation = (row as any).ai_recommendation || null;
-      const riasec = (aiRecommendation as any)?.riasec || null;
-      const answers = (row as any).answers || [];
+    const responsesBase = data || [];
+
+    // Enriquecer com status de pagamento (orders)
+    const ids = responsesBase.map((row) => row.id).filter(Boolean);
+    let paidMap: Record<string, { paid: boolean; paid_at: string | null; amount: number | null; order_id: string | null }> = {};
+
+    if (ids.length > 0) {
+      const { data: orders, error: ordersError } = await supabase
+        .from("orders")
+        .select("id, quiz_response_id, payment_status, paid_at, amount")
+        .in("quiz_response_id", ids);
+
+      if (!ordersError && orders) {
+        paidMap = orders.reduce((acc: typeof paidMap, order) => {
+          if (!order.quiz_response_id) return acc;
+          const isPaid = (order.payment_status || "").toLowerCase() === "paid";
+          const existing = acc[order.quiz_response_id];
+          if (!existing || (isPaid && !existing.paid)) {
+            acc[order.quiz_response_id] = {
+              paid: isPaid,
+              paid_at: order.paid_at || null,
+              amount: order.amount ?? null,
+              order_id: order.id ?? null,
+            };
+          }
+          return acc;
+        }, {});
+      }
+    }
+
+    const responses = responsesBase.map((row) => {
+      const riasec = (row as any).riasec_json || null;
+      const answers = (row as any).answers_json || [];
+      const paidInfo = paidMap[row.id] || { paid: false, paid_at: null, amount: null, order_id: null };
       return {
         id: row.id,
-        name: (row as any).name || "",
-        email: (row as any).email || "",
-        whatsapp: (row as any).whatsapp ?? null,
+        name: (row as any).user_name || "",
+        email: (row as any).user_email || "",
+        whatsapp: (row as any).whatsapp ?? null, // pode não existir; retornamos null
         created_at: row.created_at,
         answers,
-        ai_recommendation: aiRecommendation,
-        clicked_upsell: (row as any).clicked_upsell ?? null,
-        upsell_clicked_at: (row as any).upsell_clicked_at ?? null,
+        ai_recommendation: riasec,
+        clicked_upsell: (row as any).clicked_upsell ?? null, // pode não existir; retornamos null
         riasec,
         riasec_top1: riasec?.top1 || null,
         riasec_top2: riasec?.top2 || null,
+        paid: paidInfo,
       };
     });
 

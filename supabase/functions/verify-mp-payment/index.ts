@@ -150,7 +150,7 @@ serve(async (req) => {
         success: true,
         userName: order.user_name,
         userEmail: order.user_email,
-        recommendation: quizResponse?.ai_recommendation,
+        recommendation: quizResponse?.riasec_json || quizResponse?.ai_recommendation,
         paidContent: {
           studyPlan: {
             days: ["Dia 1-5: Fundamentos", "Dia 6-10: Prática", "Dia 11-15: Aprofundamento", "Dia 16-20: Simulados", "Dia 21-25: Revisão", "Dia 26-30: Preparação final"],

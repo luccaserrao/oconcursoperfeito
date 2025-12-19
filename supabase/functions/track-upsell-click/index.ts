@@ -24,7 +24,7 @@ serve(async (req) => {
     const { data: responses, error: fetchError } = await supabase
       .from('quiz_responses')
       .select('id')
-      .eq('email', email)
+      .eq('user_email', email)
       .order('created_at', { ascending: false })
       .limit(1);
 

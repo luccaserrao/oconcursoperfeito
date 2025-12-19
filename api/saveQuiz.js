@@ -29,9 +29,8 @@ export default async function handler(req, res) {
     const email = body.email || body.user_email;
     const whatsapp = body.whatsapp || null;
     const answers = body.answers || body.answers_json || [];
-    const aiRecommendation =
-      body.ai_recommendation ||
-      (body.riasec_json ? { riasec: body.riasec_json } : null);
+    const riasec = body.riasec || body.riasec_json || null;
+    const clickedUpsell = body.clickedUpsell ?? body.clicked_upsell;
 
     if (!name || !email) {
       res.status(400).json({ error: "Nome e email obrigatorios." });
@@ -46,11 +45,12 @@ export default async function handler(req, res) {
     const { data, error } = await supabase
       .from("quiz_responses")
       .insert({
-        name,
-        email,
-        whatsapp,
-        answers,
-        ai_recommendation: aiRecommendation || {},
+        user_name: name,
+        user_email: email,
+        answers_json: answers,
+        riasec_json: riasec,
+        ...(whatsapp ? { whatsapp } : {}),
+        ...(typeof clickedUpsell === "boolean" ? { clicked_upsell: clickedUpsell } : {}),
       })
       .select()
       .single();
