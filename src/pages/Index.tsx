@@ -78,7 +78,6 @@ const Index = () => {
           email: trimmedEmail,
           riasec: riasecPayload,
           whatsapp: "",
-          clickedUpsell: false,
         }),
       });
 

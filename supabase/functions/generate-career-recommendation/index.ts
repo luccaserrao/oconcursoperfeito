@@ -40,7 +40,7 @@ serve(async (req) => {
       );
     }
 
-    const { name, email, answers, riasec, whatsapp, clickedUpsell } = parsed.data;
+    const { name, email, answers, riasec, whatsapp } = parsed.data;
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -63,8 +63,6 @@ serve(async (req) => {
 
     const safeWhatsapp = typeof whatsapp === "string" ? whatsapp.trim() : "";
     if (safeWhatsapp) insertPayload.whatsapp = safeWhatsapp;
-    if (typeof clickedUpsell === "boolean") insertPayload.clicked_upsell = clickedUpsell;
-
     const { data, error } = await supabase
       .from("quiz_responses")
       .insert(insertPayload)
