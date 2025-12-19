@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -59,7 +59,7 @@ const AdminQuizResponses = () => {
   const [inputToken, setInputToken] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [onlyWithAnswers, setOnlyWithAnswers] = useState(false);
-  const [onlyRecent, setOnlyRecent] = useState(false); // últimas 24h
+  const [onlyRecent, setOnlyRecent] = useState(false); // ?ltimas 24h
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -140,7 +140,7 @@ const AdminQuizResponses = () => {
           upsell_clicked_at: item.upsell_clicked_at ?? null,
           riasec_top1: item.riasec_top1 || item.riasec?.top1 || null,
           riasec_top2: item.riasec_top2 || item.riasec?.top2 || null,
-          riasec: item.riasec || null,
+          riasec: item.riasec || item.ai_recommendation || null,
           paid: item.paid || { paid: false, paid_at: null, amount: null, order_id: null },
         };
       });
@@ -293,7 +293,7 @@ const AdminQuizResponses = () => {
           Desbloquear
         </Button>
         <p className="text-xs text-muted-foreground text-center">
-          Usamos apenas este token para validar que você é o dono. Nenhum dado sensível é gravado no navegador.
+          Usamos apenas este token para validar que voc? ? o dono. Nenhum dado sens?vel ? gravado no navegador.
         </p>
       </form>
     </Card>
@@ -310,7 +310,7 @@ const AdminQuizResponses = () => {
   const unauthorized =
     error?.message?.startsWith("401") ||
     error?.message?.toLowerCase().includes("nao autorizado") ||
-    error?.message?.toLowerCase().includes("não autorizado") ||
+    error?.message?.toLowerCase().includes("n?o autorizado") ||
     error?.message?.toLowerCase().includes("token");
   const serverError = error?.message?.startsWith("500");
 
@@ -367,7 +367,7 @@ const AdminQuizResponses = () => {
                   onClick={() => setOnlyRecent((v) => !v)}
                   className="text-sm"
                 >
-                  Últimas 24h
+                  ?ltimas 24h
                 </Button>
               </div>
             </div>
@@ -379,7 +379,7 @@ const AdminQuizResponses = () => {
             <div className="flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-destructive mt-0.5" />
               <div>
-                <p className="font-semibold">Token inválido</p>
+                <p className="font-semibold">Token inv?lido</p>
                 <p className="text-sm text-muted-foreground">
                   Confirme o token ADMIN_DASHBOARD_TOKEN configurado na API e cole novamente.
                 </p>
@@ -453,6 +453,9 @@ const AdminQuizResponses = () => {
                   : null;
               const riasecTop = item.riasec_top1 || item.riasec_top2;
               const riasecSecondary = item.riasec_top2 || item.riasec_top1;
+              const riasecScores = (item.riasec as any)?.scores || {};
+              const riasecDesc = (item.riasec as any)?.descricao_personalizada || "";
+              const riasecHabs = (item.riasec as any)?.habilidades || [];
 
               return (
                 <Card key={item.id} className="overflow-hidden border-border/70 shadow-sm">
@@ -493,22 +496,54 @@ const AdminQuizResponses = () => {
                         </div>
                       </div>
 
-                      <div className="w-full md:w-80">
-                        <Card className="p-4 bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/20">
-                          <p className="text-xs uppercase text-primary font-semibold mb-1">Perfil RIASEC</p>
-                          <div className="flex flex-wrap gap-2 mb-2">
-                            {riasecTop && <Badge className="bg-primary text-white">{riasecTop}</Badge>}
-                            {riasecSecondary && (
-                              <Badge variant="outline" className="border-primary text-primary">
-                                {riasecSecondary}
-                              </Badge>
+                      <div className="w-full md:w-96">
+                        <Card className="p-4 bg-gradient-to-br from-primary/5 via-background to-accent/5 border border-primary/20 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-xs uppercase text-primary font-semibold">Perfil RIASEC</p>
+                              <div className="flex flex-wrap gap-2 mt-1">
+                                {riasecTop && <Badge className="bg-primary text-white">{riasecTop}</Badge>}
+                                {riasecSecondary && (
+                                  <Badge variant="outline" className="border-primary text-primary">
+                                    {riasecSecondary}
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            {item.clicked_upsell && (
+                              <Badge className="bg-blue-600 text-white">Clicou upsell</Badge>
                             )}
                           </div>
-                          <p className="text-xs text-muted-foreground">
-                            {item.riasec?.descricao_personalizada
-                              ? String(item.riasec.descricao_personalizada).slice(0, 180) + "..."
-                              : "Resumo de personalidade baseado nas respostas do usuário."}
+                          <div className="space-y-2">
+                            {Object.entries(riasecScores).map(([label, score]) => (
+                              <div key={label} className="space-y-1">
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                  <span>{label}</span>
+                                  <span>{score as number}%</span>
+                                </div>
+                                <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                                  <div
+                                    className="h-full bg-primary"
+                                    style={{ width: `${Math.min(100, Number(score) || 0)}%` }}
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            {riasecDesc
+                              ? String(riasecDesc).slice(0, 220) + (String(riasecDesc).length > 220 ? "..." : "")
+                              : "Resumo de personalidade baseado nas respostas do usu?rio."}
                           </p>
+                          {riasecHabs?.length ? (
+                            <div className="flex flex-wrap gap-2">
+                              {riasecHabs.slice(0, 5).map((hab: any, idx: number) => (
+                                <Badge key={`${item.id}-hab-${idx}`} variant="outline" className="text-xs">
+                                  {String(hab)}
+                                </Badge>
+                              ))}
+                            </div>
+                          ) : null}
                         </Card>
                       </div>
                     </div>
@@ -523,9 +558,12 @@ const AdminQuizResponses = () => {
                         {(item.answers || []).map((answer, index) => (
                           <Card key={`${item.id}-${index}`} className="border border-border/80 bg-card/60">
                             <div className="p-4 space-y-2">
-                              <p className="text-sm font-semibold text-foreground">
-                                Q{index + 1}: {answer.question || "Pergunta"}
-                              </p>
+                              <div className="flex items-start justify-between gap-3">
+                                <p className="text-sm font-semibold text-foreground">
+                                  Q{index + 1}: {answer.question || "Pergunta"}
+                                </p>
+                                <Badge variant="outline" className="text-xs">Resposta do usu�rio</Badge>
+                              </div>
                               <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                                 {answer.answer || "Sem resposta"}
                               </p>
@@ -549,6 +587,12 @@ const AdminQuizResponses = () => {
 };
 
 export default AdminQuizResponses;
+
+
+
+
+
+
 
 
 
