@@ -38,8 +38,8 @@ export default async function handler(req, res) {
       email: parsed.email || parsed.user_email || "",
       answers: parsed.answers || parsed.answers_json || [],
       riasec: parsed.riasec || parsed.riasec_json || null,
-      whatsapp: parsed.whatsapp || null,
       clickedUpsell: parsed.clickedUpsell ?? parsed.clicked_upsell,
+      ...(parsed.whatsapp ? { whatsapp: parsed.whatsapp } : {}),
     };
 
     const response = await fetch(fnUrl, {

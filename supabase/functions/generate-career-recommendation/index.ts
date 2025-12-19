@@ -13,7 +13,7 @@ const requestSchema = z.object({
   email: z.string().trim().email().max(255),
   answers: z.array(z.any()).nonempty("answers obrigatorio"),
   riasec: z.any().optional(),
-  whatsapp: z.string().trim().optional(),
+  whatsapp: z.string().trim().optional().nullable(),
   clickedUpsell: z.boolean().optional(),
 });
 
@@ -54,17 +54,20 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    const insertPayload: Record<string, unknown> = {
+      user_name: name,
+      user_email: email,
+      answers_json: answers,
+      riasec_json: riasec ?? null,
+    };
+
+    const safeWhatsapp = typeof whatsapp === "string" ? whatsapp.trim() : "";
+    if (safeWhatsapp) insertPayload.whatsapp = safeWhatsapp;
+    if (typeof clickedUpsell === "boolean") insertPayload.clicked_upsell = clickedUpsell;
+
     const { data, error } = await supabase
       .from("quiz_responses")
-      .insert({
-        user_name: name,
-        user_email: email,
-        answers_json: answers,
-        riasec_json: riasec ?? null,
-        // Campos opcionais (só funcionam se a coluna existir no schema)
-        ...(whatsapp ? { whatsapp } : {}),
-        ...(typeof clickedUpsell === "boolean" ? { clicked_upsell: clickedUpsell } : {}),
-      })
+      .insert(insertPayload)
       .select("id")
       .single();
 
