@@ -64,8 +64,8 @@ const Index = () => {
     trackEvent("email_captured");
 
     try {
-      // Backend aceita no maximo 30 respostas; fatiamos para evitar 400
-      const payloadAnswers = quizAnswers.slice(0, 30);
+      // Enviar todas as respostas para o backend
+      const payloadAnswers = quizAnswers;
 
       const response = await fetch("/api/generate-career-recommendation", {
         method: "POST",
