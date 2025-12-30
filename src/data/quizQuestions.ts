@@ -97,9 +97,9 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q4",
     type: "text",
-    question: "Você tem experiência ou formação em alguma área?",
-    placeholder: "Ex: cursando direito e estágio em escritório",
-    helperText: "Outros exemplos: 'cursando administração, sem experiência ainda'.",
+    question: "Descreva sua experiência profissional ou com provas de concursos anteriores.",
+    placeholder: "Ex: trabalhei no setor privado e já fiz 2 provas (INSS e TJ-SP)",
+    helperText: "Outros exemplos: 'estágio na prefeitura e fiz PF e Receita', 'sou CLT e fiz INSS e TJ-RJ'.",
   },
   {
     id: "q5",

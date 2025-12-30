@@ -12,133 +12,112 @@ const Privacy = () => {
             <ArrowLeft className="w-4 h-4" />
             Voltar para o início
           </Link>
-          
+
           <Card className="p-8 shadow-[var(--shadow-elevated)]">
             <h1 className="text-3xl font-bold mb-6">Política de Privacidade</h1>
-            <p className="text-sm text-muted-foreground mb-8">Última atualização: Janeiro de 2025</p>
-            
+            <p className="text-sm text-muted-foreground mb-8">Última atualização: Dezembro de 2025</p>
+
             <div className="prose prose-sm max-w-none space-y-6">
               <section>
                 <h2 className="text-xl font-semibold mb-3">1. Introdução</h2>
                 <p className="text-muted-foreground">
-                  O Career Quest AI ("nós", "nosso") está comprometido em proteger sua privacidade. 
-                  Esta política descreve como coletamos, usamos e protegemos seus dados pessoais, 
-                  em conformidade com a Lei Geral de Proteção de Dados (LGPD - Lei 13.709/2018).
+                  O Futuro Perfeito é um projeto independente e se compromete a proteger sua privacidade, seguindo a Lei Geral de
+                  Proteção de Dados (LGPD - Lei 13.709/2018). Esta política explica como coletamos, usamos e protegemos seus dados.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">2. Dados Coletados</h2>
-                <p className="text-muted-foreground mb-2">Coletamos os seguintes dados:</p>
+                <h2 className="text-xl font-semibold mb-3">2. Dados coletados</h2>
+                <p className="text-muted-foreground mb-2">Coletamos apenas o necessário para entregar o serviço:</p>
                 <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
-                  <li><strong>Nome completo:</strong> Para personalizar sua experiência</li>
-                  <li><strong>E-mail:</strong> Para enviar resultados e comunicações</li>
-                  <li><strong>WhatsApp (opcional):</strong> Para envio de resultados e suporte</li>
-                  <li><strong>Respostas do quiz:</strong> Para gerar recomendações personalizadas</li>
-                  <li><strong>Dados de navegação:</strong> Via Google Analytics (cookies)</li>
+                  <li><strong>Nome:</strong> para personalizar a comunicação e os resultados</li>
+                  <li><strong>E-mail:</strong> para enviar o relatório e atualizações</li>
+                  <li><strong>WhatsApp (opcional):</strong> para entrega do relatório e suporte, se você optar</li>
+                  <li><strong>Respostas do quiz:</strong> para gerar recomendações personalizadas</li>
+                  <li><strong>Dados técnicos de navegação:</strong> como IP, dispositivo e métricas de uso, via ferramentas de analytics</li>
                 </ul>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">3. Como Usamos Seus Dados</h2>
+                <h2 className="text-xl font-semibold mb-3">3. Como usamos seus dados</h2>
                 <p className="text-muted-foreground mb-2">Utilizamos seus dados para:</p>
                 <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
-                  <li>Gerar recomendações de carreira personalizadas via IA</li>
-                  <li>Enviar por e-mail seus resultados e conteúdos relacionados</li>
-                  <li>Processar pagamentos (via Mercado Pago)</li>
-                  <li>Fornecer suporte via WhatsApp</li>
-                  <li>Melhorar nosso serviço através de análises agregadas</li>
-                  <li>Enviar comunicações sobre o Pacote Completo (você pode cancelar a qualquer momento)</li>
+                  <li>Gerar e entregar recomendações e relatórios personalizados</li>
+                  <li>Enviar comunicações sobre o seu pedido ou sobre melhorias do serviço (você pode sair a qualquer momento)</li>
+                  <li>Processar pagamento do relatório completo (pagamento único de R$ 25)</li>
+                  <li>Melhorar o produto com análises agregadas e métricas de uso</li>
                 </ul>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">4. Compartilhamento de Dados</h2>
-                <p className="text-muted-foreground mb-2">Compartilhamos dados apenas com:</p>
+                <h2 className="text-xl font-semibold mb-3">4. Bases legais</h2>
+                <p className="text-muted-foreground mb-2">Tratamos seus dados com base em:</p>
                 <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
-                  <li><strong>Mercado Pago:</strong> Para processar pagamentos (dados criptografados)</li>
-                  <li><strong>Google Analytics:</strong> Para análise de tráfego (dados anonimizados)</li>
-                  <li><strong>Lovable Cloud/Supabase:</strong> Para armazenamento seguro de dados</li>
+                  <li><strong>Consentimento:</strong> para comunicações e uso do WhatsApp</li>
+                  <li><strong>Execução de contrato:</strong> para gerar e entregar o relatório</li>
+                  <li><strong>Legítimo interesse:</strong> para segurança, prevenção a fraudes e melhoria do serviço</li>
                 </ul>
-                <p className="text-muted-foreground mt-2">
-                  <strong>Nunca vendemos ou alugamos seus dados a terceiros.</strong>
-                </p>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">5. Seus Direitos (LGPD)</h2>
-                <p className="text-muted-foreground mb-2">Você tem direito a:</p>
+                <h2 className="text-xl font-semibold mb-3">5. Compartilhamento</h2>
+                <p className="text-muted-foreground mb-2">Compartilhamos dados apenas com provedores necessários:</p>
                 <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
-                  <li>Confirmar se tratamos seus dados</li>
-                  <li>Acessar seus dados</li>
+                  <li>Processador de pagamentos para transações seguras</li>
+                  <li>Serviços de e-mail para envio de relatórios e comunicações</li>
+                  <li>Plataformas de analytics para métricas (dados agregados)</li>
+                  <li>Plataforma de backend/armazenamento para guardar respostas do quiz e contato</li>
+                </ul>
+                <p className="text-muted-foreground mt-2"><strong>Não vendemos nem alugamos seus dados.</strong></p>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold mb-3">6. Seus direitos (LGPD)</h2>
+                <p className="text-muted-foreground mb-2">Você pode, a qualquer momento:</p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
+                  <li>Confirmar se tratamos seus dados e acessar uma cópia</li>
                   <li>Corrigir dados incompletos ou desatualizados</li>
                   <li>Solicitar anonimização ou exclusão de dados</li>
-                  <li>Revogar consentimento a qualquer momento</li>
-                  <li>Cancelar recebimento de e-mails</li>
+                  <li>Revogar consentimento e cancelar comunicações</li>
                 </ul>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">6. Como Exercer Seus Direitos</h2>
+                <h2 className="text-xl font-semibold mb-3">7. Segurança</h2>
                 <p className="text-muted-foreground">
-                  Para exercer qualquer direito acima, entre em contato:<br />
-                  📱 WhatsApp: (91) 98423-3672
-                </p>
-                <p className="text-muted-foreground mt-2">
-                  Responderemos sua solicitação em até 15 dias úteis.
+                  Usamos criptografia (HTTPS), controles de acesso e armazenamento restrito. Apesar dos cuidados, nenhum sistema é
+                  100% imune; mantenha seus dispositivos seguros.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">7. Cookies</h2>
+                <h2 className="text-xl font-semibold mb-3">8. Retenção</h2>
                 <p className="text-muted-foreground">
-                  Utilizamos cookies para:
-                </p>
-                <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
-                  <li>Melhorar a experiência do usuário</li>
-                  <li>Analisar tráfego via Google Analytics</li>
-                  <li>Salvar progresso do quiz (localStorage)</li>
-                </ul>
-                <p className="text-muted-foreground mt-2">
-                  Você pode desativar cookies nas configurações do seu navegador, mas isso pode 
-                  afetar funcionalidades do site.
+                  Mantemos seus dados enquanto necessário para entregar o serviço ou cumprir obrigações legais. Você pode pedir a
+                  exclusão; isso pode limitar funcionalidades futuras.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">8. Segurança</h2>
+                <h2 className="text-xl font-semibold mb-3">9. Cookies e métricas</h2>
                 <p className="text-muted-foreground">
-                  Implementamos medidas técnicas e organizacionais para proteger seus dados:
-                </p>
-                <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
-                  <li>Criptografia SSL/TLS em toda comunicação</li>
-                  <li>Banco de dados com acesso restrito</li>
-                  <li>Backups regulares</li>
-                  <li>Conformidade com padrões de segurança do Mercado Pago</li>
-                </ul>
-              </section>
-
-              <section>
-                <h2 className="text-xl font-semibold mb-3">9. Retenção de Dados</h2>
-                <p className="text-muted-foreground">
-                  Mantemos seus dados enquanto você usar nosso serviço ou conforme exigido por lei. 
-                  Você pode solicitar exclusão a qualquer momento.
+                  Utilizamos cookies/localStorage para manter sua sessão no quiz e analytics para métricas de uso. Você pode
+                  desativar no navegador, mas algumas funções podem ser afetadas.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">10. Alterações nesta Política</h2>
+                <h2 className="text-xl font-semibold mb-3">10. Alterações nesta política</h2>
                 <p className="text-muted-foreground">
-                  Podemos atualizar esta política periodicamente. Mudanças significativas serão 
-                  comunicadas por e-mail com 30 dias de antecedência.
+                  Podemos atualizar esta política. Mudanças relevantes serão comunicadas pelos canais disponíveis. O uso contínuo
+                  após a atualização significa que você concorda com a nova versão.
                 </p>
               </section>
 
               <section>
                 <h2 className="text-xl font-semibold mb-3">11. Contato</h2>
                 <p className="text-muted-foreground">
-                  Para dúvidas sobre privacidade ou proteção de dados:<br />
-                  📱 WhatsApp: (91) 98423-3672
+                  Para exercer seus direitos ou tirar dúvidas: WhatsApp (91) 98423-3672 ou mensagem via Instagram @luccaserrao.
                 </p>
               </section>
             </div>
@@ -151,3 +130,4 @@ const Privacy = () => {
 };
 
 export default Privacy;
+

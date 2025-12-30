@@ -43,6 +43,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`[Process Queue] Found ${pendingEmails.length} pending emails`);
 
+    const paidStatuses = ["paid", "approved"];
+
     let processed = 0;
     let skipped = 0;
     let failed = 0;
@@ -56,8 +58,9 @@ const handler = async (req: Request): Promise<Response> => {
           .from("orders")
           .select("*")
           .eq("quiz_response_id", emailJob.quiz_response_id)
-          .eq("payment_status", "approved")
-          .single();
+          .in("payment_status", paidStatuses)
+          .limit(1)
+          .maybeSingle();
 
         if (order) {
           console.log(`[Process Queue] User already paid, skipping email ${emailJob.id}`);

@@ -1,3 +1,10 @@
+import { supabase } from "./supabaseClient.js";
+
+const normalizeString = (value, fallback = "") => {
+  if (!value) return fallback;
+  return String(value).trim();
+};
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Metodo nao permitido" });
@@ -13,16 +20,105 @@ export default async function handler(req, res) {
 
   try {
     const reqBody = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+    const userName = normalizeString(reqBody.userName || reqBody.name || "Cliente");
+    const userEmail = normalizeString(reqBody.userEmail || reqBody.email || "").toLowerCase();
+    const quizResponseId = normalizeString(reqBody.quizResponseId || reqBody.quiz_response_id || "");
+
+    if (!userEmail) {
+      return res.status(400).json({ error: "Email obrigatorio" });
+    }
+
     const amountNumber = Number(reqBody.amount || 25); // valor em reais
     const valueInCents = Number.isFinite(amountNumber) && amountNumber > 0 ? Math.round(amountNumber * 100) : 2500;
 
     const forwardedProto = (req.headers["x-forwarded-proto"] || "").toString().split(",")[0];
     const hostHeader = (req.headers["x-forwarded-host"] || req.headers.host || "").toString().split(",")[0].trim();
-    const webhookBase = process.env.PIX_WEBHOOK_URL || `${forwardedProto || "https"}://${process.env.PIX_WEBHOOK_HOST || hostHeader || "www.futuroperfeito.com.br"}`;
+    const webhookBase =
+      process.env.PIX_WEBHOOK_URL ||
+      `${forwardedProto || "https"}://${process.env.PIX_WEBHOOK_HOST || hostHeader || "www.futuroperfeito.com.br"}`;
     const webhookUrl = webhookBase.endsWith("/api/pixWebhook")
       ? webhookBase
       : `${webhookBase.replace(/\/$/, "")}/api/pixWebhook`;
 
+    // 1) Cria ou reaproveita pedido pendente no Supabase
+    let orderRecord = null;
+    if (!supabase) {
+      console.error("Supabase client not configured; skipping order insert for PIX");
+    } else {
+      try {
+        let existing = null;
+
+        if (quizResponseId) {
+          const { data: rows, error: fetchErr } = await supabase
+            .from("orders")
+            .select("id, payment_status")
+            .eq("quiz_response_id", quizResponseId)
+            .order("created_at", { ascending: false })
+            .limit(1);
+          if (fetchErr && fetchErr.code !== "PGRST116") {
+            console.error("Erro ao buscar pedido existente (quiz_response_id):", fetchErr);
+          }
+          if (rows && rows.length) existing = rows[0];
+        }
+
+        if (!existing && userEmail) {
+          const { data: rows, error: fetchErr } = await supabase
+            .from("orders")
+            .select("id, payment_status")
+            .eq("user_email", userEmail)
+            .not("payment_status", "eq", "paid")
+            .order("created_at", { ascending: false })
+            .limit(1);
+          if (fetchErr && fetchErr.code !== "PGRST116") {
+            console.error("Erro ao buscar pedido existente (email):", fetchErr);
+          }
+          if (rows && rows.length) existing = rows[0];
+        }
+
+        if (existing) {
+          const { data: updated, error: updateErr } = await supabase
+            .from("orders")
+            .update({
+              user_email: userEmail,
+              user_name: userName,
+              quiz_response_id: quizResponseId || null,
+              amount: valueInCents,
+              payment_status: "pending",
+            })
+            .eq("id", existing.id)
+            .select()
+            .single();
+          if (updateErr) {
+            console.error("Erro ao atualizar pedido existente:", updateErr);
+          } else {
+            orderRecord = updated;
+          }
+        }
+
+        if (!orderRecord) {
+          const { data: inserted, error: insertErr } = await supabase
+            .from("orders")
+            .insert({
+              user_email: userEmail,
+              user_name: userName,
+              quiz_response_id: quizResponseId || null,
+              amount: valueInCents,
+              payment_status: "pending",
+            })
+            .select()
+            .single();
+          if (insertErr) {
+            console.error("Erro ao criar pedido para PIX:", insertErr);
+          } else {
+            orderRecord = inserted;
+          }
+        }
+      } catch (dbErr) {
+        console.error("Erro inesperado ao preparar pedido PIX:", dbErr);
+      }
+    }
+
+    // 2) Gera PIX na PushinPay
     const body = {
       value: valueInCents,
       webhook_url: webhookUrl,
@@ -80,6 +176,16 @@ export default async function handler(req, res) {
       transactionData?.qr_code_text ||
       (typeof data === "string" ? data : undefined);
 
+    const transactionId =
+      safeData?.transaction_id ||
+      safeData?.transactionId ||
+      safeData?.id ||
+      transactionData?.transaction_id ||
+      transactionData?.id ||
+      safeData?.payment_id ||
+      safeData?.paymentId ||
+      null;
+
     if (!copyPaste) {
       console.error("PushinPay response missing copyPaste/qr_code", data);
       return res.status(502).json({
@@ -88,9 +194,35 @@ export default async function handler(req, res) {
       });
     }
 
+    // 3) Atualiza pedido com referencia do PIX para o webhook localizar
+    if (orderRecord && supabase) {
+      try {
+        const updatePayload = {
+          payment_status: "pending",
+          pix_copy_paste: copyPaste || null,
+          pushinpay_transaction_id: transactionId || orderRecord?.pushinpay_transaction_id || null,
+          pushinpay_status: safeData?.status || null,
+        };
+        const { error: updateErr } = await supabase
+          .from("orders")
+          .update(updatePayload)
+          .eq("id", orderRecord.id);
+
+        if (updateErr) {
+          console.error("Erro ao salvar referencia PIX no pedido:", updateErr);
+        } else {
+          orderRecord = { ...orderRecord, ...updatePayload };
+        }
+      } catch (updErr) {
+        console.error("Erro inesperado ao atualizar pedido PIX:", updErr);
+      }
+    }
+
     return res.status(200).json({
       qrCodeImage,
       copyPaste,
+      order_id: orderRecord?.id || null,
+      transaction_id: transactionId || null,
       raw: data,
     });
   } catch (err) {

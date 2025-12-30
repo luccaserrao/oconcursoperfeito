@@ -61,6 +61,18 @@ export default async function handler(req, res) {
       return;
     }
 
+    try {
+      await supabase.functions.invoke("schedule-email-sequence", {
+        body: {
+          quizResponseId: data.id,
+          userEmail: email,
+          userName: name,
+        },
+      });
+    } catch (scheduleError) {
+      console.error("Falha ao agendar sequencia de emails:", scheduleError);
+    }
+
     res.status(200).json({ success: true, id: data.id });
   } catch (err) {
     console.error("Server error:", err);

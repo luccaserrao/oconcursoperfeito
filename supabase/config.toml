@@ -48,6 +48,9 @@ verify_jwt = false
 [functions.send-email-sequence-2]
 verify_jwt = false
 
+[functions.send-email-sequence-3]
+verify_jwt = false
+
 [functions.schedule-email-sequence]
 verify_jwt = false
 

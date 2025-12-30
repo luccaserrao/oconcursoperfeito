@@ -60,6 +60,7 @@ const AdminQuizResponses = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [onlyWithAnswers, setOnlyWithAnswers] = useState(false);
   const [onlyRecent, setOnlyRecent] = useState(false); // ?ltimas 24h
+  const [expandedAnswers, setExpandedAnswers] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -221,6 +222,9 @@ const AdminQuizResponses = () => {
     navigator.clipboard?.writeText(JSON.stringify(payload, null, 2)).catch(() => {});
   };
 
+  const toggleAnswersVisibility = (id: string) => {
+    setExpandedAnswers((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
   const handleExportCsv = () => {
     const rows = filteredData.map((item) => ({
       id: item.id,
@@ -456,6 +460,10 @@ const AdminQuizResponses = () => {
               const riasecScores = (item.riasec as any)?.scores || {};
               const riasecDesc = (item.riasec as any)?.descricao_personalizada || "";
               const riasecHabs = (item.riasec as any)?.habilidades || [];
+              const answers = item.answers || [];
+              const isExpanded = expandedAnswers[item.id];
+              const answersToShow = isExpanded ? answers : answers.slice(0, 5);
+              const hiddenCount = Math.max(0, answers.length - answersToShow.length);
 
               return (
                 <Card key={item.id} className="overflow-hidden border-border/70 shadow-sm">
@@ -552,28 +560,47 @@ const AdminQuizResponses = () => {
 
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <p className="font-semibold text-sm text-foreground">Respostas ({item.answers?.length || 0})</p>
-                      </div>
-                      <div className="grid gap-3">
-                        {(item.answers || []).map((answer, index) => (
-                          <Card key={`${item.id}-${index}`} className="border border-border/80 bg-card/60">
-                            <div className="p-4 space-y-2">
-                              <div className="flex items-start justify-between gap-3">
-                                <p className="text-sm font-semibold text-foreground">
-                                  Q{index + 1}: {answer.question || "Pergunta"}
-                                </p>
-                                <Badge variant="outline" className="text-xs">Resposta do usuário</Badge>
-                              </div>
-                              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                                {answer.answer || "Sem resposta"}
-                              </p>
-                            </div>
-                          </Card>
-                        ))}
-                        {(!item.answers || item.answers.length === 0) && (
-                          <p className="text-sm text-muted-foreground">Sem respostas registradas.</p>
+                        <p className="font-semibold text-sm text-foreground">Respostas ({answers.length})</p>
+                        {answers.length > 5 && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => toggleAnswersVisibility(item.id)}
+                            className="h-8 px-2 text-xs"
+                          >
+                            {isExpanded ? "Ver menos" : `Ver todas (${answers.length})`}
+                          </Button>
                         )}
                       </div>
+                      {answers.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">Sem respostas registradas.</p>
+                      ) : (
+                        <ScrollArea className={isExpanded ? "max-h-[520px]" : "max-h-[320px]"}>
+                          <div className="grid gap-3 pr-1">
+                            {answersToShow.map((answer, index) => (
+                              <Card key={`${item.id}-${index}`} className="border border-border/80 bg-card/60">
+                                <div className="p-4 space-y-2">
+                                  <div className="flex items-start justify-between gap-3">
+                                    <p className="text-sm font-semibold text-foreground">
+                                      Q{index + 1}: {answer.question || "Pergunta"}
+                                    </p>
+                                    <Badge variant="outline" className="text-xs">Resposta do usu?rio</Badge>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                                    {answer.answer || "Sem resposta"}
+                                  </p>
+                                </div>
+                              </Card>
+                            ))}
+                            {!isExpanded && hiddenCount > 0 && (
+                              <p className="text-xs text-muted-foreground pb-2">
+                                +{hiddenCount} respostas ocultas. Clique em "Ver todas".
+                              </p>
+                            )}
+                          </div>
+                        </ScrollArea>
+                      )}
                     </div>
                   </div>
                 </Card>

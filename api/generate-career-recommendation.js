@@ -68,6 +68,28 @@ export default async function handler(req, res) {
       return;
     }
 
+    // Schedule follow-up email sequence (fire-and-forget)
+    if (data?.id && payload.email && payload.name) {
+      const scheduleUrl = `${supabaseUrl.replace(/\/$/, "")}/functions/v1/schedule-email-sequence`;
+      try {
+        await fetch(scheduleUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: supabaseKey,
+            Authorization: `Bearer ${supabaseKey}`,
+          },
+          body: JSON.stringify({
+            quizResponseId: data.id,
+            userEmail: payload.email,
+            userName: payload.name,
+          }),
+        });
+      } catch (scheduleError) {
+        console.error("Failed to schedule email sequence:", scheduleError);
+      }
+    }
+
     res.status(200).json(data);
   } catch (error) {
     console.error("Proxy error generate-career-recommendation:", error);

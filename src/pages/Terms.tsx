@@ -12,97 +12,106 @@ const Terms = () => {
             <ArrowLeft className="w-4 h-4" />
             Voltar para o início
           </Link>
-          
+
           <Card className="p-8 shadow-[var(--shadow-elevated)]">
             <h1 className="text-3xl font-bold mb-6">Termos de Uso</h1>
-            <p className="text-sm text-muted-foreground mb-8">Última atualização: Janeiro de 2025</p>
-            
+            <p className="text-sm text-muted-foreground mb-8">Última atualização: Dezembro de 2025</p>
+
             <div className="prose prose-sm max-w-none space-y-6">
               <section>
                 <h2 className="text-xl font-semibold mb-3">1. Aceitação dos Termos</h2>
                 <p className="text-muted-foreground">
-                  Ao acessar e usar o Career Quest AI, você concorda com estes Termos de Uso. 
-                  Se você não concordar com qualquer parte destes termos, não deve usar nosso serviço.
+                  Ao acessar ou usar o Futuro Perfeito, você concorda com estes Termos de Uso. Se não concordar com qualquer
+                  parte, não utilize o serviço.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">2. Descrição do Serviço</h2>
+                <h2 className="text-xl font-semibold mb-3">2. Quem somos e o que oferecemos</h2>
                 <p className="text-muted-foreground">
-                  O Career Quest AI é uma plataforma que oferece:
+                  Futuro Perfeito é um projeto independente, desenvolvido por uma pessoa, que ajuda você a identificar concursos
+                  públicos aderentes ao seu perfil. Oferecemos:
                 </p>
                 <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
-                  <li>Quiz gratuito para identificação de carreiras públicas compatíveis</li>
-                  <li>Análise de perfil por inteligência artificial</li>
-                  <li>Recomendações personalizadas de concursos públicos</li>
-                  <li>Pacote completo de preparação (produto pago opcional)</li>
+                  <li>Quiz gratuito para mapear perfil e contexto</li>
+                  <li>Recomendações iniciais baseadas nas suas respostas</li>
+                  <li>Relatório completo opcional por pagamento único de R$ 25 (ranking de concursos, estimativas e plano)</li>
                 </ul>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">3. Uso do Serviço</h2>
-                <p className="text-muted-foreground mb-2">Você concorda em:</p>
+                <h2 className="text-xl font-semibold mb-3">3. Uso do serviço</h2>
+                <p className="text-muted-foreground mb-2">Ao usar o Futuro Perfeito, você se compromete a:</p>
                 <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
-                  <li>Fornecer informações verdadeiras e precisas</li>
-                  <li>Usar o serviço apenas para fins legais</li>
-                  <li>Não tentar burlar ou manipular nossos sistemas</li>
-                  <li>Não revender ou redistribuir o conteúdo sem autorização</li>
+                  <li>Fornecer informações verdadeiras e atualizadas</li>
+                  <li>Não tentar burlar, interromper ou explorar o sistema</li>
+                  <li>Usar o serviço somente para fins pessoais e legais</li>
+                  <li>Respeitar direitos autorais e marcas exibidas no site</li>
                 </ul>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">4. Produto Pago</h2>
+                <h2 className="text-xl font-semibold mb-3">4. Produto pago e entrega</h2>
                 <p className="text-muted-foreground">
-                  O Pacote Completo de Preparação é um produto digital com pagamento único de R$ 50,00. 
-                  Após a confirmação do pagamento, você receberá acesso imediato ao conteúdo por e-mail.
+                  O relatório completo tem pagamento único de R$ 25. O processamento é feito por provedores de pagamento
+                  terceirizados e o acesso é entregue por e-mail (e, se você optar, também por WhatsApp). Não há assinatura
+                  nem recorrência.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">5. Política de Reembolso</h2>
+                <h2 className="text-xl font-semibold mb-3">5. Reembolso</h2>
                 <p className="text-muted-foreground">
-                  Oferecemos garantia incondicional de 7 dias. Se você não ficar satisfeito com o 
-                  Pacote Completo, entre em contato através do WhatsApp (91) 98423-3672 para solicitar 
-                  reembolso total, sem perguntas ou burocracia.
+                  Se não ficar satisfeito com o relatório completo, você pode solicitar reembolso em até 7 dias pelo WhatsApp
+                  (91) 98423-3672 ou pelo contato indicado no site. Reembolsos são integrais para pedidos dentro desse prazo.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">6. Propriedade Intelectual</h2>
+                <h2 className="text-xl font-semibold mb-3">6. Propriedade intelectual</h2>
                 <p className="text-muted-foreground">
-                  Todo o conteúdo, design, logotipos e materiais do Career Quest AI são de propriedade 
-                  exclusiva e protegidos por leis de direitos autorais.
+                  Todo o conteúdo, textos, layouts, ilustrações e marca Futuro Perfeito são de propriedade do projeto ou de seus
+                  licenciantes. É proibido copiar, revender ou distribuir sem autorização por escrito.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">7. Limitação de Responsabilidade</h2>
+                <h2 className="text-xl font-semibold mb-3">7. Limitação de responsabilidade</h2>
                 <p className="text-muted-foreground">
-                  O Career Quest AI oferece recomendações baseadas em IA, mas não garante aprovação em 
-                  concursos públicos. O sucesso depende de múltiplos fatores, incluindo seu esforço e dedicação.
+                  As recomendações são baseadas nas respostas fornecidas e em dados disponíveis no momento. Não garantimos
+                  aprovação em concursos nem que informações de terceiros (editais, salários, datas) estejam sempre atualizadas.
+                  Use seu julgamento e verifique fontes oficiais antes de decisões.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">8. Alterações nos Termos</h2>
+                <h2 className="text-xl font-semibold mb-3">8. Privacidade e dados</h2>
                 <p className="text-muted-foreground">
-                  Podemos atualizar estes termos periodicamente. Mudanças significativas serão comunicadas 
-                  por e-mail aos usuários cadastrados.
+                  O tratamento dos seus dados pessoais é regido pela nossa Política de Privacidade. Ao usar o serviço, você
+                  concorda com ela.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">9. Lei Aplicável</h2>
+                <h2 className="text-xl font-semibold mb-3">9. Alterações nos termos</h2>
                 <p className="text-muted-foreground">
-                  Estes termos são regidos pelas leis da República Federativa do Brasil.
+                  Podemos atualizar estes termos. Mudanças relevantes serão comunicadas pelos canais disponíveis no site. O uso
+                  continuado após a atualização implica concordância com a versão vigente.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-3">10. Contato</h2>
+                <h2 className="text-xl font-semibold mb-3">10. Lei aplicável</h2>
                 <p className="text-muted-foreground">
-                  Para dúvidas sobre estes termos, entre em contato:<br />
-                  📱 WhatsApp: (91) 98423-3672
+                  Estes termos são regidos pelas leis da República Federativa do Brasil. Eventuais disputas serão resolvidas em
+                  foro competente no Brasil.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold mb-3">11. Contato</h2>
+                <p className="text-muted-foreground">
+                  Dúvidas ou solicitações: WhatsApp (91) 98423-3672 ou mensagem via Instagram @luccaserrao.
                 </p>
               </section>
             </div>
@@ -115,3 +124,4 @@ const Terms = () => {
 };
 
 export default Terms;
+

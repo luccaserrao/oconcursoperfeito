@@ -22,8 +22,8 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    console.log("[Email Seq 1] Starting email send process");
-    
+    console.log("[Email Seq 3] Starting email send process");
+
     const body = await req.json();
     const { quizResponseId } = requestSchema.parse(body);
 
@@ -32,8 +32,8 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Buscar dados do lead
-    const { data: existingOrder } = await supabase
+    // Skip if user already paid
+    const { data: order } = await supabase
       .from("orders")
       .select("id")
       .eq("quiz_response_id", quizResponseId)
@@ -41,14 +41,15 @@ const handler = async (req: Request): Promise<Response> => {
       .limit(1)
       .maybeSingle();
 
-    if (existingOrder) {
-      console.log("[Email Seq 1] User already paid, skipping email");
+    if (order) {
+      console.log("[Email Seq 3] User already paid, skipping email");
       return new Response(
         JSON.stringify({ message: "User already paid, email skipped" }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
+    // Fetch lead data
     const { data: quizResponse, error: quizError } = await supabase
       .from("quiz_responses")
       .select("*")
@@ -62,69 +63,75 @@ const handler = async (req: Request): Promise<Response> => {
     const name = (quizResponse as any).user_name || (quizResponse as any).name;
     const email = (quizResponse as any).user_email || (quizResponse as any).email;
     const recommendation = (quizResponse as any).riasec_json || (quizResponse as any).ai_recommendation || {};
-    const careerName = (recommendation as any)?.careerName || (recommendation as any)?.top1 || "sua carreira ideal";
-    const salary = (recommendation as any)?.salary || "competitivo";
-    const examFrequency = (recommendation as any)?.examFrequency || "";
-    
-    // Resumir previsão de edital
-    let examPreview = "próximos meses";
+    const careerName = recommendation?.careerName || "sua carreira ideal";
+    const salary = recommendation?.salary || "competitivo";
+    const examFrequency = recommendation?.examFrequency || "";
+
+    // Quick exam window summary
+    let examPreview = "proximos meses";
     if (examFrequency.toLowerCase().includes("anual") || examFrequency.toLowerCase().includes("ano")) {
-      examPreview = "próximos 6-12 meses";
+      examPreview = "proximos 6-12 meses";
     } else if (examFrequency.toLowerCase().includes("frequente")) {
-      examPreview = "próximos 3-6 meses";
+      examPreview = "proximos 3-6 meses";
     }
 
-    // Verificar se já foi enviado
+    // Prevent duplicates
     const { data: existingLog } = await supabase
       .from("email_logs")
       .select("id")
       .eq("quiz_response_id", quizResponseId)
-      .eq("email_type", "sequence_1")
-      .single();
+      .eq("email_type", "sequence_3")
+      .maybeSingle();
 
     if (existingLog) {
-      console.log("[Email Seq 1] Email already sent, skipping");
+      console.log("[Email Seq 3] Email already sent, skipping");
       return new Response(
         JSON.stringify({ message: "Email already sent" }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Gerar link de pagamento
-    const paymentLink = `${Deno.env.get("SUPABASE_URL")?.replace("https://gtmsjqqqzsfganppcdxe.supabase.co", "https://seu-dominio.com.br")}/?source=email1&qid=${quizResponseId}`;
+    const paymentLink = `${Deno.env.get("SUPABASE_URL")?.replace("https://gtmsjqqqzsfganppcdxe.supabase.co", "https://seu-dominio.com.br")}/?source=email3&qid=${quizResponseId}`;
 
-    // Enviar email
     const emailHtml = `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
-        <h2 style="color: #2563eb; margin-bottom: 20px;">Oi ${name},</h2>
-        
-        <p style="font-size: 16px; line-height: 1.6; margin-bottom: 15px;">
-          Lembra do teste que você fez no Concurso Perfeito?<br>
-          A IA analisou seu perfil e indicou que a carreira ideal pra você é:
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 620px; margin: 0 auto; padding: 24px; color: #111;">
+        <h2 style="color: #0f172a; margin-bottom: 16px;">${name}, sua decisao final sobre ${careerName}</h2>
+
+        <p style="font-size: 16px; line-height: 1.6; margin-bottom: 12px;">
+          Nosso time reservou um plano completo para voce, mas ele so fica guardado ate hoje.
         </p>
-        
-        <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <p style="margin: 8px 0; font-size: 16px;"><strong>🎯 ${careerName}</strong></p>
-          <p style="margin: 8px 0; font-size: 16px;"><strong>💰 Salário:</strong> ${salary}</p>
-          <p style="margin: 8px 0; font-size: 16px;"><strong>📅 Próximo edital:</strong> ${examPreview}</p>
+
+        <div style="background: #0ea5e9; color: white; padding: 16px; border-radius: 10px; margin: 20px 0;">
+          <p style="margin: 6px 0; font-size: 16px;"><strong>Carreira:</strong> ${careerName}</p>
+          <p style="margin: 6px 0; font-size: 16px;"><strong>Faixa salarial:</strong> ${salary}</p>
+          <p style="margin: 6px 0; font-size: 16px;"><strong>Proximo edital:</strong> ${examPreview}</p>
         </div>
-        
-        <p style="font-size: 16px; line-height: 1.6; margin: 20px 0;">
-          👉 <strong>Libere agora o resultado completo e veja todas as chances pra 2025:</strong>
+
+        <p style="font-size: 16px; line-height: 1.6; margin: 16px 0;">
+          Desbloqueie por R$ 50 e receba o passo a passo para chegar preparado no edital.
         </p>
-        
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${paymentLink}" style="background: #2563eb; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
-            Ver Resultado Completo por R$ 50
+
+        <div style="text-align: center; margin: 28px 0;">
+          <a href="${paymentLink}" style="background: #0f172a; color: white; padding: 14px 30px; text-decoration: none; border-radius: 10px; display: inline-block; font-weight: 700;">
+            Garantir meu plano agora
           </a>
         </div>
-        
-        <p style="font-size: 16px; line-height: 1.6; margin-top: 30px;">
-          Você pode começar o ano já no caminho certo.
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 10px;">
+          <p style="margin: 0 0 8px 0; font-size: 15px;"><strong>O que voce leva:</strong></p>
+          <ul style="margin: 0; padding-left: 20px; color: #334155; font-size: 15px; line-height: 1.6;">
+            <li>Cronograma detalhado com as materias que mais pontuam.</li>
+            <li>Materiais recomendados pela IA para acelerar a preparacao.</li>
+            <li>Revisao express para os 7 dias antes da prova.</li>
+          </ul>
+        </div>
+
+        <p style="font-size: 14px; color: #475569; margin-top: 24px;">
+          Se nao fizer sentido agora, tudo bem. Mas se quer comecar 2025 preparado, esse e o momento.
         </p>
-        
-        <p style="font-size: 14px; color: #666; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-          — Equipe Concurso Perfeito
+
+        <p style="font-size: 14px; color: #94a3b8; margin-top: 20px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
+          Equipe Concurso Perfeito
         </p>
       </div>
     `;
@@ -132,18 +139,17 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "Concurso Perfeito <onboarding@resend.dev>",
       to: [email],
-      subject: `${name}, sua carreira pública ideal já foi escolhida pela IA 👀`,
+      subject: `${name}, ultima chance de liberar seu plano para ${careerName}`,
       html: emailHtml,
     });
 
-    console.log("[Email Seq 1] Email sent successfully:", emailResponse);
+    console.log("[Email Seq 3] Email sent successfully:", emailResponse);
 
-    // Registrar no log
     await supabase.from("email_logs").insert({
       quiz_response_id: quizResponseId,
       user_email: email,
       user_name: name,
-      email_type: "sequence_1",
+      email_type: "sequence_3",
       status: "sent",
       resend_email_id: emailResponse.data?.id,
     });
@@ -153,26 +159,25 @@ const handler = async (req: Request): Promise<Response> => {
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error: any) {
-    console.error("[Email Seq 1] Error:", error);
-    
-    // Tentar registrar erro no log
+    console.error("[Email Seq 3] Error:", error);
+
     try {
       const body = await req.json();
       const supabase = createClient(
         Deno.env.get("SUPABASE_URL") ?? "",
         Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
       );
-      
+
       await supabase.from("email_logs").insert({
         quiz_response_id: body.quizResponseId,
         user_email: "unknown",
         user_name: "unknown",
-        email_type: "sequence_1",
+        email_type: "sequence_3",
         status: "failed",
         error_message: error.message,
       });
     } catch (logError) {
-      console.error("[Email Seq 1] Error logging failed:", logError);
+      console.error("[Email Seq 3] Error logging failed:", logError);
     }
 
     return new Response(
