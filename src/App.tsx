@@ -19,6 +19,8 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 import Obrigado from "./pages/Obrigado";
+import BlogIndex from "./pages/blog/BlogIndex";
+import BlogPostPage from "./pages/blog/BlogPostPage";
 
 
 const queryClient = new QueryClient();
@@ -53,6 +55,8 @@ const App = () => (
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/quiz-responses" element={<AdminQuizResponses />} />
             <Route path="/admin/clients" element={<AdminClients />} />
+            <Route path="/blog" element={<BlogIndex />} />
+            <Route path="/blog/:slug" element={<BlogPostPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
