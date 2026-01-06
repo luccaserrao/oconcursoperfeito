@@ -92,7 +92,7 @@ const BlogPostPage = () => {
         <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">{description}</p>
         <div className="pt-1">
           <a
-            href="/teste-futuro-perfeito"
+            href="/"
             className={`inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 ${fullWidth ? "w-full" : ""}`}
           >
             Fazer o teste Futuro Perfeito

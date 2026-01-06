@@ -1,6 +1,12 @@
 {
   "routes": [
     { "handle": "filesystem" },
+    { "src": "/sitemap.xml", "dest": "/api/sitemap.xml" },
     { "src": "/.*", "dest": "/" }
-  ]
+  ],
+  "functions": {
+    "api/sitemap.xml.js": {
+      "includeFiles": "content/blog/**"
+    }
+  }
 }
