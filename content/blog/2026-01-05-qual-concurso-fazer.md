@@ -1,267 +1,129 @@
 ---
-title: "Qual concurso fazer? Como escolher o cargo certo para o seu perfil"
-description: "Se você quer fazer concurso público mas não sabe qual escolher, este guia mostra como analisar seu perfil, rotina desejada e áreas de concurso — sem decidir no escuro."
-slug: "qual-concurso-fazer"
-date: "2026-02-07"
-tags: ["concurso publico", "carreira publica", "perfil profissional", "teste vocacional"]
+title: "Qual concurso devo fazer? Descubra o que realmente combina com você"
+description: "Um guia prático para ajudar você a descobrir qual concurso fazer analisando perfil, rotina e estilo de vida — não apenas salário."
+slug: "qual-concurso-devo-fazer"
+date: "2026-01-05"
+tags: ["concurso publico", "carreira", "escolha de concurso", "teste vocacional"]
 ---
 
-# Qual concurso fazer? Como escolher o cargo certo para o seu perfil
+# Qual concurso devo fazer? Descubra o que realmente combina com você
 
-Talvez você esteja exatamente assim:
+Se você está pesquisando sobre concursos, provavelmente já pensou:
 
-> “Quero fazer concurso… mas não sei qual escolher.”
+> **“Com tanta opção… qual concurso eu devo fazer?”**
 
-E aí começam as dúvidas:
+É normal ficar confuso.
 
-- policial?  
-- administrativo?  
-- área da saúde?  
-- tribunal?  
-- fiscal?  
+Você escuta:
 
-Ao mesmo tempo, todo mundo opina:
+- “faz o que paga mais”  
+- “vai no que sair primeiro”  
+- “entra em qualquer um e depois troca”
 
-> “Esse paga mais.”  
-> “Aquele é mais fácil.”  
-> “Esse tem mais vagas.”
+Mas o que quase ninguém fala é:
 
-Mas existe uma pergunta que quase ninguém faz — e que muda tudo:
-
-> **Esse concurso combina com o meu jeito de trabalhar?**
+> **o melhor concurso é o que combina com você — e com a sua vida.**
 
 ---
 
-## Concurso não é só salário — é rotina + pressão + ambiente
+## Concurso não é só passar — é conseguir ficar
 
-Quando você passa, não ganha só estabilidade.
+Quando você escolhe um concurso, escolhe também:
 
-Você ganha também:
+- rotina,  
+- ambiente,  
+- tipo de pressão.
 
-- um tipo de rotina,
-- um tipo de problema,
-- um tipo de pressão emocional,
-- um tipo de ambiente.
+E muita gente descobre isso **depois que passa**.
 
-E é aí que muita gente se arrepende.
-
-> Passar é difícil —  
-> **ficar no lugar errado é pior ainda.**
+> Passar é difícil.  
+> Ficar no lugar errado é pior.
 
 ---
 
-## Primeiro passo: entenda seu perfil de trabalho
+## Comece pelo seu perfil (antes de olhar salário)
 
-Responda com sinceridade:
+Pergunte a si mesmo:
 
-- você gosta de lidar com pessoas o tempo todo?
-- prefere tarefas organizadas e repetitivas?
-- gosta de resolver problemas práticos?
-- lida bem com pressão e conflito?
-- prefere ambiente calmo e previsível?
-- gosta de campo ou prefere gabinete?
+- gosto de lidar com pessoas diariamente?  
+- prefiro tarefas organizadas e repetitivas?  
+- lido bem com risco e conflito?  
+- gosto de analisar números e dados?  
+- funciono melhor em ambientes calmos?
 
-Essas respostas já indicam **ÁREAS**, não cargos isolados.
-
----
-
-## Principais áreas de concurso (e para quem combinam mais)
-
-### 🗂️ Área administrativa
-**Perfil:** organizado, paciente, gosta de rotina.
-
-Atuação comum:
-
-- processos,
-- documentos,
-- atendimento eventual,
-- tarefas estruturadas.
-
-Costuma ter menos pressão direta.
+Essas respostas apontam a área certa.
 
 ---
 
-### 👥 Área de atendimento ao público
-**Perfil:** comunicativo, empático, tolera reclamações.
+## Áreas de concurso — e quem combina com cada uma
 
-Envolve:
+### 🗂️ Administrativa  
+Rotina, organização e previsibilidade.
 
-- contato constante com pessoas,
-- situações emocionais,
-- explicação de procedimentos.
+### 👥 Atendimento ao público  
+Contato constante — exige paciência.
 
-Pode ser cansativo para quem é mais introvertido.
+### 🚓 Segurança/policial  
+Risco, pressão e hierarquia.
 
----
+### ⚖️ Tribunais  
+Perfil analítico e organizado.
 
-### 🚓 Área policial / segurança
-**Perfil:** resistente a pressão, gosta de ação, aceita risco.
+### 💉 Saúde  
+Exige preparo emocional e plantões.
 
-Inclui:
-
-- plantões,
-- estresse,
-- hierarquia rígida.
-
-É vocação — e não “plano B”.
+### 📊 Fiscal/controle  
+Muita responsabilidade e cobrança.
 
 ---
 
-### ⚖️ Área jurídica (tribunais)
-**Perfil:** analítico, organizado, gosta de normas e detalhes.
+## Como filtrar sem travar
 
-Rotina mais técnica, geralmente com:
+### 1️⃣ Liste o que você NÃO aceita viver  
+Plantões, risco físico, cobrança pública…
 
-- análise de processos,
-- pareceres,
-- pouco improviso.
+### 2️⃣ Pense no estilo de vida que deseja  
+Tempo, tranquilidade, crescimento, estabilidade…
 
----
-
-### 💉 Área da saúde
-**Perfil:** emocionalmente forte, gosta de cuidar.
-
-Pode incluir:
-
-- plantões,
-- contato com dor,
-- decisões rápidas.
-
-Não combina com quem evita conflito ou intensidade.
+### 3️⃣ Pesquise o dia a dia real  
+Converse com servidores. Veja os pontos negativos também.
 
 ---
 
-### 📊 Área fiscal e controle
-**Perfil:** analítico, lógico, gosta de números.
+## Testes ajudam — mas não decidem por você
 
-Em geral:
+Eles:
 
-- alta responsabilidade,
-- exigência técnica,
-- boa remuneração — com cobrança.
+- organizam suas tendências,  
+- reduzem opções erradas,  
+- trazem clareza.
 
----
-
-## Erro comum: escolher só pelo salário
-
-Muita gente pensa:
-
-> “Depois eu me acostumo.”
-
-Às vezes acostuma.  
-Em muitos casos… **adoece**.
-
-- ansiedade
-- desgaste emocional
-- vontade de largar
-- sensação de prisão
-
-> Concurso certo não é o que paga mais.  
-> É o que **você consegue sustentar por anos.**
+> Eles são bússola — não destino.
 
 ---
 
-## Como descobrir qual concurso combina com você (na prática)
+## Como o Futuro Perfeito ajuda
 
-### 1️⃣ Liste o que você NÃO quer viver
+Nós:
 
-Exemplo:
+- analisamos perfil,  
+- formação,  
+- preferências,  
+- e rotina desejada,
 
-- plantão noturno
-- contato com violência
-- muita cobrança pública
-- atendimento tenso
-- trabalho solitário demais
+e apresentamos **3 caminhos compatíveis**, explicando prós e contras.
 
-Isso já elimina metade dos concursos.
-
----
-
-### 2️⃣ Pense no estilo de vida que deseja
-
-- tempo com família?
-- previsibilidade?
-- adrenalina?
-- status?
-- descanso emocional?
-
-> Cada área “cobra” um preço diferente.
+Sem ilusão.  
+Com clareza.
 
 ---
 
-### 3️⃣ Pesquise o dia a dia real
-
-Não confie só em vídeos de aprovação.
-
-Procure:
-
-- relatos,
-- bastidores,
-- depoimentos negativos também.
-
-Pergunte:
-
-> “Qual é a pior parte desse cargo?”
-
-Se ainda assim fizer sentido — é um bom sinal.
-
----
-
-## Onde os testes ajudam nessa escolha
-
-Testes de perfil e vocação ajudam a:
-
-- identificar tendências,
-- cruzar perfil com áreas,
-- reduzir opções confusas.
-
-Eles não escolhem por você —  
-mas tiram a decisão do escuro.
-
----
-
-## Como o Futuro Perfeito ajuda a escolher o concurso certo
-
-No Futuro Perfeito, não dizemos:
-
-> “Faça tal concurso.”
-
-Em vez disso, fazemos assim:
-
-- avaliamos **seu perfil**,  
-- analisamos **sua formação**,  
-- entendemos **seu estilo de vida desejado**,  
-- cruzamos com **áreas de concurso reais**,  
-
-e mostramos **3 caminhos possíveis**, com explicações claras.
-
-Sem prometer milagres.  
-Com clareza e realidade.
-
----
-
-## Perguntas frequentes
-
-### Existe “concurso perfeito”?
-Não. Existe **concurso compatível**.
-
-### Dá para passar em algo que não combina comigo?
-Dá — mas custa caro emocionalmente.
-
-### Posso descobrir isso só depois de aprovado?
-Pode — por isso refletir antes é tão importante.
-
----
-
-## Quer escolher seu concurso com mais segurança?
+## Quer descobrir com mais segurança?
 
 Se quiser:
 
 - responder perguntas guiadas,  
 - entender melhor seu perfil,  
-- ver quais áreas combinam mais com você,
+- ver áreas que combinam com você,
 
-o teste do Futuro Perfeito pode ajudar.
-
-Sem fórmulas mágicas —  
-só clareza para decidir melhor.
+o Futuro Perfeito pode ajudar.
