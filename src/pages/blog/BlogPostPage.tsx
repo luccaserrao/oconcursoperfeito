@@ -291,7 +291,11 @@ const BlogPostPage = () => {
 
               <div className="mt-8 rounded-2xl border border-slate-200 bg-muted/80 p-4 md:p-5">
                 <div className="flex items-start gap-3">
-                  <div className="mt-1 h-10 w-10 shrink-0 rounded-full bg-indigo-100" />
+                  <img
+                    src="/favicon.png"
+                    alt="Futuro Perfeito"
+                    className="mt-1 h-10 w-10 shrink-0 rounded-full object-cover"
+                  />
                   <div className="space-y-2">
                     <p className="text-sm font-semibold text-slate-900">Sobre o Futuro Perfeito</p>
                     <p className="text-sm leading-relaxed text-slate-700">
