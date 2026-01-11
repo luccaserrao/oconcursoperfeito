@@ -33,7 +33,21 @@ export default async function handler(req, res) {
   const expectedToken = process.env.INTERNAL_API_TOKEN;
 
   if (!isNonEmptyString(token) || !isNonEmptyString(expectedToken) || token !== expectedToken) {
-    res.status(401).json({ error: "unauthorized" });
+    const authHeader = req.headers.authorization;
+    const hasAuthHeader = typeof authHeader === "string" && authHeader.length > 0;
+    const authStartsWithBearer = typeof authHeader === "string" && authHeader.startsWith("Bearer ");
+    const tokenLength = typeof token === "string" ? token.length : 0;
+    const hasExpectedToken = isNonEmptyString(expectedToken);
+    const expectedTokenLength = hasExpectedToken ? expectedToken.length : 0;
+
+    res.status(401).json({
+      error: "unauthorized",
+      hasAuthHeader,
+      authStartsWithBearer,
+      tokenLength,
+      hasExpectedToken,
+      expectedTokenLength,
+    });
     return;
   }
 
