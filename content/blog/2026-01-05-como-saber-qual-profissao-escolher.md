@@ -1,7 +1,7 @@
 ---
 title: "Qual carreira seguir? Guia completo para decidir com mais segurança em 2026"
 description: "Se você tem dúvidas sobre qual carreira seguir, veja um guia atualizado com análise de mercado, salários, tendências e concursos para decidir com mais segurança."
-slug: "qual-carreira-seguir"
+slug: "como-saber-qual-profissao-escolher"
 date: "2026-02-05"
 tags: ["qual carreira seguir", "como escolher uma profissão", "perfil profissional", "teste vocacional", "concurso publico"]
 ---

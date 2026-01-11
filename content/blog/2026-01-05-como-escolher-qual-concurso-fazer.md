@@ -14,8 +14,8 @@ Se você está pensando em concurso público, provavelmente já se fez esta perg
 
 Muita gente começa pelo caminho errado:
 
-- olha primeiro o salário,  
-- segue o que os outros dizem,  
+- olha primeiro o salário,
+- segue o que os outros dizem,
 - escolhe o que “está na moda”.
 
 Depois passa… e descobre que a rotina não combina.
@@ -29,8 +29,8 @@ Vamos fazer diferente.
 Quando você passa, você ganha estabilidade —  
 mas também ganha:
 
-- um tipo de rotina,  
-- um tipo de pressão,  
+- um tipo de rotina,
+- um tipo de pressão,
 - um tipo de ambiente.
 
 E viver anos num cargo que não combina com você é caro emocionalmente.
@@ -57,10 +57,10 @@ Essas respostas apontam para áreas mais adequadas.
 
 Faça uma lista honesta:
 
-- plantões?  
-- risco físico?  
-- conflito frequente?  
-- cobrança pública?  
+- plantões?
+- risco físico?
+- conflito frequente?
+- cobrança pública?
 - trabalho solitário demais?
 
 Quanto mais claro isso fica, mais simples é escolher.
@@ -95,8 +95,8 @@ Não basta assistir depoimentos de aprovação.
 
 Procure:
 
-- relatos de servidores,  
-- pontos negativos,  
+- relatos de servidores,
+- pontos negativos,
 - bastidores.
 
 Pergunte:
@@ -107,10 +107,10 @@ Pergunte:
 
 ## Passo 5 — Avalie estilo de vida e prioridades
 
-- estabilidade?  
-- tempo com a família?  
-- desafio?  
-- status?  
+- estabilidade?
+- tempo com a família?
+- desafio?
+- status?
 - tranquilidade emocional?
 
 Cada área cobra um preço diferente.
@@ -121,8 +121,8 @@ Cada área cobra um preço diferente.
 
 Eles ajudam a:
 
-- enxergar tendências,  
-- eliminar opções incompatíveis,  
+- enxergar tendências,
+- eliminar opções incompatíveis,
 - direcionar melhor seus esforços.
 
 > Teste é bússola — não destino final.
@@ -133,9 +133,9 @@ Eles ajudam a:
 
 Nós:
 
-- analisamos seu perfil,  
-- entendemos sua formação,  
-- avaliamos seu estilo de vida,  
+- analisamos seu perfil,
+- entendemos sua formação,
+- avaliamos seu estilo de vida,
 - cruzamos com áreas de concurso,
 
 e sugerimos **3 caminhos plausíveis**, com prós e contras.
@@ -149,8 +149,8 @@ Só clareza.
 
 Se quiser:
 
-- responder perguntas guiadas,  
-- entender melhor seu perfil,  
+- responder perguntas guiadas,
+- entender melhor seu perfil,
 - ver concursos que combinam mais com você,
 
 o teste do Futuro Perfeito pode ajudar.

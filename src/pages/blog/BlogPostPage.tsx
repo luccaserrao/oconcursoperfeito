@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { useEffect, useMemo, useState } from "react";
 import { getPostBySlug, getAllPosts, BlogPost } from "@/lib/blog";
+import { buildCanonicalUrl } from "@/lib/seo";
 
 const formatDate = (isoDate: string) =>
   new Date(isoDate).toLocaleDateString("pt-BR", {
@@ -120,8 +121,7 @@ const BlogPostPage = () => {
     );
   }
 
-  const canonical =
-    typeof window !== "undefined" ? `${window.location.origin}/blog/${post.slug}` : `/blog/${post.slug}`;
+  const canonical = buildCanonicalUrl(`/blog/${post.slug}`);
 
   const keywords = post.tags.join(", ");
   const [heroImageLoaded, setHeroImageLoaded] = useState(true);
@@ -140,7 +140,6 @@ const BlogPostPage = () => {
         <title>{`${post.title} | Blog`}</title>
         <meta name="description" content={post.description} />
         {keywords && <meta name="keywords" content={keywords} />}
-        <link rel="canonical" href={canonical} />
         <meta property="og:type" content="article" />
         <meta property="og:title" content={post.title} />
         <meta property="og:description" content={post.description} />

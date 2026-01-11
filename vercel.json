@@ -1,8 +1,15 @@
 {
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/sitemap.xml", "dest": "/api/sitemap.xml" },
-    { "src": "/.*", "dest": "/" }
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "futuroperfeito.com.br" }],
+      "destination": "https://www.futuroperfeito.com.br/:path*",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    { "source": "/sitemap.xml", "destination": "/api/sitemap.xml" },
+    { "source": "/:path*", "destination": "/" }
   ],
   "functions": {
     "api/sitemap.xml.js": {

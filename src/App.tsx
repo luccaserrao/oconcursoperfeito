@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import { useEffect } from "react";
 import { ThemeProvider } from "@/components/theme-provider";
 import Index from "./pages/Index";
@@ -21,6 +22,7 @@ import NotFound from "./pages/NotFound";
 import Obrigado from "./pages/Obrigado";
 import BlogIndex from "./pages/blog/BlogIndex";
 import BlogPostPage from "./pages/blog/BlogPostPage";
+import { buildCanonicalUrl } from "@/lib/seo";
 
 
 const queryClient = new QueryClient();
@@ -33,6 +35,16 @@ const ScrollToTop = () => {
   return null;
 };
 
+const CanonicalLink = () => {
+  const { pathname } = useLocation();
+  const canonical = buildCanonicalUrl(pathname);
+  return (
+    <Helmet>
+      <link rel="canonical" href={canonical} />
+    </Helmet>
+  );
+};
+
 const App = () => (
   <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
     <QueryClientProvider client={queryClient}>
@@ -41,6 +53,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ScrollToTop />
+          <CanonicalLink />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/paid-content" element={<PaidContent />} />

@@ -1,7 +1,7 @@
 ---
 title: "Qual concurso devo fazer? Descubra o que realmente combina com você"
 description: "Um guia prático para ajudar você a descobrir qual concurso fazer analisando perfil, rotina e estilo de vida — não apenas salário."
-slug: "qual-concurso-devo-fazer"
+slug: "qual-concurso-fazer"
 date: "2026-01-05"
 tags: ["concurso publico", "carreira", "escolha de concurso", "teste vocacional"]
 ---

@@ -2,32 +2,7 @@ import { promises as fs } from "fs";
 import path from "path";
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
-const DEFAULT_HOST = "www.futuroperfeito.com.br";
-
-const normalizeBaseUrl = (value) => (value ? value.replace(/\/+$/, "") : "");
-
-const getBaseUrl = (req) => {
-  const envBase = normalizeBaseUrl(
-    process.env.SITE_URL || process.env.PUBLIC_SITE_URL || process.env.VITE_SITE_URL
-  );
-  if (envBase) return envBase;
-
-  const forwardedProto = (req.headers["x-forwarded-proto"] || "").toString().split(",")[0] || "https";
-  const forwardedHost = (req.headers["x-forwarded-host"] || req.headers.host || "")
-    .toString()
-    .split(",")[0]
-    .trim();
-  if (forwardedHost) {
-    return normalizeBaseUrl(`${forwardedProto}://${forwardedHost}`);
-  }
-
-  const vercelUrl = process.env.VERCEL_URL;
-  if (vercelUrl) {
-    return normalizeBaseUrl(vercelUrl.startsWith("http") ? vercelUrl : `https://${vercelUrl}`);
-  }
-
-  return `https://${DEFAULT_HOST}`;
-};
+const CANONICAL_BASE = "https://www.futuroperfeito.com.br";
 
 const parseFrontMatter = (raw) => {
   const match = raw.match(/^---\s*[\r\n]+([\s\S]*?)\r?\n---\s*[\r\n]*([\s\S]*)$/);
@@ -114,7 +89,7 @@ const getBlogEntries = async () => {
     return [];
   }
 
-  const results = [];
+  const resultsBySlug = new Map();
   for (const entry of entries) {
     if (!entry.isFile() || !entry.name.endsWith(".md")) continue;
     const filePath = path.join(BLOG_DIR, entry.name);
@@ -140,18 +115,30 @@ const getBlogEntries = async () => {
       continue;
     }
 
-    results.push({
+    const nextEntry = {
       loc: `/blog/${slug}`,
       lastmod,
       priority: 0.7,
-    });
+    };
+
+    const existing = resultsBySlug.get(slug);
+    if (!existing) {
+      resultsBySlug.set(slug, nextEntry);
+      continue;
+    }
+
+    if (existing.lastmod && lastmod && existing.lastmod < lastmod) {
+      resultsBySlug.set(slug, nextEntry);
+    }
+
+    console.warn("Sitemap: duplicate blog slug detected.", slug, entry.name);
   }
 
-  return results;
+  return Array.from(resultsBySlug.values());
 };
 
 export default async function handler(req, res) {
-  const baseUrl = getBaseUrl(req);
+  const baseUrl = CANONICAL_BASE;
   const staticLastMod = getStaticLastMod();
 
   // Primary routes for the public site.
