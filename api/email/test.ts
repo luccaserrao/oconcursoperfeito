@@ -14,6 +14,15 @@ export default async function handler(req, res) {
     return;
   }
 
+  const testTokenHeader = req.headers["x-test-token"];
+  const testToken = Array.isArray(testTokenHeader) ? testTokenHeader[0] : testTokenHeader;
+  const expectedToken = process.env.EMAIL_TEST_TOKEN;
+
+  if (!isNonEmptyString(testToken) || !isNonEmptyString(expectedToken) || testToken !== expectedToken) {
+    res.status(401).json({ error: "unauthorized" });
+    return;
+  }
+
   const { to, subject, html } = req.body ?? {};
 
   if (!isNonEmptyString(to) || !isNonEmptyString(subject) || !isNonEmptyString(html)) {
