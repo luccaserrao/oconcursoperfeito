@@ -8,20 +8,6 @@ function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
 
-function extractBearerToken(authorization: unknown): string | null {
-  if (typeof authorization !== "string") {
-    return null;
-  }
-
-  const prefix = "Bearer ";
-  if (!authorization.startsWith(prefix)) {
-    return null;
-  }
-
-  const token = authorization.slice(prefix.length).trim();
-  return isNonEmptyString(token) ? token : null;
-}
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -29,25 +15,12 @@ export default async function handler(req, res) {
     return;
   }
 
-  const token = extractBearerToken(req.headers.authorization);
+  const tokenHeader = req.headers["x-internal-token"];
+  const token = Array.isArray(tokenHeader) ? tokenHeader[0] : tokenHeader;
   const expectedToken = process.env.INTERNAL_API_TOKEN;
 
   if (!isNonEmptyString(token) || !isNonEmptyString(expectedToken) || token !== expectedToken) {
-    const authHeader = req.headers.authorization;
-    const hasAuthHeader = typeof authHeader === "string" && authHeader.length > 0;
-    const authStartsWithBearer = typeof authHeader === "string" && authHeader.startsWith("Bearer ");
-    const tokenLength = typeof token === "string" ? token.length : 0;
-    const hasExpectedToken = isNonEmptyString(expectedToken);
-    const expectedTokenLength = hasExpectedToken ? expectedToken.length : 0;
-
-    res.status(401).json({
-      error: "unauthorized",
-      hasAuthHeader,
-      authStartsWithBearer,
-      tokenLength,
-      hasExpectedToken,
-      expectedTokenLength,
-    });
+    res.status(401).json({ error: "unauthorized" });
     return;
   }
 
