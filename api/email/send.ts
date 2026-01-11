@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { to, template } = req.body ?? {};
+  const { to, template, data } = req.body ?? {};
 
   if (!isNonEmptyString(to)) {
     res.status(400).json({ error: "Missing required field: to" });
@@ -37,7 +37,17 @@ export default async function handler(req, res) {
   switch (template) {
     case "welcome":
       subject = "Bem-vindo";
-      html = "<p>Ola! Bem-vindo(a) ao O Concurso Perfeito.</p>";
+      const name = data?.name;
+      const summary = data?.summary;
+      const htmlParts = [];
+      if (isNonEmptyString(name)) {
+        htmlParts.push(`<p>Olá, ${name}!</p>`);
+      }
+      htmlParts.push("<p>Ola! Bem-vindo(a) ao O Concurso Perfeito.</p>");
+      if (isNonEmptyString(summary)) {
+        htmlParts.push(`<p>${summary}</p>`);
+      }
+      html = htmlParts.join("");
       break;
     case "day1":
       subject = "Dia 1 - Primeiros passos";
