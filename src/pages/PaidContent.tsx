@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle2, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { PaidContent as PaidContentType } from "@/types/quiz";
-import { trackEvent, trackPurchase } from "@/lib/analytics";
+import { getHomeVariant, trackEvent, trackPurchase } from "@/lib/analytics";
 
 export const PaidContent = () => {
   const [searchParams] = useSearchParams();
@@ -27,7 +27,7 @@ export const PaidContent = () => {
     };
     setUserName("Usuário");
     setPaidContent(mock);
-    trackPurchase(paymentId, 25.0);
+    trackPurchase(paymentId, 25.0, { home_variant: getHomeVariant() });
     toast.success("Pagamento confirmado!");
     setLoading(false);
   }, [searchParams]);

@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { CreditCard, Copy, Check } from "lucide-react";
-import { trackBeginCheckout, trackCtaDesbloqueioClick } from "@/lib/analytics";
+import { getHomeVariant, trackBeginCheckout, trackCtaDesbloqueioClick } from "@/lib/analytics";
 
 interface MercadoPagoButtonProps {
   userName: string;
@@ -37,7 +37,7 @@ export const MercadoPagoButton = ({
       setCopied(false);
 
       trackCtaDesbloqueioClick(location);
-      trackBeginCheckout(amount);
+      trackBeginCheckout(amount, { home_variant: getHomeVariant() });
 
       toast({
         title: "Gerando PIX...",

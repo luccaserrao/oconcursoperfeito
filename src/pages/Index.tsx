@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Landing } from "@/components/Landing";
 import { PreparationScreen } from "@/components/PreparationScreen";
 import { Quiz } from "@/components/Quiz";
@@ -7,7 +7,7 @@ import { Results } from "@/components/Results";
 import ErrorPage from "./ErrorPage";
 import { QuizAnswer, CareerRecommendation, RiasecResult } from "@/types/quiz";
 import { toast } from "sonner";
-import { trackEvent } from "@/lib/analytics";
+import { getHomeVariant, setGAUserProperties, trackEvent } from "@/lib/analytics";
 import { calculateRiasecScores } from "@/lib/riasec";
 import { quizQuestions } from "@/data/quizQuestions";
 import { useSearchParams } from "react-router-dom";
@@ -48,6 +48,7 @@ const Index = () => {
     window.localStorage.setItem(HOME_VARIANT_KEY, randomVariant);
     return randomVariant;
   });
+  const hasTrackedHomeView = useRef(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -71,8 +72,16 @@ const Index = () => {
   }, [searchParams]);
 
   useEffect(() => {
+    setGAUserProperties({ home_variant: homeVariant });
     trackEvent("home_variant_assigned", { variant: homeVariant });
   }, [homeVariant]);
+
+  useEffect(() => {
+    if (currentStep !== "landing") return;
+    if (hasTrackedHomeView.current) return;
+    trackEvent("home_viewed", { variant: homeVariant });
+    hasTrackedHomeView.current = true;
+  }, [currentStep, homeVariant]);
 
   const handleStartQuiz = () => {
     trackEvent("quiz_start_clicked");
@@ -113,7 +122,7 @@ const Index = () => {
 
     setUserName(safeName);
     setUserEmail(trimmedEmail);
-    trackEvent("email_captured");
+    trackEvent("email_captured", { home_variant: getHomeVariant() });
 
     try {
       // Enviar todas as respostas para o backend

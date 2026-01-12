@@ -4,6 +4,28 @@ export const trackEvent = (eventName: string, params?: Record<string, any>) => {
   }
 };
 
+export const getHomeVariant = (): "A" | "B" => {
+  if (typeof window === "undefined") return "A";
+  try {
+    const stored = window.localStorage.getItem("home_variant");
+    const normalized = stored ? stored.trim().toUpperCase() : "";
+    return normalized === "B" ? "B" : "A";
+  } catch {
+    return "A";
+  }
+};
+
+export const setGAUserProperties = (props: Record<string, any>) => {
+  if (typeof window === "undefined") return;
+  try {
+    if ((window as any).gtag) {
+      (window as any).gtag("set", "user_properties", props);
+    }
+  } catch {
+    // no-op
+  }
+};
+
 // Track Google Ads conversion
 export const trackConversion = (conversionLabel: string, value?: number) => {
   if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -16,7 +38,7 @@ export const trackConversion = (conversionLabel: string, value?: number) => {
 };
 
 // Track purchase specifically for Google Ads
-export const trackPurchase = (transactionId: string, value: number = 25.0) => {
+export const trackPurchase = (transactionId: string, value: number = 25.0, params?: Record<string, any>) => {
   if (typeof window !== 'undefined' && (window as any).gtag) {
     // Enhanced ecommerce event for Google Analytics
     (window as any).gtag('event', 'purchase', {
@@ -29,7 +51,8 @@ export const trackPurchase = (transactionId: string, value: number = 25.0) => {
         item_category: 'Concursos Públicos',
         price: value,
         quantity: 1
-      }]
+      }],
+      ...(params ?? {})
     });
     
     // Google Ads conversion event
@@ -44,7 +67,7 @@ export const trackPurchase = (transactionId: string, value: number = 25.0) => {
 };
 
 // Track begin_checkout for Google Ads
-export const trackBeginCheckout = (value: number = 50.0) => {
+export const trackBeginCheckout = (value: number = 50.0, params?: Record<string, any>) => {
   if (typeof window !== 'undefined' && (window as any).gtag) {
     (window as any).gtag('event', 'begin_checkout', {
       value: value,
@@ -55,7 +78,8 @@ export const trackBeginCheckout = (value: number = 50.0) => {
         item_category: 'Concursos Públicos',
         price: value,
         quantity: 1
-      }]
+      }],
+      ...(params ?? {})
     });
   }
 };
@@ -80,8 +104,8 @@ export const trackCtaDesbloqueioClick = (location: string) => {
 };
 
 // Track Checkout Success (alias for trackPurchase for clarity)
-export const trackCheckoutSuccess = (transactionId: string, value: number = 25.0) => {
-  trackPurchase(transactionId, value);
+export const trackCheckoutSuccess = (transactionId: string, value: number = 25.0, params?: Record<string, any>) => {
+  trackPurchase(transactionId, value, params);
 };
 
 // Track Cupom WhatsApp Click
