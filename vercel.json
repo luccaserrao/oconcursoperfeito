@@ -1,4 +1,7 @@
 {
+  "framework": "other",
+  "buildCommand": "echo \"Skipping build on Vercel; serving prebuilt dist\"",
+  "outputDirectory": "dist",
   "redirects": [
     {
       "source": "/:path*",

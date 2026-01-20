@@ -6,11 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:full": "npm run build && npm run prerender",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "postinstall": "playwright install --with-deps chromium",
     "preview": "vite preview",
-    "postbuild": "node scripts/prerender.mjs"
+    "prerender": "node scripts/prerender.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
