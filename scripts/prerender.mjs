@@ -130,7 +130,16 @@ const prerender = async () => {
   }
 
   const { server, baseUrl } = await startStaticServer(DIST_DIR);
-  const browser = await chromium.launch();
+  let browser;
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
+    });
+  } catch (error) {
+    console.error("[prerender] Failed to launch Chromium:", error);
+    throw error;
+  }
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(20000);
   page.setDefaultTimeout(20000);
@@ -157,5 +166,6 @@ const prerender = async () => {
 
 prerender().catch((error) => {
   console.error("[prerender] Failed:", error);
+  console.error("[prerender] Exiting with error. Check Playwright install and Chromium launch flags.");
   process.exit(1);
 });

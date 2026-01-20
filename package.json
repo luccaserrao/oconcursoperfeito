@@ -8,7 +8,7 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "postinstall": "playwright install chromium",
+    "postinstall": "playwright install --with-deps chromium",
     "preview": "vite preview",
     "postbuild": "node scripts/prerender.mjs"
   },
