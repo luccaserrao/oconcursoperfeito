@@ -9,7 +9,9 @@
   ],
   "rewrites": [
     { "source": "/sitemap.xml", "destination": "/api/sitemap.xml" },
-    { "source": "/:path*", "destination": "/" }
+    { "source": "/admin/:path*", "destination": "/" },
+    { "source": "/paid-content", "destination": "/" },
+    { "source": "/obrigado", "destination": "/" }
   ],
   "functions": {
     "api/sitemap.xml.js": {

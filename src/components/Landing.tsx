@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Footer } from "@/components/Footer";
+import { getAllPosts } from "@/lib/blog";
 import {
   ArrowRight,
   BookOpen,
@@ -13,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 
 interface LandingProps {
   onStart: () => void;
@@ -39,6 +41,7 @@ export const Landing = ({ onStart, variant }: LandingProps) => {
   }, [isVariantB]);
   const [heroIndex, setHeroIndex] = useState(0);
   const [heroVisible, setHeroVisible] = useState(true);
+  const latestPosts = useMemo(() => getAllPosts().slice(0, 3), []);
 
   useEffect(() => {
     let timeout: number | undefined;
@@ -460,6 +463,39 @@ export const Landing = ({ onStart, variant }: LandingProps) => {
                   </Card>
                 ))}
               </div>
+            </section>
+
+            <section className="space-y-6">
+              <div className="flex flex-col items-center justify-between gap-2 text-center md:flex-row md:text-left">
+                <h2 className="text-3xl font-bold">Blog e conteudo</h2>
+                <Link
+                  to="/blog"
+                  className="text-sm font-semibold text-primary transition-colors hover:text-primary/80"
+                >
+                  Ver todos os artigos
+                </Link>
+              </div>
+              {latestPosts.length > 0 ? (
+                <div className="grid gap-4 md:grid-cols-3">
+                  {latestPosts.map((post) => (
+                    <Link
+                      key={post.slug}
+                      to={`/blog/${post.slug}`}
+                      className="group rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                    >
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                        Blog
+                      </p>
+                      <h3 className="mt-3 text-lg font-semibold text-foreground group-hover:text-primary">
+                        {post.title}
+                      </h3>
+                      <p className="mt-2 text-sm text-muted-foreground">{post.description}</p>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center text-muted-foreground">Sem posts publicados no momento.</p>
+              )}
             </section>
 
             <section className="text-center space-y-4">

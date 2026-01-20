@@ -24,13 +24,12 @@ import BlogIndex from "./pages/blog/BlogIndex";
 import BlogPostPage from "./pages/blog/BlogPostPage";
 import { buildCanonicalUrl } from "@/lib/seo";
 
-
 const queryClient = new QueryClient();
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [pathname]);
   return null;
 };

@@ -15,6 +15,9 @@ export const Footer = () => {
           <div>
             <h5 className="font-semibold mb-3 text-sm">Legal</h5>
             <div className="space-y-2">
+              <Link to="/blog" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                Blog
+              </Link>
               <Link to="/terms" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
                 Termos de Uso
               </Link>
@@ -56,4 +59,3 @@ export const Footer = () => {
     </footer>
   );
 };
-

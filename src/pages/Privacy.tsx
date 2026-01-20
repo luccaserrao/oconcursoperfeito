@@ -2,10 +2,18 @@ import { Footer } from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { Helmet } from "react-helmet";
 
 const Privacy = () => {
   return (
     <>
+      <Helmet>
+        <title>Politica de Privacidade | Futuro Perfeito</title>
+        <meta
+          name="description"
+          content="Saiba como o Futuro Perfeito coleta, usa e protege seus dados."
+        />
+      </Helmet>
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 py-12">
         <div className="container mx-auto px-4 max-w-4xl">
           <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-6 transition-colors">
@@ -130,4 +138,3 @@ const Privacy = () => {
 };
 
 export default Privacy;
-
