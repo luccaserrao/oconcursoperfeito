@@ -12,10 +12,36 @@ const formatDate = (isoDate: string) =>
     year: "numeric",
   });
 
+type BlogComment = {
+  id: string;
+  name: string;
+  message: string;
+  createdAt: string;
+};
+
+const formatDateTime = (isoDate: string) =>
+  new Date(isoDate).toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+const buildCommentId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
 const BlogPostPage = () => {
   const { slug } = useParams();
   const post = getPostBySlug(slug);
   const [progress, setProgress] = useState(0);
+  const [heroImageLoaded, setHeroImageLoaded] = useState(true);
+  const [comments, setComments] = useState<BlogComment[]>([]);
+  const [commentName, setCommentName] = useState("");
+  const [commentMessage, setCommentMessage] = useState("");
+  const [commentError, setCommentError] = useState<string | null>(null);
+  const [commentsLoaded, setCommentsLoaded] = useState(false);
+
+  const commentStorageKey = slug ? `blog:comments:${slug}` : "blog:comments:unknown";
 
   const relatedPosts: BlogPost[] = useMemo(() => {
     const all = getAllPosts().filter((p) => p.slug !== post?.slug);
@@ -34,6 +60,57 @@ const BlogPostPage = () => {
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    setComments([]);
+    setCommentsLoaded(false);
+    if (!slug || typeof window === "undefined") return;
+
+    try {
+      const stored = localStorage.getItem(commentStorageKey);
+      if (!stored) {
+        setCommentsLoaded(true);
+        return;
+      }
+      const parsed = JSON.parse(stored);
+      if (!Array.isArray(parsed)) {
+        setCommentsLoaded(true);
+        return;
+      }
+      const sanitized = parsed
+        .filter((entry) => entry && typeof entry === "object")
+        .map((entry) => {
+          const candidate = entry as Partial<BlogComment>;
+          return {
+            id: typeof candidate.id === "string" && candidate.id ? candidate.id : buildCommentId(),
+            name: typeof candidate.name === "string" ? candidate.name : "",
+            message: typeof candidate.message === "string" ? candidate.message : "",
+            createdAt:
+              typeof candidate.createdAt === "string" && candidate.createdAt
+                ? candidate.createdAt
+                : new Date().toISOString(),
+          };
+        })
+        .filter((entry) => entry.name && entry.message);
+      setComments(sanitized);
+    } catch (error) {
+      try {
+        localStorage.removeItem(commentStorageKey);
+      } catch {
+        // Ignorar erros de limpeza do localStorage.
+      }
+    }
+    setCommentsLoaded(true);
+  }, [commentStorageKey, slug]);
+
+  useEffect(() => {
+    if (!commentsLoaded || !slug || typeof window === "undefined") return;
+    try {
+      localStorage.setItem(commentStorageKey, JSON.stringify(comments));
+    } catch {
+      // Ignorar falhas do localStorage (ex.: modo privativo).
+    }
+  }, [comments, commentsLoaded, commentStorageKey, slug]);
 
   const slugify = (text: string) =>
     text
@@ -103,6 +180,29 @@ const BlogPostPage = () => {
     </div>
   );
 
+  const handleCommentSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmedName = commentName.trim();
+    const trimmedMessage = commentMessage.trim();
+
+    if (!trimmedName || !trimmedMessage) {
+      setCommentError("Preencha seu nome e o comentário.");
+      return;
+    }
+
+    const nextComment: BlogComment = {
+      id: buildCommentId(),
+      name: trimmedName,
+      message: trimmedMessage,
+      createdAt: new Date().toISOString(),
+    };
+
+    setComments((prev) => [nextComment, ...prev]);
+    setCommentName(trimmedName);
+    setCommentMessage("");
+    setCommentError(null);
+  };
+
   if (!post) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -124,9 +224,10 @@ const BlogPostPage = () => {
   const canonical = buildCanonicalUrl(`/blog/${post.slug}`);
 
   const keywords = post.tags.join(", ");
-  const [heroImageLoaded, setHeroImageLoaded] = useState(true);
   const heroImage =
     post.slug === "qual-profissao-combina-comigo" ? "/blog/qual-profissao-hero.png" : null;
+  const canSubmit = commentName.trim().length > 0 && commentMessage.trim().length > 0;
+  const commentCountLabel = comments.length === 1 ? "1 comentário" : `${comments.length} comentários`;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -244,6 +345,93 @@ const BlogPostPage = () => {
               </ReactMarkdown>
               <CtaBlock />
             </div>
+
+            <section className="mx-auto mt-12 max-w-3xl rounded-2xl border border-slate-200 bg-card p-6 shadow-sm sm:p-7">
+              <div className="flex flex-col gap-1">
+                <h3 className="text-lg font-semibold text-slate-900">Deixe um comentário</h3>
+                <p className="text-sm text-slate-600">
+                  Escreva seu nome e compartilhe sua opinião sobre o conteúdo.
+                </p>
+              </div>
+
+              <form onSubmit={handleCommentSubmit} className="mt-6 grid gap-4">
+                <div className="grid gap-2">
+                  <label htmlFor="comment-name" className="text-sm font-semibold text-slate-700">
+                    Nome
+                  </label>
+                  <input
+                    id="comment-name"
+                    name="comment-name"
+                    type="text"
+                    autoComplete="name"
+                    value={commentName}
+                    onChange={(event) => {
+                      setCommentName(event.target.value);
+                      if (commentError) setCommentError(null);
+                    }}
+                    maxLength={60}
+                    className="w-full rounded-xl border border-slate-200 bg-background px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                    placeholder="Seu nome"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <label htmlFor="comment-message" className="text-sm font-semibold text-slate-700">
+                    Comentário
+                  </label>
+                  <textarea
+                    id="comment-message"
+                    name="comment-message"
+                    rows={4}
+                    value={commentMessage}
+                    onChange={(event) => {
+                      setCommentMessage(event.target.value);
+                      if (commentError) setCommentError(null);
+                    }}
+                    maxLength={600}
+                    className="w-full rounded-xl border border-slate-200 bg-background px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                    placeholder="O que você achou?"
+                  />
+                </div>
+                {commentError && (
+                  <p className="text-sm font-medium text-red-600">{commentError}</p>
+                )}
+                <button
+                  type="submit"
+                  disabled={!canSubmit}
+                  className="inline-flex w-full items-center justify-center rounded-full bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                >
+                  Enviar comentário
+                </button>
+              </form>
+
+              <div className="mt-8 border-t border-slate-200 pt-6">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-semibold text-slate-900">{commentCountLabel}</h4>
+                </div>
+                {comments.length === 0 ? (
+                  <p className="mt-3 text-sm text-slate-500">Sem comentários ainda. Seja o primeiro!</p>
+                ) : (
+                  <div className="mt-4 space-y-4">
+                    {comments.map((comment) => (
+                      <div
+                        key={comment.id}
+                        className="rounded-2xl border border-slate-200 bg-card p-4 shadow-sm"
+                      >
+                        <div className="flex flex-wrap items-center gap-2 text-sm">
+                          <span className="font-semibold text-slate-900">{comment.name}</span>
+                          <span className="text-xs text-slate-500">
+                            {formatDateTime(comment.createdAt)}
+                          </span>
+                        </div>
+                        <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-700">
+                          {comment.message}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
 
             <div className="mx-auto mt-12 flex max-w-3xl flex-col gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
