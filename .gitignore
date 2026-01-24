@@ -23,3 +23,11 @@ dist-ssr
 *.sw?
 .vercel
 .env*.local
+
+# Build outputs
+dist/
+.vercel/
+.next/
+build/
+.vite/
+node_modules/
