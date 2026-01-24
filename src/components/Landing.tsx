@@ -1,19 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Footer } from "@/components/Footer";
-import { getAllPosts } from "@/lib/blog";
-import {
-  ArrowRight,
-  BookOpen,
-  CheckCircle2,
-  Layers,
-  MapPin,
-  Sparkles,
-  Star,
-  Target,
-  X,
-} from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+﻿import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight, Star } from "lucide-react";
+import { ReactNode, useEffect, useId, useRef } from "react";
 import { Link } from "react-router-dom";
 
 interface LandingProps {
@@ -21,507 +8,668 @@ interface LandingProps {
   variant: "A" | "B";
 }
 
-export const Landing = ({ onStart, variant }: LandingProps) => {
-  const isVariantB = variant === "B";
-  const heroPhrases = useMemo(() => {
-    if (isVariantB) {
-      return [
-        "concurso público",
-        "iniciativa privada",
-        "empreendedorismo",
-        "o próximo passo profissional",
-      ];
-    }
-    return [
-      "baseado na sua personalidade",
-      "baseado na sua experiência com provas anteriores",
-      "baseado na sua formação acadêmica",
-      "baseado no estado onde deseja construir carreira",
-    ];
-  }, [isVariantB]);
-  const [heroIndex, setHeroIndex] = useState(0);
-  const [heroVisible, setHeroVisible] = useState(true);
-  const latestPosts = useMemo(() => getAllPosts().slice(0, 3), []);
+interface GradientIconProps {
+  children: ReactNode;
+  size?: number;
+}
+
+const GradientIcon = ({ children, size = 24 }: GradientIconProps) => {
+  const gradientId = useId();
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id={gradientId} x1="0" y1="0" x2="24" y2="24">
+          <stop offset="0%" stopColor="hsl(261, 51%, 51%)" />
+          <stop offset="100%" stopColor="hsl(282, 70%, 72%)" />
+        </linearGradient>
+      </defs>
+      <g
+        stroke={`url(#${gradientId})`}
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {children}
+      </g>
+    </svg>
+  );
+};
+
+const IconCoin = () => (
+  <GradientIcon>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M9.5 9.5h5" />
+    <path d="M9.5 14.5h5" />
+    <path d="M12 8.5v7" />
+  </GradientIcon>
+);
+
+const IconCopy = () => (
+  <GradientIcon>
+    <rect x="7" y="7" width="11" height="11" rx="2" />
+    <path d="M5 15V7a2 2 0 0 1 2-2h6" />
+  </GradientIcon>
+);
+
+const IconTarget = () => (
+  <GradientIcon>
+    <circle cx="12" cy="12" r="6.5" />
+    <circle cx="12" cy="12" r="1.6" />
+    <path d="M12 4.5v2.5" />
+    <path d="M12 17v2.5" />
+    <path d="M4.5 12h2.5" />
+    <path d="M17 12h2.5" />
+  </GradientIcon>
+);
+
+const IconMap = () => (
+  <GradientIcon>
+    <path d="M3 6.5l6-2 6 2 6-2v13l-6 2-6-2-6 2z" />
+    <path d="M9 4.5v13" />
+    <path d="M15 6.5v13" />
+  </GradientIcon>
+);
+
+const IconShield = () => (
+  <GradientIcon>
+    <path d="M12 3.5l7 3v5.5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6.5z" />
+    <path d="M9 12l6 6" />
+  </GradientIcon>
+);
+
+const IconGauge = () => (
+  <GradientIcon>
+    <path d="M4.5 14.5a7.5 7.5 0 0 1 15 0" />
+    <path d="M12 14.5l3-3" />
+    <circle cx="12" cy="14.5" r="1.6" />
+  </GradientIcon>
+);
+
+const IconBriefcase = () => (
+  <GradientIcon>
+    <rect x="4" y="7" width="16" height="11" rx="2" />
+    <path d="M9 7V5.5a1.5 1.5 0 0 1 1.5-1.5h3a1.5 1.5 0 0 1 1.5 1.5V7" />
+    <path d="M4 11.5h16" />
+  </GradientIcon>
+);
+
+const IconClipboard = () => (
+  <GradientIcon>
+    <rect x="6" y="4" width="12" height="16" rx="2" />
+    <rect x="9" y="3.5" width="6" height="4" rx="1" />
+    <path d="M9 11.5h6" />
+    <path d="M9 15.5h4" />
+  </GradientIcon>
+);
+
+const IconScale = () => (
+  <GradientIcon>
+    <path d="M12 4v16" />
+    <path d="M6 8h12" />
+    <path d="M8 8l-3 5h6z" />
+    <path d="M16 8l-3 5h6z" />
+  </GradientIcon>
+);
+
+const mistakes = [
+  {
+    title: "Escolher concurso apenas pelo salário.",
+    description: "Sem alinhamento com seu perfil, a motivação some rápido.",
+    Icon: IconCoin,
+  },
+  {
+    title: "Copiar o caminho de outras pessoas.",
+    description: "O que funciona para alguém pode ser ruim para você.",
+    Icon: IconCopy,
+  },
+  {
+    title: "Começar a estudar sem saber se tem perfil.",
+    description: "Sem direção, o esforço vira frustração e retrabalho.",
+    Icon: IconTarget,
+  },
+];
+
+const benefits = [
+  {
+    title: "Áreas de concurso mais compatíveis com seu perfil",
+    Icon: IconMap,
+  },
+  {
+    title: "Áreas que você deve evitar e por quê",
+    Icon: IconShield,
+  },
+  {
+    title: "Análise do seu nível de pressão, rotina ideal e perfil de trabalho (RIASEC)",
+    Icon: IconGauge,
+  },
+  {
+    title: "Sugestões de cargos específicos e requisitos",
+    Icon: IconBriefcase,
+  },
+  {
+    title: "Plano inicial de estudo e próximos passos",
+    Icon: IconClipboard,
+  },
+  {
+    title: "Comparativo de risco/benefício de cada área",
+    Icon: IconScale,
+  },
+];
+
+const testimonials = [
+  {
+    name: "Carolina M.",
+    role: "Área fiscal",
+    quote:
+      "Eu estava perdida entre tribunais e fiscal. O relatório trouxe clareza e economizou meses de dúvidas.",
+  },
+  {
+    name: "Igor S.",
+    role: "Área administrativa",
+    quote:
+      "Achei que precisava estudar tudo. O teste mostrou o que faz sentido para o meu perfil e onde focar.",
+  },
+  {
+    name: "Renata L.",
+    role: "Área policial",
+    quote:
+      "Finalmente entendi que não era falta de esforço, era falta de direção. Valeu cada minuto.",
+  },
+];
+
+const steps = [
+  {
+    step: "1",
+    text: "Responda ao teste (7–10 min)",
+  },
+  {
+    step: "2",
+    text: "Veja sua recomendação de área — quais áreas e cargos fazem sentido para você",
+  },
+  {
+    step: "3",
+    text: "Destrave o relatório completo e receba o plano de estudo, comparação de áreas e checklist de próximos passos",
+  },
+];
+
+const faqs = [
+  {
+    question: "O teste é genérico?",
+    answer: "Não, é especializado para concursos públicos e compara áreas.",
+  },
+  {
+    question: "Quanto tempo demora?",
+    answer: "7–10 min.",
+  },
+  {
+    question: "Como recebo o resultado?",
+    answer: "Você recebe uma prévia grátis e o relatório completo por e-mail/WhatsApp após o pagamento.",
+  },
+  {
+    question: "E se eu discordar do resultado?",
+    answer: "O relatório é personalizado e gratuito para começar.",
+  },
+];
+
+const paymentLink = "https://checkout.futuroperfeito.com.br";
+
+export const Landing = ({ onStart }: LandingProps) => {
+  const testimonialsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let timeout: number | undefined;
-    const interval = window.setInterval(() => {
-      setHeroVisible(false);
-      timeout = window.setTimeout(() => {
-        setHeroIndex((prev) => (prev + 1) % heroPhrases.length);
-        setHeroVisible(true);
-      }, 220);
-    }, 2000);
+    const elements = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    if (!elements.length) return;
 
-    return () => {
-      clearInterval(interval);
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
-  }, [heroPhrases]);
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      elements.forEach((element) => element.classList.add("reveal-visible"));
+      return;
+    }
 
-  const howItems = isVariantB
-    ? [
-        { title: "Estilo de trabalho e motivadores", icon: <Sparkles className="w-5 h-5 text-primary" /> },
-        { title: "Habilidades e pontos fortes", icon: <BookOpen className="w-5 h-5 text-primary" /> },
-        { title: "Experiência profissional e estudos", icon: <Layers className="w-5 h-5 text-primary" /> },
-        { title: "Objetivos de renda e qualidade de vida", icon: <Target className="w-5 h-5 text-primary" /> },
-        { title: "Localização e formato de trabalho", icon: <MapPin className="w-5 h-5 text-primary" /> },
-      ]
-    : [
-        { title: "Personalidade (RIASEC)", icon: <Sparkles className="w-5 h-5 text-primary" /> },
-        { title: "Formação acadêmica e habilidades", icon: <BookOpen className="w-5 h-5 text-primary" /> },
-        { title: "Histórico com provas anteriores", icon: <Layers className="w-5 h-5 text-primary" /> },
-        { title: "Objetivo de carreira e qualidade de vida", icon: <Target className="w-5 h-5 text-primary" /> },
-        { title: "Localização onde deseja construir carreira", icon: <MapPin className="w-5 h-5 text-primary" /> },
-      ];
-  const whatYouReceive = isVariantB
-    ? [
-        "Mapa das rotas: concurso público, iniciativa privada e empreendedorismo",
-        "Clareza sobre seu perfil RIASEC e ambiente ideal",
-        "Sugestões de cargos/áreas compatíveis com seu perfil",
-        "Plano inicial de próximos passos (estudo, portfólio ou validação)",
-        "Comparativo de riscos e benefícios por rota",
-        "Checklist prático para executar sem travar",
-      ]
-    : [
-        "Ranking dos concursos mais compatíveis (3 concursos públicos ideais)",
-        "Descrição prática do dia a dia no trabalho",
-        "Faixa salarial e tempo estimado de estudo",
-        "Orientação para editais e provas anteriores",
-        "Plano de estudo alinhado ao edital",
-        "Assistente de Estudos para organizar o cronograma",
-      ];
-  const testimonials = isVariantB
-    ? [
-        {
-          quote:
-            "O relatório me ajudou a decidir entre concurso e empresa privada. Parei de girar em círculos.",
-          name: "Larissa, transição de carreira",
-        },
-        {
-          quote:
-            "Achei que precisava empreender, mas o diagnóstico mostrou um caminho mais claro para mim.",
-          name: "Marcos, área comercial",
-        },
-      ]
-    : [
-        {
-          quote:
-            "“Obrigada pela análise! Creio que são 3 boas opções dentro da minha área que demandam menos estresse cognitivo. E a opção número 1 é exatamente meu foco hoje: área pericial… Foi o motivo para eu fazer o PIX, para contribuir com o trabalho :).”",
-          name: "Bruna, área pericial",
-        },
-        {
-          quote:
-            "“Consegui ver sim, tem vínculo com meu perfil. Agora vou pensar em algo relacionado à transição de carreira, pois trabalho com engenharia ambiental.”",
-          name: "Diogo, engenharia ambiental",
-        },
-      ];
-  const differentiators = isVariantB
-    ? [
-        "Diagnóstico feito por uma pessoa, com melhoria contínua a cada feedback.",
-        "Direção prática: aponta a rota mais coerente agora e o próximo passo.",
-        "Transparente e simples: pagamento único de R$ 25 para o relatório completo, sem assinatura ou recorrência.",
-        "Base em método (RIASEC) + contexto profissional real, sem promessas milagrosas.",
-      ]
-    : [
-        "Futuro Perfeito é tocado por uma pessoa, com melhoria contínua a cada feedback para entregar um futuro cada vez mais perfeito para você.",
-        "Atendimento próximo: respondo direto e ajusto o produto com base nas dúvidas reais dos clientes.",
-        "Transparente e simples: pagamento único de R$ 25 para o relatório completo, sem assinatura ou recorrência.",
-        "Base em método (RIASEC) + dados reais, sem promessas milagrosas.",
-      ];
-  const steps = isVariantB
-    ? [
-        { title: "Responda ao teste", desc: "Leva 7-10 minutos e já é gratuito.", icon: <Sparkles className="w-5 h-5 text-primary" /> },
-        { title: "Veja sua clareza de rota", desc: "Receba seus pontos fortes e o caminho mais coerente agora.", icon: <Target className="w-5 h-5 text-primary" /> },
-        {
-          title: "Destrave o relatório profissional",
-          desc: "Se fizer sentido, por R$ 25 você recebe a comparação das rotas e um plano detalhado.",
-          icon: <CheckCircle2 className="w-5 h-5 text-primary" />,
-        },
-      ]
-    : [
-        { title: "Responda ao teste", desc: "Leva 7-10 minutos e já é gratuito.", icon: <Sparkles className="w-5 h-5 text-primary" /> },
-        { title: "Veja seus insights", desc: "Receba os primeiros encaixes e pontos fortes na hora.", icon: <Target className="w-5 h-5 text-primary" /> },
-        {
-          title: "Destrave o relatório completo",
-          desc: "Se fizer sentido, por R$ 25 você recebe ranking de concursos e plano detalhado (pagamento único).",
-          icon: <CheckCircle2 className="w-5 h-5 text-primary" />,
-        },
-      ];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("reveal-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.2 },
+    );
 
-  const experienceItems = isVariantB
-    ? [
-        "identificar seus pontos fortes e lacunas,",
-        "comparar rotas com melhor encaixe,",
-        "criar um plano eficiente para o seu momento atual.",
-      ]
-    : [
-        "identificar matérias onde você trava,",
-        "ajustar seu cronograma,",
-        "criar um plano eficiente para o seu momento atual.",
-      ];
+    elements.forEach((element) => observer.observe(element));
 
-  const forWhoItems = isVariantB
-    ? [
-        "quer clareza para decidir entre concurso, CLT e empreender,",
-        "quer um plano realista para o próximo passo,",
-        "quer alinhar trabalho, renda e estilo de vida.",
-      ]
-    : [
-        "quer estabilidade com clareza e método,",
-        "já estudou sem resultados consistentes,",
-        "busca direção realista.",
-      ];
+    return () => observer.disconnect();
+  }, []);
 
-  const notForWhoItems = isVariantB
-    ? [
-        "quer atalho mágico,",
-        "não aceita olhar para o próprio perfil,",
-        "quer decidir sem seguir um plano.",
-      ]
-    : [
-        "quer promessas mágicas,",
-        "não quer seguir um plano.",
-        "acredita em milagres sem esforço.",
-      ];
+  const handleScrollTestimonials = (direction: "left" | "right") => {
+    if (!testimonialsRef.current) return;
+    const offset = direction === "left" ? -360 : 360;
+    testimonialsRef.current.scrollBy({ left: offset, behavior: "smooth" });
+  };
+
   return (
-    <>
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
-        <div className="container mx-auto px-4 py-16 md:py-24">
-          <div className="max-w-5xl mx-auto space-y-16 animate-fade-in">
-            <div className="text-center space-y-4 md:space-y-6">
-              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight">
-                {isVariantB
-                  ? "Encontre clareza profissional para decidir seu próximo passo:"
-                  : "Descubra o concurso que combina com você —"}{" "}
-                <span className="block md:inline bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  <span
-                    className="relative inline-flex items-center justify-center min-h-[34px] sm:min-h-[40px] md:min-h-[44px]"
-                  >
-                    <span
-                      className={`absolute inset-0 flex items-center justify-center text-2xl sm:text-3xl md:text-inherit transition-opacity duration-300 ${heroVisible ? "opacity-100" : "opacity-0"}`}
-                    >
-                      {heroPhrases[heroIndex]}
-                    </span>
-                    <span className="opacity-0 text-2xl sm:text-3xl md:text-inherit">{heroPhrases[0]}</span>
-                  </span>
-                </span>
-              </h1>
+    <div className="relative min-h-screen bg-[hsl(260_43%_97%)] text-[hsl(269_66%_19%)]">
+      <div className="pointer-events-none absolute inset-0 landing-dot opacity-70" aria-hidden="true" />
 
-              <div className="flex justify-center">
-                <div className="relative w-full max-w-3xl h-14 sm:h-16 md:h-20" style={{ perspective: "1200px" }}>
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/15 via-accent/10 to-primary/15 blur-md" />
-                  <div className="relative h-full overflow-hidden rounded-2xl border border-primary/20 bg-white/50 backdrop-blur-sm shadow-[var(--shadow-elevated)]">
-                    {heroPhrases.map((phrase, index) => (
-                      <div
-                        key={phrase}
-                        className="absolute inset-0 flex items-center justify-center text-base sm:text-lg md:text-xl font-semibold text-primary transition-all duration-500 ease-out"
-                        style={{
-                          opacity: heroIndex === index ? 1 : 0,
-                          transform: heroIndex === index ? "translateZ(40px) rotateX(0deg)" : "translateZ(-40px) rotateX(-70deg)",
-                        }}
-                      >
-                        {phrase}
-                      </div>
-                    ))}
-                    <div className="opacity-0 text-base sm:text-lg md:text-xl">{heroPhrases[0]}</div>
-                  </div>
+      <div className="relative z-10">
+        <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[hsla(269,66%,19%,0.86)] backdrop-blur">
+          <div className="container mx-auto flex flex-col gap-3 py-4 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center justify-between gap-4">
+              <Link to="/" className="text-lg font-semibold tracking-tight text-white">
+                Futuro Perfeito
+              </Link>
+              <Button
+                onClick={onStart}
+                className="h-auto rounded-full bg-[hsl(261_51%_51%)] px-5 py-5 text-sm font-semibold text-white shadow-[0_12px_30px_-18px_hsla(261,51%,51%,0.8)] hover:bg-[hsl(261_51%_46%)] md:hidden"
+              >
+                Começar teste
+              </Button>
+            </div>
+            <nav className="flex flex-wrap items-center gap-5 text-sm font-medium text-white/80">
+              <a
+                href="#inicio"
+                aria-current="page"
+                className="border-b-2 border-[hsl(261_51%_51%)] pb-1 text-white"
+              >
+                Início
+              </a>
+              <Link to="/blog" className="transition-colors hover:text-white">
+                Blog
+              </Link>
+              <a href="#contato" className="transition-colors hover:text-white">
+                Contato
+              </a>
+            </nav>
+            <Button
+              onClick={onStart}
+              className="hidden h-auto rounded-full bg-[hsl(261_51%_51%)] px-6 py-5 text-sm font-semibold text-white shadow-[0_12px_30px_-18px_hsla(261,51%,51%,0.8)] hover:bg-[hsl(261_51%_46%)] md:inline-flex"
+            >
+              Começar teste
+            </Button>
+          </div>
+        </header>
+
+        <main className="pt-24">
+          <section id="inicio" className="relative min-h-[100svh] scroll-mt-24">
+            <div
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_hsla(261,51%,51%,0.18),_transparent_55%)]"
+              aria-hidden="true"
+            />
+            <div className="container mx-auto grid items-center gap-12 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:py-24">
+              <div className="reveal space-y-6" data-reveal>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[hsl(269_20%_40%)]">
+                  Teste vocacional para concursos
+                </span>
+                <h1 className="text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
+                  Descubra qual área de concurso combina com você — e pare de perder tempo estudando o concurso errado.
+                </h1>
+                <p className="text-base text-[hsl(269_20%_32%)] sm:text-lg">
+                  Um teste rápido que analisa seu perfil e mostra qual área de concurso faz sentido para você
+                  (administrativo, tribunais, policial, fiscal, etc.) — e quais você deve evitar.
+                </p>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <Button
+                    onClick={onStart}
+                    className="h-auto rounded-full bg-[hsl(261_51%_51%)] px-8 py-6 text-base font-semibold text-white shadow-[0_18px_40px_-24px_hsla(261,51%,51%,0.9)] hover:bg-[hsl(261_51%_46%)]"
+                  >
+                    Descobrir meu concurso ideal
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="h-auto rounded-full border-[hsl(261_51%_51%)] px-8 py-6 text-base font-semibold text-[hsl(261_51%_51%)] hover:bg-[hsla(261,51%,51%,0.08)]"
+                  >
+                    <a href="#erros">Quero saber mais</a>
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-3 text-sm text-[hsl(269_20%_32%)]">
+                  <span className="rounded-full bg-white/70 px-4 py-2 shadow-[0_8px_20px_-16px_hsla(261,51%,51%,0.5)]">
+                    Resposta em 7–10 minutos
+                  </span>
+                  <span className="rounded-full bg-white/70 px-4 py-2 shadow-[0_8px_20px_-16px_hsla(261,51%,51%,0.5)]">
+                    Prévia gratuita + relatório completo
+                  </span>
                 </div>
               </div>
 
-              <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
-                {isVariantB
-                  ? "Um diagnóstico que organiza seu perfil e mostra a rota mais coerente agora: concurso público, iniciativa privada ou empreendedorismo. Sem promessas milagrosas, só direção prática."
-                  : "Um relatório personalizado que transforma suas informações em um plano claro — mostrando quais concursos realmente valem seu tempo e como estudar com método, sem promessas milagrosas ou testes genéricos."}
-              </p>
-
-              <div className="flex flex-col items-center gap-2">
-                <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary font-medium">
-                  <CheckCircle2 className="w-4 h-4" />
-                  {isVariantB
-                    ? "Centenas de pessoas já buscaram clareza profissional com o teste."
-                    : "Centenas de pessoas já fizeram o teste e avaliaram positivamente a experiência."}
-                </div>
-                <Button
-                  onClick={onStart}
-                  size="lg"
-                  className="text-lg px-8 py-6 rounded-full shadow-[var(--shadow-elevated)] hover:scale-105 transition-transform duration-200 bg-gradient-to-r from-primary to-accent"
-                >
-                  Começar meu teste agora
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-                <p className="text-sm text-muted-foreground">Teste gratuito, leva 7–10 minutos para responder.</p>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  {isVariantB
-                    ? "Relatório completo custa R$ 25 (pagamento único, sem assinatura) — menos do que um hambúrguer para evitar meses no caminho errado."
-                    : "Relatório completo custa R$ 25 (pagamento único, sem assinatura) — menos do que um hambúrguer para evitar meses no edital errado."}
-                </p>
-                <div className="flex flex-wrap justify-center gap-2 text-xs sm:text-sm text-muted-foreground">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    Pagamento único, sem assinatura
-                  </span>
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    Dados protegidos
-                  </span>
+              <div className="reveal relative" data-reveal>
+                <div className="absolute -inset-6 rounded-[40px] bg-[radial-gradient(circle,_hsla(261,51%,51%,0.22),_transparent_70%)]" aria-hidden="true" />
+                <div className="relative rounded-[32px] border border-white/70 bg-white/85 p-6 shadow-[0_30px_70px_-50px_hsla(261,51%,51%,0.8)] backdrop-blur float-slow">
+                  <div className="absolute left-1/2 top-4 h-1.5 w-16 -translate-x-1/2 rounded-full bg-[hsla(269,66%,19%,0.12)]" />
+                  <div className="mt-6 space-y-4">
+                    <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-[hsl(269_20%_45%)]">
+                      <span>Relatório</span>
+                      <span>Futuro Perfeito</span>
+                    </div>
+                    <div className="rounded-2xl bg-[hsl(260_43%_97%)] p-4">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[hsl(269_20%_45%)]">
+                        Compatibilidade
+                      </p>
+                      <div className="mt-4 flex items-end gap-2">
+                        <div className="h-10 w-8 rounded-lg bg-[hsla(261,51%,51%,0.2)]" />
+                        <div className="h-16 w-8 rounded-lg bg-[hsla(261,51%,51%,0.35)]" />
+                        <div className="h-24 w-8 rounded-lg bg-[hsla(261,51%,51%,0.55)]" />
+                        <div className="h-12 w-8 rounded-lg bg-[hsla(261,51%,51%,0.28)]" />
+                        <div className="h-20 w-8 rounded-lg bg-[hsla(261,51%,51%,0.45)]" />
+                      </div>
+                      <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium text-[hsl(269_20%_40%)]">
+                        <span className="rounded-full bg-white px-3 py-1 shadow-sm">Administrativo</span>
+                        <span className="rounded-full bg-white px-3 py-1 shadow-sm">Tribunais</span>
+                        <span className="rounded-full bg-white px-3 py-1 shadow-sm">Fiscal</span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-2xl border border-[hsla(261,51%,51%,0.18)] bg-white p-3 text-xs text-[hsl(269_20%_40%)]">
+                        <p className="font-semibold text-[hsl(269_66%_19%)]">Perfil RIASEC</p>
+                        <p className="mt-1">Social · Investigativo</p>
+                      </div>
+                      <div className="rounded-2xl border border-[hsla(261,51%,51%,0.18)] bg-white p-3 text-xs text-[hsl(269_20%_40%)]">
+                        <p className="font-semibold text-[hsl(269_66%_19%)]">Plano inicial</p>
+                        <p className="mt-1">Primeiros 30 dias</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+          </section>
 
-            <section>
-              <Card className="p-8 bg-card border border-border">
-                <div className="space-y-4 text-left">
-                  <h2 className="text-3xl font-bold">
-                    {isVariantB ? "Você se esforça muito — mas sem direção." : "Você estuda muito… mas cresce pouco."}
-                  </h2>
-                  <p className="text-lg text-foreground">
-                    {isVariantB
-                      ? "O maior problema não é a quantidade de esforço, e sim escolher a rota profissional errada para o seu perfil e realidade."
-                      : "O maior problema não é a quantidade de horas de estudo, e sim escolher o concurso errado para o seu perfil e realidade."}
-                  </p>
-                  <p className="text-lg text-foreground">
-                    {isVariantB
-                      ? "Muita gente oscila entre concurso, iniciativa privada e empreender sem clareza. O Futuro Perfeito foi criado para acabar com essa perda de tempo: ele mostra o caminho certo, de acordo com quem você é e onde quer chegar."
-                      : "Muita gente segue listas aleatórias e passa anos sem resultado. O Futuro Perfeito foi criado para acabar com essa perda de tempo: ele mostra o caminho certo, de acordo com quem você é e onde quer chegar."}
-                  </p>
-                </div>
-              </Card>
-            </section>
-
-            <section className="space-y-6">
-              <h2 className="text-3xl font-bold text-center">
-                {isVariantB ? "Como o Futuro Perfeito funciona: analisamos seu perfil profissional" : "Como o Futuro Perfeito funciona: analisamos"}
-              </h2>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {howItems.map((item, index) => (
-                  <Card key={index} className="p-5 flex items-center gap-3 h-full">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      {item.icon}
+          <section id="erros" className="scroll-mt-24 py-20">
+            <div className="container mx-auto space-y-10">
+              <div className="reveal space-y-4" data-reveal>
+                <h2 className="text-2xl font-semibold sm:text-3xl">Você talvez esteja cometendo estes erros</h2>
+                <p className="text-lg font-semibold text-[hsl(269_20%_32%)]">
+                  O erro da maioria não é falta de esforço, é começar a estudar sem escolher a área correta.
+                </p>
+                <p className="text-base text-[hsl(269_20%_38%)]">
+                  Esses erros podem custar anos de estudo. O teste corrige isso com clareza e um caminho realista antes
+                  de você investir energia.
+                </p>
+              </div>
+              <div className="grid gap-6 md:grid-cols-3">
+                {mistakes.map((item, index) => (
+                  <div
+                    key={item.title}
+                    className="reveal rounded-3xl border border-white/80 bg-white/85 p-6 shadow-[0_24px_50px_-40px_hsla(261,51%,51%,0.6)]"
+                    data-reveal
+                    style={{ transitionDelay: `${index * 120}ms` }}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[hsl(260_43%_97%)]">
+                        <item.Icon />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold">{item.title}</h3>
+                        <p className="mt-2 text-sm text-[hsl(269_20%_38%)]">{item.description}</p>
+                      </div>
                     </div>
-                    <p className="font-semibold leading-snug">{item.title}</p>
-                  </Card>
+                  </div>
                 ))}
               </div>
-              <Card className="p-6 bg-primary/5 border-primary/20 text-center">
-                <p className="text-lg">
-                  {isVariantB
-                    ? "Com isso, o relatório mostra as rotas mais compatíveis (concurso, iniciativa privada ou empreendedorismo) e um plano de ação realista."
-                    : "Com isso, o relatório indica concursos compatíveis e um plano de estudo realista."}
-                </p>
-              </Card>
-            </section>
+            </div>
+          </section>
 
-            <section className="space-y-6">
-              <h2 className="text-3xl font-bold text-center">
-                {isVariantB ? "Futuro Perfeito: clareza profissional de forma humana" : "Futuro Perfeito: feito por uma pessoa, evoluindo sempre"}
-              </h2>
-              <div className="grid md:grid-cols-2 gap-4">
-                {differentiators.map((item, index) => (
-                  <Card key={index} className="p-5 flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-primary mt-1" />
-                    <p>{item}</p>
-                  </Card>
+          <section id="recebe" className="scroll-mt-24 bg-white/50 py-20">
+            <div className="container mx-auto space-y-10">
+              <div className="reveal space-y-4" data-reveal>
+                <h2 className="text-2xl font-semibold sm:text-3xl">O que você recebe</h2>
+                <p className="text-base text-[hsl(269_20%_38%)]">
+                  Um relatório objetivo, focado no seu perfil e nas áreas de concurso que realmente fazem sentido.
+                </p>
+              </div>
+              <div className="grid gap-6 md:grid-cols-2">
+                {benefits.map((item, index) => (
+                  <div
+                    key={item.title}
+                    className="reveal flex items-start gap-4 rounded-3xl border border-white/80 bg-white/90 p-6 shadow-[0_20px_40px_-34px_hsla(261,51%,51%,0.5)]"
+                    data-reveal
+                    style={{ transitionDelay: `${index * 90}ms` }}
+                  >
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[hsl(260_43%_97%)]">
+                      <item.Icon />
+                    </div>
+                    <p className="text-base font-medium text-[hsl(269_66%_19%)]">{item.title}</p>
+                  </div>
                 ))}
               </div>
-              <Card className="p-6 bg-primary/5 border-primary/20 text-center space-y-3">
-                <p className="text-lg">
-                  {isVariantB
-                    ? "Você começa respondendo ao teste gratuitamente, vê seus primeiros insights e só paga se quiser receber o relatório profissional completo, detalhado e personalizado."
-                    : "Você começa respondendo ao teste gratuitamente, vê seus primeiros insights e só paga se quiser receber o relatório completo, detalhado e personalizado."}
+            </div>
+          </section>
+
+          <section id="valor" className="scroll-mt-24 py-20">
+            <div className="container mx-auto grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+              <div className="reveal space-y-5" data-reveal>
+                <h2 className="text-2xl font-semibold sm:text-3xl">Por que pagar R$ 25?</h2>
+                <p className="text-base text-[hsl(269_20%_38%)]">
+                  Estudar para o concurso errado pode custar anos da sua vida e milhares de reais. Por apenas R$ 25, você
+                  elimina a incerteza e foca no que realmente importa.
                 </p>
-                <p className="text-sm text-muted-foreground">
-                  {isVariantB
-                    ? "O relatório completo custa R$ 25 — menos do que um hambúrguer — para te ajudar a decidir a rota profissional mais coerente com o seu perfil. Sem mensalidade, sem recorrência: pagamento único que evita anos de tentativa e erro."
-                    : "O relatório completo custa R$ 25 — menos do que um hambúrguer — para te ajudar a decidir um caminho de concursos alinhado com o seu perfil. Sem mensalidade, sem recorrência: pagamento único que evita anos de tentativa e erro."}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Precisa falar direto comigo? WhatsApp:{" "}
-                  <a className="text-primary font-semibold" href="https://wa.me/5591984233672" target="_blank" rel="noreferrer">
-                    (91) 98423-3672
+                <Button
+                  asChild
+                  className="h-auto rounded-full bg-[hsl(261_51%_51%)] px-7 py-6 text-base font-semibold text-white shadow-[0_18px_40px_-24px_hsla(261,51%,51%,0.9)] hover:bg-[hsl(261_51%_46%)]"
+                >
+                  <a href={paymentLink} target="_blank" rel="noreferrer">
+                    Liberar relatório por R$ 25
                   </a>
-                </p>
-              </Card>
-            </section>
-
-            <section className="space-y-4">
-              <h2 className="text-3xl font-bold text-center">Como acontece na prática</h2>
-              <div className="grid md:grid-cols-3 gap-4">
-                {steps.map((step, index) => (
-                  <Card key={index} className="p-5 flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      {step.icon}
+                </Button>
+              </div>
+              <div
+                className="reveal rounded-3xl border border-white/80 bg-white/90 p-6 shadow-[0_26px_60px_-45px_hsla(261,51%,51%,0.6)]"
+                data-reveal
+              >
+                <h3 className="text-base font-semibold text-[hsl(269_66%_19%)]">
+                  Tempo perdido sem clareza vs. investimento baixo
+                </h3>
+                <div className="mt-6 space-y-5">
+                  <div>
+                    <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.2em] text-[hsl(269_20%_40%)]">
+                      <span>Sem clareza</span>
+                      <span>12–24 meses</span>
                     </div>
-                    <div>
-                      <p className="font-semibold">{step.title}</p>
-                      <p className="text-sm text-muted-foreground">{step.desc}</p>
+                    <div className="mt-2 h-3 rounded-full bg-[hsla(269,66%,19%,0.1)]">
+                      <div className="h-3 w-[88%] rounded-full bg-[hsl(269_66%_19%)]" />
                     </div>
-                  </Card>
-                ))}
-              </div>
-              <p className="text-center text-sm text-muted-foreground">
-                Seus dados ficam protegidos; envio no WhatsApp é opcional e não há assinatura escondida.
-              </p>
-            </section>
-
-            <section className="grid md:grid-cols-2 gap-6 items-start">
-              <Card className="p-7 h-full">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-primary" />
                   </div>
-                  <h3 className="text-2xl font-semibold">
-                    {isVariantB ? "Oportunidades alinhadas com a sua realidade" : "Concursos alinhados com a sua realidade geográfica"}
-                  </h3>
-                </div>
-                <p className="text-muted-foreground text-lg">
-                  {isVariantB
-                    ? "Você pode comparar rotas considerando região, estabilidade, crescimento e estilo de vida. O relatório mostra opções viáveis sem te prender a um único caminho."
-                    : "Você pode focar na região onde já vive ou considerar outros estados. O relatório mostra oportunidades que realmente existem para o seu cenário — sem forçar ninguém a se mudar."}
-                </p>
-              </Card>
-
-              <Card className="p-7 h-full">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
-                    <Layers className="w-5 h-5 text-accent" />
+                  <div>
+                    <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.2em] text-[hsl(269_20%_40%)]">
+                      <span>Com o teste</span>
+                      <span>7–10 min</span>
+                    </div>
+                    <div className="mt-2 h-3 rounded-full bg-[hsla(261,51%,51%,0.16)]">
+                      <div className="h-3 w-[32%] rounded-full bg-[hsl(261_51%_51%)]" />
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-semibold">
-                    {isVariantB ? "Sua experiência profissional vira vantagem" : "Sua experiência com provas vira vantagem"}
-                  </h3>
+                  <div className="rounded-2xl bg-[hsl(260_43%_97%)] p-4 text-sm text-[hsl(269_20%_40%)]">
+                    Investimento baixo agora = meses economizados depois.
+                  </div>
                 </div>
-                <div className="space-y-2 text-muted-foreground text-lg">
-                  <p>{isVariantB ? "Usamos sua experiência para:" : "Usamos seu histórico para:"}</p>
-                  <ul className="list-disc list-inside space-y-1">
-                    {experienceItems.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                  <p className="font-medium text-foreground">
-                    {isVariantB ? "Você não começa do zero — começa do que já fez e aprendeu." : "Você não começa do zero — começa de onde está."}
-                  </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="depoimentos" className="scroll-mt-24 py-20">
+            <div className="container mx-auto space-y-8">
+              <div className="reveal flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between" data-reveal>
+                <div>
+                  <h2 className="text-2xl font-semibold sm:text-3xl">Depoimentos</h2>
+                  <p className="text-base text-[hsl(269_20%_38%)]">Histórias reais de quem ganhou clareza.</p>
                 </div>
-              </Card>
-            </section>
-
-            <section className="space-y-4">
-              <h2 className="text-3xl font-bold text-center">O que você recebe</h2>
-              <div className="grid md:grid-cols-2 gap-4">
-                {whatYouReceive.map((item, index) => (
-                  <Card key={index} className="p-5 flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-primary mt-1" />
-                    <p>{item}</p>
-                  </Card>
-                ))}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleScrollTestimonials("left")}
+                    aria-label="Ver depoimento anterior"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-[hsla(261,51%,51%,0.3)] bg-white text-[hsl(261_51%_51%)] transition hover:bg-[hsla(261,51%,51%,0.1)]"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleScrollTestimonials("right")}
+                    aria-label="Ver próximo depoimento"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-[hsla(261,51%,51%,0.3)] bg-white text-[hsl(261_51%_51%)] transition hover:bg-[hsla(261,51%,51%,0.1)]"
+                  >
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
-            </section>
 
-            <section className="space-y-6">
-              <h2 className="text-3xl font-bold text-center">Para quem o Futuro Perfeito foi feito</h2>
-              <div className="grid md:grid-cols-2 gap-4">
-                <Card className="p-6 space-y-3">
-                  <p className="font-semibold">É para quem:</p>
-                  <ul className="space-y-2 text-muted-foreground">
-                    {forWhoItems.map((item) => (
-                      <li key={item} className="flex gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-primary mt-1" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
-                <Card className="p-6 space-y-3">
-                  <p className="font-semibold">Não é para quem:</p>
-                  <ul className="space-y-2 text-muted-foreground">
-                    {notForWhoItems.map((item) => (
-                      <li key={item} className="flex gap-2">
-                        <X className="w-4 h-4 text-destructive mt-1" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
-              </div>
-            </section>
-
-            <section className="space-y-6">
-              <h2 className="text-3xl font-bold text-center">
-                {isVariantB ? "Histórias de clareza profissional" : "Depoimentos"}
-              </h2>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div
+                ref={testimonialsRef}
+                className="flex gap-6 overflow-x-auto pb-2 snap-x snap-mandatory"
+              >
                 {testimonials.map((item, index) => (
-                  <Card key={index} className="p-6 space-y-3 shadow-[var(--shadow-card)]">
-                    <div className="flex gap-1">
-                      {[...Array(5)].map((_, starIndex) => (
-                        <Star key={starIndex} className="w-4 h-4 fill-primary text-primary" />
+                  <div
+                    key={item.name}
+                    className="reveal min-w-[280px] snap-center rounded-3xl border border-white/80 bg-white/90 p-6 shadow-[0_22px_50px_-38px_hsla(261,51%,51%,0.55)] sm:min-w-[320px]"
+                    data-reveal
+                    style={{ transitionDelay: `${index * 100}ms` }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="h-12 w-12 rounded-full bg-[linear-gradient(135deg,_hsl(261,51%,51%),_hsl(282,70%,72%))]" aria-hidden="true" />
+                      <div>
+                        <p className="text-sm font-semibold">{item.name}</p>
+                        <p className="text-xs text-[hsl(269_20%_40%)]">{item.role}</p>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex gap-1">
+                      {Array.from({ length: 5 }).map((_, starIndex) => (
+                        <Star
+                          key={`${item.name}-${starIndex}`}
+                          className="h-4 w-4 text-[hsl(261_51%_51%)]"
+                          fill="hsl(261, 51%, 51%)"
+                        />
                       ))}
                     </div>
-                    <p className="text-muted-foreground italic">{item.quote}</p>
-                    <p className="font-semibold">{item.name}</p>
-                  </Card>
+                    <p className="mt-4 text-sm text-[hsl(269_20%_38%)]">{item.quote}</p>
+                  </div>
                 ))}
               </div>
-            </section>
+            </div>
+          </section>
 
-            <section className="space-y-6">
-              <div className="flex flex-col items-center justify-between gap-2 text-center md:flex-row md:text-left">
-                <h2 className="text-3xl font-bold">Blog e conteudo</h2>
-                <Link
-                  to="/blog"
-                  className="text-sm font-semibold text-primary transition-colors hover:text-primary/80"
+          <section id="como-funciona" className="scroll-mt-24 bg-white/50 py-20">
+            <div className="container mx-auto space-y-10">
+              <div className="reveal space-y-4" data-reveal>
+                <h2 className="text-2xl font-semibold sm:text-3xl">Como funciona</h2>
+                <p className="text-base text-[hsl(269_20%_38%)]">
+                  Responda ao teste (7–10 min) → Veja sua recomendação de área → Destrave o relatório completo e receba um
+                  plano detalhado.
+                </p>
+              </div>
+              <div className="flex flex-col gap-6 md:flex-row md:items-center">
+                {steps.map((item, index) => (
+                  <div key={item.step} className="flex flex-1 flex-col gap-6 md:flex-row md:items-center">
+                    <div
+                      className="reveal flex flex-1 items-start gap-4 rounded-3xl border border-white/80 bg-white/90 p-6 shadow-[0_20px_40px_-34px_hsla(261,51%,51%,0.55)]"
+                      data-reveal
+                      style={{ transitionDelay: `${index * 120}ms` }}
+                    >
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[hsla(261,51%,51%,0.15)] text-lg font-semibold text-[hsl(261_51%_51%)]">
+                        {item.step}
+                      </div>
+                      <p className="text-base font-medium text-[hsl(269_66%_19%)]">{item.text}</p>
+                    </div>
+                    {index < steps.length - 1 && (
+                      <div className="hidden md:flex md:items-center md:justify-center">
+                        <ArrowRight className="h-6 w-6 text-[hsla(269,66%,19%,0.35)]" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section id="faq" className="scroll-mt-24 py-20">
+            <div className="container mx-auto space-y-8">
+              <div className="reveal space-y-4" data-reveal>
+                <h2 className="text-2xl font-semibold sm:text-3xl">FAQ / Perguntas frequentes</h2>
+                <p className="text-base text-[hsl(269_20%_38%)]">Respostas diretas para dúvidas comuns.</p>
+              </div>
+              <div className="space-y-4">
+                {faqs.map((item, index) => (
+                  <details
+                    key={item.question}
+                    className="reveal rounded-3xl border border-white/80 bg-white/90 p-5 shadow-[0_18px_40px_-32px_hsla(261,51%,51%,0.5)]"
+                    data-reveal
+                    style={{ transitionDelay: `${index * 90}ms` }}
+                  >
+                    <summary className="cursor-pointer text-base font-semibold text-[hsl(269_66%_19%)]">
+                      {item.question}
+                    </summary>
+                    <p className="mt-3 text-sm text-[hsl(269_20%_38%)]">{item.answer}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section id="cta" className="scroll-mt-24 bg-[hsl(260_43%_94%)] py-20">
+            <div className="container mx-auto text-center">
+              <div className="reveal mx-auto max-w-3xl space-y-6" data-reveal>
+                <h2 className="text-2xl font-semibold sm:text-3xl">
+                  Não escolha no escuro. Tenha clareza para estudar o concurso certo.
+                </h2>
+                <Button
+                  onClick={onStart}
+                  className="h-auto rounded-full bg-[hsl(261_51%_51%)] px-10 py-6 text-base font-semibold text-white shadow-[0_18px_40px_-24px_hsla(261,51%,51%,0.9)] hover:bg-[hsl(261_51%_46%)]"
                 >
-                  Ver todos os artigos
+                  Descobrir meu concurso ideal
+                </Button>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <footer id="contato" className="border-t border-white/10 bg-[hsl(269_66%_19%)] py-12 text-white/80">
+          <div className="container mx-auto grid gap-8 md:grid-cols-3">
+            <div className="space-y-3">
+              <p className="text-lg font-semibold text-white">Futuro Perfeito</p>
+              <p className="text-sm text-white/70">
+                Clareza para você escolher a área de concurso certa antes de investir meses de estudo.
+              </p>
+            </div>
+            <div className="space-y-3 text-sm">
+              <p className="font-semibold text-white">Links</p>
+              <div className="space-y-2">
+                <Link to="/blog" className="block transition-colors hover:text-white">
+                  Blog
+                </Link>
+                <Link to="/privacy" className="block transition-colors hover:text-white">
+                  Política de Privacidade
+                </Link>
+                <Link to="/terms" className="block transition-colors hover:text-white">
+                  Termos de Uso
                 </Link>
               </div>
-              {latestPosts.length > 0 ? (
-                <div className="grid gap-4 md:grid-cols-3">
-                  {latestPosts.map((post) => (
-                    <Link
-                      key={post.slug}
-                      to={`/blog/${post.slug}`}
-                      className="group rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                    >
-                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                        Blog
-                      </p>
-                      <h3 className="mt-3 text-lg font-semibold text-foreground group-hover:text-primary">
-                        {post.title}
-                      </h3>
-                      <p className="mt-2 text-sm text-muted-foreground">{post.description}</p>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-center text-muted-foreground">Sem posts publicados no momento.</p>
-              )}
-            </section>
-
-            <section className="text-center space-y-4">
-              <h2 className="text-3xl font-bold">
-                {isVariantB
-                  ? "Você não precisa escolher no escuro. Precisa de clareza para seguir o caminho certo."
-                  : "Você não precisa estudar mais. Precisa estudar com direção — para o concurso certo."}
-              </h2>
-              <Button
-                onClick={onStart}
-                size="lg"
-                className="text-lg px-8 py-6 rounded-full shadow-[var(--shadow-elevated)] hover:scale-105 transition-transform duration-200 bg-gradient-to-r from-primary to-accent"
+            </div>
+            <div className="space-y-3 text-sm">
+              <p className="font-semibold text-white">Contato</p>
+              <p>WhatsApp: (91) 98423-3672</p>
+              <a
+                href="https://www.instagram.com/luccaserrao/"
+                target="_blank"
+                rel="noreferrer"
+                className="block transition-colors hover:text-white"
               >
-                Começar meu teste agora
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-              <p className="text-sm text-muted-foreground">
-                {isVariantB
-                  ? "Teste gratuito para começar; o relatório completo é opcional e ajuda a decidir sua rota profissional."
-                  : "Teste gratuito para começar; o relatório completo é opcional, de pagamento único e sem recorrência."}
-              </p>
-            </section>
+                Instagram: @luccaserrao
+              </a>
+            </div>
           </div>
-        </div>
+          <div className="container mx-auto mt-10 border-t border-white/10 pt-6 text-center text-xs text-white/60">
+            (c) 2026 Futuro Perfeito. Todos os direitos reservados.
+          </div>
+        </footer>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
