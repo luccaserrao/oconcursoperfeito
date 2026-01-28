@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { CreditCard, Copy, Check } from "lucide-react";
-import { getHomeVariant, trackBeginCheckout, trackCtaDesbloqueioClick } from "@/lib/analytics";
+import { getHomeVariant, trackBeginCheckout, trackCtaDesbloqueioClick, trackEvent } from "@/lib/analytics";
 
 interface MercadoPagoButtonProps {
   userName: string;
@@ -10,6 +10,7 @@ interface MercadoPagoButtonProps {
   quizResponseId?: string;
   amount?: number;
   location?: string;
+  quizVersion?: "v1" | "v2";
 }
 
 interface PixData {
@@ -23,6 +24,7 @@ export const MercadoPagoButton = ({
   quizResponseId,
   amount = 25,
   location = "unknown",
+  quizVersion,
 }: MercadoPagoButtonProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -37,6 +39,9 @@ export const MercadoPagoButton = ({
       setCopied(false);
 
       trackCtaDesbloqueioClick(location);
+      if (quizVersion === "v2") {
+        trackEvent("cta_desbloqueio_click_v2", { location });
+      }
       trackBeginCheckout(amount, { home_variant: getHomeVariant() });
 
       toast({

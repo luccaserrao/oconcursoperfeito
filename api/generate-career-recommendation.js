@@ -38,6 +38,8 @@ export default async function handler(req, res) {
       email: parsed.email || parsed.user_email || "",
       answers: parsed.answers || parsed.answers_json || [],
       riasec: parsed.riasec || parsed.riasec_json || null,
+      quiz_version: parsed.quiz_version,
+      macro_area_result: parsed.macro_area_result,
       ...(parsed.whatsapp ? { whatsapp: parsed.whatsapp } : {}),
     };
 

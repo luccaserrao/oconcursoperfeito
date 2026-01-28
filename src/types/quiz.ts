@@ -1,11 +1,15 @@
 export type RiasecType = "Realista" | "Investigativo" | "Artístico" | "Social" | "Empreendedor" | "Convencional";
 
+export type CONCURSO_AREA = "ADMINISTRATIVO" | "TRIBUNAIS" | "POLICIAL" | "FISCAL";
+
 export interface QuizQuestion {
   id: string;
   question: string;
   options?: string[];
   type?: "likert" | "multiple-choice" | "text";
   riasecType?: RiasecType;
+  areaWeights?: Record<CONCURSO_AREA, number>;
+  optionAreas?: Record<string, CONCURSO_AREA>;
   placeholder?: string;
   helperText?: string;
 }
@@ -34,6 +38,13 @@ export interface RiasecResult {
   habilidade_destaque?: string;
   contexto_profissional?: string;
   descricao_personalizada?: string;
+}
+
+export interface MacroAreaResult {
+  areaPrincipal: CONCURSO_AREA;
+  areaPossivel: CONCURSO_AREA;
+  areaEvitar: CONCURSO_AREA;
+  scores?: Record<CONCURSO_AREA, number>;
 }
 
 export interface CareerRecommendation {

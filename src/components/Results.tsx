@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CareerRecommendation, RiasecResult } from "@/types/quiz";
+import { CareerRecommendation, CONCURSO_AREA, MacroAreaResult, RiasecResult } from "@/types/quiz";
 import { MercadoPagoButton } from "./MercadoPagoButton";
 import { CountdownTimer } from "./CountdownTimer";
 import { Footer } from "./Footer";
@@ -52,6 +52,8 @@ interface ResultsProps {
   userEmail: string;
   quizResponseId?: string;
   riasecFallback?: RiasecResult;
+  mode?: "free-v1" | "free-v2";
+  macroAreaResult?: MacroAreaResult;
 }
 
 export const Results = ({
@@ -59,8 +61,25 @@ export const Results = ({
   userName,
   userEmail,
   quizResponseId,
-  riasecFallback
+  riasecFallback,
+  mode = "free-v1",
+  macroAreaResult,
 }: ResultsProps) => {
+  const isV2 = mode === "free-v2";
+  const quizVersion = isV2 ? "v2" : "v1";
+  const macroAreaLabels: Record<CONCURSO_AREA, string> = {
+    ADMINISTRATIVO: "Area Administrativa",
+    TRIBUNAIS: "Area de Tribunais",
+    POLICIAL: "Area Policial",
+    FISCAL: "Area Fiscal",
+  };
+  const macroResult: MacroAreaResult = macroAreaResult || {
+    areaPrincipal: "ADMINISTRATIVO",
+    areaPossivel: "TRIBUNAIS",
+    areaEvitar: "POLICIAL",
+  };
+  const macroAreaPrincipal = macroResult.areaPrincipal;
+  const formatMacroArea = (area: CONCURSO_AREA) => macroAreaLabels[area] || "Area Administrativa";
   const [showFloatingCta, setShowFloatingCta] = useState(false);
   const [showScrollCta, setShowScrollCta] = useState(false);
   const [ctaVariant] = useState<'A' | 'B'>(() => {
@@ -85,14 +104,20 @@ export const Results = ({
   const shortJustification = (recommendation.justification?.split(".")[0] || "").trim();
   const top1Score = riasecData.scores?.[riasecData.top1] ?? 90;
   const top2Score = riasecData.scores?.[riasecData.top2] ?? 78;
-  const heroCopy = riasecData.descricao_personalizada || "Se este recorte gratuito já faz sentido, o plano completo (R$25) destrava salário, cronograma e cargos que combinam com seu estilo.";
+  const heroCopy = riasecData.descricao_personalizada || "Se este recorte gratuito ja faz sentido, o plano completo (R$25) explica o PORQUE, compara areas e mostra cargos compativeis.";
 
   // Track page view
   useEffect(() => {
     trackEvent('results_viewed', {
-      career: recommendation.careerName
+      career: recommendation.careerName,
+      quiz_version: mode,
     });
-  }, [recommendation.careerName]);
+    if (isV2) {
+      trackEvent('results_viewed_v2', {
+        area_principal: macroAreaPrincipal,
+      });
+    }
+  }, [recommendation.careerName, mode, isV2, macroAreaPrincipal]);
 
   useEffect(() => {
     trackEvent('cta_variant_assigned', { variant: ctaVariant });
@@ -153,6 +178,7 @@ export const Results = ({
               quizResponseId={quizResponseId}
               amount={25}
               location="floating_desktop"
+              quizVersion={quizVersion}
             />
           </div>
         </div>
@@ -161,8 +187,92 @@ export const Results = ({
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 pt-20 pb-12">
         <div className="container mx-auto px-4 max-w-6xl">
         
-          {/* ============= HERO + IDENTIDADE RIASEC (MOBILE FIRST) ============= */}
-          <div className="mb-14 animate-fade-in">
+          {isV2 && (
+            <div className="mb-14 animate-fade-in">
+              <div className="text-center mb-8 space-y-3">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wide">
+                  resultado gratuito pronto
+                </div>
+                <h1 className="text-3xl md:text-5xl font-bold leading-tight">
+                  {firstName}, sua direcao inicial e:{" "}
+                  <span className="text-primary">{formatMacroArea(macroResult.areaPrincipal)}</span>
+                </h1>
+                <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                  Esse resultado mostra a DIRECAO. O relatorio completo mostra o PORQUE e quais cargos priorizar.
+                </p>
+              </div>
+
+              <div className="grid gap-4 lg:grid-cols-3">
+                <Card className="p-6 bg-card border-2 border-primary/20">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Target className="w-5 h-5 text-primary" />
+                    <h3 className="font-bold text-lg">Area principal</h3>
+                  </div>
+                  <p className="text-xl font-semibold">{formatMacroArea(macroResult.areaPrincipal)}</p>
+                  <p className="text-sm text-muted-foreground">Maior compatibilidade com seu perfil.</p>
+                </Card>
+
+                <Card className="p-6 bg-card border-2 border-primary/10">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Lightbulb className="w-5 h-5 text-primary" />
+                    <h3 className="font-bold text-lg">Area possivel</h3>
+                  </div>
+                  <p className="text-xl font-semibold">{formatMacroArea(macroResult.areaPossivel)}</p>
+                  <p className="text-sm text-muted-foreground">Pode funcionar com ajustes.</p>
+                </Card>
+
+                <Card className="p-6 bg-card border-2 border-destructive/20">
+                  <div className="flex items-center gap-2 mb-3">
+                    <AlertTriangle className="w-5 h-5 text-destructive" />
+                    <h3 className="font-bold text-lg">Area a evitar</h3>
+                  </div>
+                  <p className="text-xl font-semibold">{formatMacroArea(macroResult.areaEvitar)}</p>
+                  <p className="text-sm text-muted-foreground">Tende a gerar desgaste.</p>
+                </Card>
+              </div>
+
+              <Card className="p-6 mt-6 bg-primary/5 border-2 border-primary/30">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                  <div className="space-y-2">
+                    <div className="inline-flex items-center gap-2 text-xs uppercase tracking-wide text-primary font-semibold bg-primary/10 border border-primary/30 px-3 py-1 rounded-full">
+                      <Sparkles className="w-4 h-4" />
+                      Se isso faz sentido, destrave o resto
+                    </div>
+                    <p className="text-xl font-bold">Plano completo por R$25</p>
+                    <p className="text-sm text-muted-foreground max-w-2xl">
+                      O relatorio completo explica o PORQUE da area indicada, mostra o perfil psicologico RIASEC completo, compara ate 3 areas e lista cargos compativeis com alertas de erro.
+                    </p>
+                    <div className="flex flex-wrap gap-2 text-xs text-foreground">
+                      <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary inline-flex items-center gap-2">
+                        <Lock className="w-3.5 h-3.5" />
+                        Pagamento seguro via Mercado Pago + criptografia
+                      </Badge>
+                      <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Bonus: checklist de erros</Badge>
+                      <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Mapa visual + plano 7 dias</Badge>
+                    </div>
+                    <MercadoPagoButton
+                      userName={userName}
+                      userEmail={userEmail}
+                      quizResponseId={quizResponseId}
+                      amount={25}
+                      location="hero_upgrade"
+                      quizVersion={quizVersion}
+                    />
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Lock className="w-4 h-4 text-primary" />
+                      <Shield className="w-4 h-4 text-primary" />
+                      <span>Garantia de 7 dias. Sem perguntas.</span>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {!isV2 && (
+            <>
+              {/* ============= HERO + IDENTIDADE RIASEC (MOBILE FIRST) ============= */}
+              <div className="mb-14 animate-fade-in">
             <div className="text-center mb-8 space-y-3">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wide">
                 diagnóstico gratuito pronto - se isso convence grátis, imagine por R$25
@@ -260,7 +370,7 @@ export const Results = ({
                   </div>
                 </div>
                 <div className="mt-4 text-xs text-muted-foreground">
-                  Este é o aperitivo gratuito. O upgrade entrega salário, cronograma 30/60/90 e cargos mais aderentes ao seu DNA.
+                  Este e o aperitivo gratuito. O upgrade entrega o PORQUE da area indicada, perfil psicologico completo, comparacao de areas e cargos compativeis.
                 </div>
               </Card>
             </div>
@@ -274,15 +384,15 @@ export const Results = ({
                   </div>
                   <p className="text-xl font-bold">Plano completo por R$25</p>
                   <p className="text-sm text-muted-foreground max-w-2xl">
-                    Veja faixa salarial, probabilidade de edital, cronograma de estudos 30/60/90 e checklist pronto. Garantia de 7 dias.
+                    O relatorio completo explica o PORQUE da area indicada, mostra o perfil psicologico RIASEC completo, compara ate 3 areas e lista cargos compativeis com alertas de erro.
                   </p>
                   <div className="flex flex-wrap gap-2 text-xs text-foreground">
                     <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary inline-flex items-center gap-2">
                       <Lock className="w-3.5 h-3.5" />
                       Pagamento seguro · Mercado Pago + criptografia
                     </Badge>
-                    <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Relatorio imediato</Badge>
-                    <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">+ Prova social 4.8/5</Badge>
+                    <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Bonus: checklist de erros</Badge>
+                    <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Mapa visual + plano 7 dias</Badge>
                   </div>
                   <MercadoPagoButton
                     userName={userName}
@@ -290,6 +400,7 @@ export const Results = ({
                     quizResponseId={quizResponseId}
                     amount={25}
                     location="hero_upgrade"
+                    quizVersion={quizVersion}
                   />
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Lock className="w-4 h-4 text-primary" />
@@ -300,6 +411,8 @@ export const Results = ({
               </div>
             </Card>
           </div>
+            </>
+          )}
 
           {/* ============= 2?? PROVA SOCIAL (DEPOIMENTOS REAIS) ============= */}
           <div className="mb-12 animate-fade-in">
@@ -314,21 +427,21 @@ export const Results = ({
                   location: "SP",
                   course: "cursando administração (4º período)",
                   date: "06/11/25",
-                  text: "O relatório liberou 'Técnico Administrativo TJ-SP' pra mim. Vi salário, rotina e um plano de 30 dias que fez sentido. Não precisei ficar adivinhando edital."
+                  text: "O relatório liberou 'area administrativa' pra mim. Vi salário, rotina e um plano de 30 dias que fez sentido. Não precisei ficar adivinhando edital."
                 },
                 {
                   name: "Lucas Andrade",
                   location: "MG",
                   course: "formado em direito",
                   date: "21/09/25",
-                  text: "Eu tinha medo de estar mirando errado. O upgrade mostrou 'Analista MPU', justificou com meu perfil Investigativo/Social e já trouxe matérias mais cobradas. Paguei 25 e parei de perder tempo."
+                  text: "Eu tinha medo de estar mirando errado. O upgrade mostrou 'area de tribunais', justificou com meu perfil Investigativo/Social e já trouxe matérias mais cobradas. Paguei 25 e parei de perder tempo."
                 },
                 {
                   name: "Amanda Souza",
                   location: "PE",
                   course: "estudante de enfermagem",
                   date: "11/08/25",
-                  text: "Ele indicou 'Enfermeira SAMU Recife' com faixa salarial e frequência de edital. O plano veio mastigado, só segui. Valeu mais que uma pizza."
+                  text: "Ele indicou 'area de saude' com faixa salarial e frequência de edital. O plano veio mastigado, só segui. Valeu mais que uma pizza."
                 }
               ].map((testimonial, index) => (
                 <Card key={index} className="p-6 border-2 border-primary/10 animate-fade-in hover:shadow-lg transition-shadow">
@@ -360,13 +473,13 @@ export const Results = ({
               
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  A maioria dos testes gratuitos mostra apenas seu tipo de personalidade. Este aqui vai além: analisa seu perfil RIASEC e combina com carreiras e concursos que realmente se encaixam no seu estilo de trabalho.
+                  Estudar para o concurso errado custa anos. Aqui voce recebe uma explicacao clara do PORQUE da area indicada e compara ate 3 caminhos para decidir com seguranca.
                 </p>
                 <p>
-                  Você não paga apenas por um resultado — recebe um plano de ação personalizado, um cronograma de estudos e cargos recomendados com base em dados reais do mercado píblico brasileiro.
+                  O perfil psicologico RIASEC completo e os alertas de erro mostram onde pessoas com o seu perfil costumam se frustrar.
                 </p>
                 <p className="font-semibold text-foreground">
-                  Por R$25, você economiza tempo, evita estudar para o concurso errado e ganha clareza sobre onde concentrar seus esforços.
+                  Por R$25, voce elimina a incerteza e ganha checklist de erros, mapa visual das areas e um plano inicial de 7 dias.
                 </p>
               </div>
             </Card>
@@ -384,7 +497,7 @@ export const Results = ({
               
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  Nosso diferencial é que cruzamos seus dados RIASEC com suas preferências de trabalho em concursos píblicos. Isso mostra quais carreiras e cargos píblicos combinam com você e inclui um plano de estudos prático para alcançar seus objetivos.
+                  Nosso diferencial e cruzar seu perfil psicologico (RIASEC completo) com macroareas de concurso. Isso mostra quais areas fazem sentido, compara ate 3 caminhos e evita escolhas erradas.
                 </p>
                 <div className="bg-primary/10 rounded-lg p-6 border-l-4 border-primary">
                   <p className="font-semibold text-foreground mb-2">
@@ -395,7 +508,7 @@ export const Results = ({
                   </p>
                 </div>
                 <p>
-                  Escolher o concurso certo, alinhado ao seu perfil, é o que define quem progride rápido e quem desiste no meio do caminho. Nosso sistema analisa o perfil dos cargos que mais se repetem nos concursos com os melhores salários e estabilidade de emprego, indicando caminhos de maior potencial.
+                  Escolher a area certa, alinhada ao seu perfil, evita meses de estudo perdido. O relatorio mostra cargos compativeis e alertas de erro para voce decidir com clareza.
                 </p>
               </div>
             </Card>
@@ -589,7 +702,7 @@ export const Results = ({
                   ?? Prévia do Relatório Profissional Completo
                 </h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
-                  Desbloqueie o Relatório Profissional Completo e transforme este resultado em um plano de ação prático para conquistar seu cargo ideal.
+                  Desbloqueie o Relatorio Profissional Completo e veja o PORQUE da area indicada, comparacao entre areas e cargos compativeis.
                 </p>
               </div>
 
@@ -631,27 +744,27 @@ export const Results = ({
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-w-2xl">
                     <Badge className="bg-primary/90 text-primary-foreground px-3 py-2">
                       <Target className="w-4 h-4 mr-1" />
-                      Carreira indicada pela IA
+                      Porque da area indicada
                     </Badge>
                     <Badge className="bg-primary/90 text-primary-foreground px-3 py-2">
                       <DollarSign className="w-4 h-4 mr-1" />
-                      Faixa salarial completa
+                      Perfil psicologico RIASEC
                     </Badge>
                     <Badge className="bg-primary/90 text-primary-foreground px-3 py-2">
                       <Calendar className="w-4 h-4 mr-1" />
-                      Probabilidade do edital
+                      Comparacao de 3 areas
                     </Badge>
                     <Badge className="bg-primary/90 text-primary-foreground px-3 py-2">
                       <BookOpen className="w-4 h-4 mr-1" />
-                      Plano de estudos 30/60/90
+                      Cargos compativeis
                     </Badge>
                     <Badge className="bg-primary/90 text-primary-foreground px-3 py-2">
                       <Sparkles className="w-4 h-4 mr-1" />
-                      Materiais recomendados
+                      Alertas de erro
                     </Badge>
                     <Badge className="bg-primary/90 text-primary-foreground px-3 py-2">
                       <CheckCircle2 className="w-4 h-4 mr-1" />
-                      Checklist completo
+                      Plano inicial 7 dias
                     </Badge>
                   </div>
                 </div>
@@ -671,19 +784,19 @@ export const Results = ({
                 </p>
                 <div className="inline-flex items-center gap-2 text-xs uppercase tracking-wide text-primary font-semibold bg-primary/10 border border-primary/30 px-3 py-1 rounded-full">
                   <Sparkles className="w-4 h-4" />
-                  Bonus: checklist de edital + mini plano imediato
+                  Bonus: checklist de erros + mapa visual + plano 7 dias
                 </div>
               </div>
 
               {/* Lista de beneficios */}
               <div className="grid md:grid-cols-2 gap-4 mb-8">
                 {[
-                  { icon: Target, text: "Cargo recomendado e justificativa do seu perfil" },
-                  { icon: DollarSign, text: "Faixa salarial inicial e com progressão" },
-                  { icon: Calendar, text: "Probabilidade do próximo edital" },
-                  { icon: BookOpen, text: "Plano de estudos 30/60/90 dias" },
-                  { icon: Sparkles, text: "Materiais práticos e checklist" },
-                  { icon: TrendingUp, text: "Acesso imediato ao Relatório" }
+                  { icon: Target, text: "Explicacao detalhada do PORQUE da area indicada" },
+                  { icon: Dna, text: "Perfil psicologico RIASEC completo" },
+                  { icon: Scale, text: "Comparacao entre ate 3 areas de concurso" },
+                  { icon: Award, text: "Lista de cargos compativeis" },
+                  { icon: AlertTriangle, text: "Alertas de erro (onde pessoas com esse perfil quebram)" },
+                  { icon: Sparkles, text: "Bonus: checklist de erros + mapa visual + plano 7 dias" }
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-start gap-3 p-3 bg-background/50 rounded-lg">
                     <item.icon className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
@@ -729,7 +842,7 @@ export const Results = ({
                     </div>
                     <div className="flex-1 rounded-lg border bg-background/60 p-3">
                       <div className="flex items-center gap-2 text-primary font-semibold text-xs">
-                        <Sparkles className="w-4 h-4" /> Diego, PF administrativa
+                        <Sparkles className="w-4 h-4" /> Diego, area policial
                       </div>
                       <p className="text-muted-foreground mt-1">"Valeu mais que 1 mês de cursinho. Checklist e cronograma em minutos."</p>
                     </div>
@@ -743,6 +856,7 @@ export const Results = ({
                     quizResponseId={quizResponseId}
                     amount={25}
                     location="main_offer"
+                    quizVersion={quizVersion}
                   />
                   <p className="text-xs text-muted-foreground text-center">
                     Pix, cartao ou saldo Mercado Pago · conexão segura com criptografia.
@@ -767,6 +881,7 @@ export const Results = ({
                     quizResponseId={quizResponseId}
                     amount={25}
                     location="scroll_banner"
+                    quizVersion={quizVersion}
                   />
                 </div>
               </Card>
@@ -920,6 +1035,7 @@ export const Results = ({
                 quizResponseId={quizResponseId}
                 amount={25}
                 location="final_cta"
+                quizVersion={quizVersion}
               />
               
               <p className="text-sm text-muted-foreground mt-4">
@@ -939,6 +1055,7 @@ export const Results = ({
           quizResponseId={quizResponseId}
           amount={25}
           location="sticky_mobile"
+          quizVersion={quizVersion}
         />
       </div>
 

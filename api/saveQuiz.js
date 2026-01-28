@@ -30,6 +30,8 @@ export default async function handler(req, res) {
     const whatsapp = body.whatsapp || null;
     const answers = body.answers || body.answers_json || [];
     const riasec = body.riasec || body.riasec_json || null;
+    const quizVersion = body.quiz_version || body.quizVersion || null;
+    const macroAreaResult = body.macro_area_result || body.macroAreaResult || null;
     const clickedUpsell = body.clickedUpsell ?? body.clicked_upsell;
 
     if (!name || !email) {
@@ -49,6 +51,8 @@ export default async function handler(req, res) {
         user_email: email,
         answers_json: answers,
         riasec_json: riasec,
+        ...(quizVersion ? { quiz_version: quizVersion } : {}),
+        ...(macroAreaResult != null ? { macro_area_result: macroAreaResult } : {}),
         ...(whatsapp ? { whatsapp } : {}),
         ...(typeof clickedUpsell === "boolean" ? { clicked_upsell: clickedUpsell } : {}),
       })

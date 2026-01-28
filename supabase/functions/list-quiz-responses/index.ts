@@ -53,7 +53,7 @@ serve(async (req) => {
     // Seleciona apenas as colunas reais existentes
     const { data, error } = await supabase
       .from("quiz_responses")
-      .select("id, created_at, user_name, user_email, answers_json, riasec_json")
+      .select("id, created_at, user_name, user_email, answers_json, riasec_json, quiz_version, macro_area_result")
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -122,6 +122,8 @@ serve(async (req) => {
         riasec,
         riasec_top1: riasec?.top1 || null,
         riasec_top2: riasec?.top2 || null,
+        quiz_version: (row as any).quiz_version ?? null,
+        macro_area_result: (row as any).macro_area_result ?? null,
         paid: paidInfo,
       };
     });

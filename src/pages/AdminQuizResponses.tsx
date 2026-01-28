@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { quizQuestions } from "@/data/quizQuestions";
+import { allQuizQuestions } from "@/data/quizQuestions";
 import {
   Accordion,
   AccordionContent,
@@ -35,6 +35,8 @@ type QuizResponse = {
   riasec_top1?: string | null;
   riasec_top2?: string | null;
   riasec?: Record<string, unknown> | null;
+  quiz_version?: "v1" | "v2" | null;
+  macro_area_result?: Record<string, unknown> | null;
   paid?: {
     paid: boolean;
     paid_at: string | null;
@@ -49,7 +51,7 @@ const formatDate = (value: string) => {
   return date.toLocaleString("pt-BR");
 };
 
-const questionTextMap: Record<string, string> = quizQuestions.reduce((acc, q) => {
+const questionTextMap: Record<string, string> = allQuizQuestions.reduce((acc, q) => {
   acc[q.id] = q.question;
   return acc;
 }, {} as Record<string, string>);
@@ -142,6 +144,8 @@ const AdminQuizResponses = () => {
           riasec_top1: item.riasec_top1 || item.riasec?.top1 || null,
           riasec_top2: item.riasec_top2 || item.riasec?.top2 || null,
           riasec: item.riasec || item.ai_recommendation || null,
+          quiz_version: item.quiz_version || null,
+          macro_area_result: item.macro_area_result || null,
           paid: item.paid || { paid: false, paid_at: null, amount: null, order_id: null },
         };
       });
@@ -218,6 +222,8 @@ const AdminQuizResponses = () => {
       answers: item.answers && item.answers.length ? item.answers : item.raw_answers || [],
       raw_answers: item.raw_answers || [],
       riasec: item.riasec || item.ai_recommendation || null,
+      quiz_version: item.quiz_version || null,
+      macro_area_result: item.macro_area_result || null,
     };
     navigator.clipboard?.writeText(JSON.stringify(payload, null, 2)).catch(() => {});
   };
@@ -234,6 +240,10 @@ const AdminQuizResponses = () => {
       answers_count: item.answers?.length || 0,
       riasec_top1: item.riasec_top1 || "",
       riasec_top2: item.riasec_top2 || "",
+      quiz_version: item.quiz_version || "",
+      macro_area_principal: (item.macro_area_result as any)?.areaPrincipal || "",
+      macro_area_possivel: (item.macro_area_result as any)?.areaPossivel || "",
+      macro_area_evitar: (item.macro_area_result as any)?.areaEvitar || "",
       clicked_upsell: item.clicked_upsell ? "yes" : "no",
     }));
 
@@ -245,6 +255,10 @@ const AdminQuizResponses = () => {
       answers_count: "",
       riasec_top1: "",
       riasec_top2: "",
+      quiz_version: "",
+      macro_area_principal: "",
+      macro_area_possivel: "",
+      macro_area_evitar: "",
       clicked_upsell: "",
     });
 
@@ -455,6 +469,11 @@ const AdminQuizResponses = () => {
                 item.paid?.amount && Number.isFinite(item.paid.amount / 100)
                   ? (item.paid.amount / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
                   : null;
+              const quizVersion = item.quiz_version || "v1";
+              const macroArea = item.macro_area_result as any;
+              const macroPrincipal = macroArea?.areaPrincipal || "";
+              const macroPossivel = macroArea?.areaPossivel || "";
+              const macroEvitar = macroArea?.areaEvitar || "";
               const riasecTop = item.riasec_top1 || item.riasec_top2;
               const riasecSecondary = item.riasec_top2 || item.riasec_top1;
               const riasecScores = (item.riasec as any)?.scores || {};
@@ -473,6 +492,7 @@ const AdminQuizResponses = () => {
                         <div className="flex flex-wrap items-center gap-2">
                           <h3 className="text-xl font-semibold text-foreground">{item.name || "Sem nome"}</h3>
                           <Badge variant="secondary" className="text-xs">{item.email}</Badge>
+                          <Badge variant="outline" className="text-xs">Quiz {quizVersion.toUpperCase()}</Badge>
                           {item.whatsapp && <Badge variant="outline">WhatsApp: {item.whatsapp}</Badge>}
                           {paid ? (
                             <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white">
@@ -506,6 +526,30 @@ const AdminQuizResponses = () => {
 
                       <div className="w-full md:w-96">
                         <Card className="p-4 bg-gradient-to-br from-primary/5 via-background to-accent/5 border border-primary/20 space-y-3">
+                          {quizVersion === "v2" ? (
+                            <div className="space-y-3">
+                              <p className="text-xs uppercase text-primary font-semibold">Resultado macroarea</p>
+                              <div className="space-y-2 text-sm">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs text-muted-foreground">Principal</span>
+                                  <Badge className="bg-primary text-white">{macroPrincipal || "N/A"}</Badge>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs text-muted-foreground">Possivel</span>
+                                  <Badge variant="outline" className="border-primary text-primary">{macroPossivel || "N/A"}</Badge>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs text-muted-foreground">Evitar</span>
+                                  <Badge variant="outline" className="border-destructive text-destructive">{macroEvitar || "N/A"}</Badge>
+                                </div>
+                              </div>
+                              <p className="text-xs text-muted-foreground">
+                                Resultado resumido do quiz v2 (macroareas).
+                              </p>
+                            </div>
+                          ) : (
+                            <>
+
                           <div className="flex items-center justify-between">
                             <div>
                               <p className="text-xs uppercase text-primary font-semibold">Perfil RIASEC</p>
@@ -552,6 +596,8 @@ const AdminQuizResponses = () => {
                               ))}
                             </div>
                           ) : null}
+                            </>
+                          )}
                         </Card>
                       </div>
                     </div>
@@ -614,12 +660,4 @@ const AdminQuizResponses = () => {
 };
 
 export default AdminQuizResponses;
-
-
-
-
-
-
-
-
 

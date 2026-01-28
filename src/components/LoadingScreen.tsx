@@ -25,7 +25,7 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
       icon: <Users className="w-6 h-6 text-primary" />
     },
     {
-      text: "Gerando relatório com inteligência artificial...",
+      text: "Gerando seu resultado personalizado...",
       icon: <Sparkles className="w-6 h-6 text-primary" />
     }
   ];
@@ -86,11 +86,10 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
 
             <div className="pt-4 space-y-2">
               <p className="text-sm font-semibold text-foreground">
-                📊 Este teste utiliza a metodologia RIASEC
+                📊 Este teste compara seu perfil com macroareas de concurso
               </p>
               <p className="text-xs text-muted-foreground max-w-lg mx-auto">
-                Usada em processos seletivos e orientações profissionais em mais de 40 países. 
-                Suas respostas estão sendo analisadas com precisão científica.
+                Suas respostas estao sendo analisadas com cuidado para entregar uma direcao inicial clara.
               </p>
             </div>
           </div>

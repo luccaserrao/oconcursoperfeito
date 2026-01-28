@@ -5,22 +5,50 @@ import { Quiz } from "@/components/Quiz";
 import { EmailCapture } from "@/components/EmailCapture";
 import { Results } from "@/components/Results";
 import ErrorPage from "./ErrorPage";
-import { QuizAnswer, CareerRecommendation, RiasecResult } from "@/types/quiz";
+import { QuizAnswer, CareerRecommendation, MacroAreaResult, RiasecResult } from "@/types/quiz";
 import { toast } from "sonner";
 import { getHomeVariant, setGAUserProperties, trackEvent } from "@/lib/analytics";
 import { calculateRiasecScores } from "@/lib/riasec";
-import { quizQuestions } from "@/data/quizQuestions";
+import { calculateMacroArea } from "@/lib/calculateMacroArea";
+import { quizQuestionsV1, quizQuestionsV2 } from "@/data/quizQuestions";
 import { useSearchParams } from "react-router-dom";
 
 type Step = "landing" | "preparation" | "quiz" | "email" | "results" | "error";
 type HomeVariant = "A" | "B";
+type QuizVersion = "v1" | "v2";
 
 const HOME_VARIANT_KEY = "home_variant";
+const QUIZ_VERSION_KEY = "quiz_version";
 
 const parseHomeVariant = (value: string | null): HomeVariant | null => {
   if (!value) return null;
   const normalized = value.trim().toUpperCase();
   return normalized === "A" || normalized === "B" ? normalized : null;
+};
+
+const parseQuizVersion = (value: string | null): QuizVersion | null => {
+  if (!value) return null;
+  const normalized = value.trim().toLowerCase();
+  return normalized === "v1" || normalized === "v2" ? (normalized as QuizVersion) : null;
+};
+
+const resolveQuizVersion = (): QuizVersion => {
+  if (typeof window === "undefined") return "v1";
+  const stored = parseQuizVersion(window.localStorage.getItem(QUIZ_VERSION_KEY));
+  if (stored) return stored;
+
+  const savedProgress = window.localStorage.getItem("quiz_progress");
+  if (savedProgress) {
+    try {
+      const parsed = JSON.parse(savedProgress);
+      const savedVersion = parseQuizVersion(parsed?.version || null);
+      return savedVersion || "v1";
+    } catch {
+      return "v1";
+    }
+  }
+
+  return "v2";
 };
 
 const Index = () => {
@@ -29,9 +57,11 @@ const Index = () => {
   const [quizAnswers, setQuizAnswers] = useState<QuizAnswer[]>([]);
   const [recommendation, setRecommendation] = useState<CareerRecommendation | null>(null);
   const [riasecResult, setRiasecResult] = useState<RiasecResult | null>(null);
+  const [macroAreaResult, setMacroAreaResult] = useState<MacroAreaResult | null>(null);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [quizResponseId, setQuizResponseId] = useState<string | undefined>();
+  const [quizVersion, setQuizVersion] = useState<QuizVersion>(() => resolveQuizVersion());
   const [homeVariant, setHomeVariant] = useState<HomeVariant>(() => {
     if (typeof window === "undefined") return "A";
 
@@ -72,6 +102,13 @@ const Index = () => {
   }, [searchParams]);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const resolved = resolveQuizVersion();
+    window.localStorage.setItem(QUIZ_VERSION_KEY, resolved);
+    setQuizVersion(resolved);
+  }, []);
+
+  useEffect(() => {
     setGAUserProperties({ home_variant: homeVariant });
     trackEvent("home_variant_assigned", { variant: homeVariant });
   }, [homeVariant]);
@@ -93,9 +130,18 @@ const Index = () => {
     setCurrentStep("quiz");
   };
 
-  const handleQuizComplete = (answers: QuizAnswer[], riasecScore: RiasecResult) => {
+  const handleQuizComplete = ({
+    answers,
+    riasecResult: riasecScore,
+    macroAreaResult: macroResult,
+  }: {
+    answers: QuizAnswer[];
+    riasecResult?: RiasecResult;
+    macroAreaResult?: MacroAreaResult;
+  }) => {
     setQuizAnswers(answers);
-    setRiasecResult(riasecScore);
+    setRiasecResult(riasecScore || null);
+    setMacroAreaResult(macroResult || null);
     trackEvent("email_form_viewed");
     setCurrentStep("email");
   };
@@ -103,16 +149,20 @@ const Index = () => {
   const handleEmailSubmit = async (name: string, email: string) => {
     const trimmedEmail = email.trim().toLowerCase();
     const safeName = name.trim().length >= 2 ? name.trim() : "Concurseiro";
+    const activeQuestions = quizVersion === "v2" ? quizQuestionsV2 : quizQuestionsV1;
+    const answersRecord = quizAnswers.reduce<Record<string, string>>((acc, cur, idx) => {
+      const questionId = cur.id || activeQuestions[idx]?.id || `q${idx}`;
+      acc[questionId] = cur.answer;
+      return acc;
+    }, {});
     const riasecPayload =
-      riasecResult ||
-      calculateRiasecScores(
-        quizAnswers.reduce<Record<string, string>>((acc, cur, idx) => {
-          const questionId = cur.id || quizQuestions[idx]?.id || `q${idx}`;
-          acc[questionId] = cur.answer;
-          return acc;
-        }, {}),
-        quizQuestions
-      );
+      quizVersion === "v1"
+        ? riasecResult || calculateRiasecScores(answersRecord, activeQuestions)
+        : null;
+    const macroAreaPayload =
+      quizVersion === "v2"
+        ? macroAreaResult || calculateMacroArea(answersRecord, activeQuestions)
+        : null;
 
     if (!trimmedEmail) {
       toast.error("Informe um email valido.");
@@ -139,6 +189,8 @@ const Index = () => {
           email: trimmedEmail,
           riasec: riasecPayload,
           whatsapp: "",
+          quiz_version: quizVersion,
+          macro_area_result: macroAreaPayload,
         }),
       });
 
@@ -149,17 +201,28 @@ const Index = () => {
 
       const data = await response.json();
 
-      const localRecommendation: CareerRecommendation = {
-        careerName: `Plano recomendado para perfil ${riasecPayload.top1}`,
-        justification: "Baseado nas suas respostas RIASEC.",
-        salary: "Em definicao",
-        examDate: "Em definicao",
-        workplaces: [],
-        workRoutine: "Plano inicial alinhado ao seu perfil.",
-        subjects: [],
-        examFrequency: "Em definicao",
-        riasec: riasecPayload,
-      };
+      const localRecommendation: CareerRecommendation = quizVersion === "v2"
+        ? {
+            careerName: macroAreaPayload ? `Direção inicial: ${macroAreaPayload.areaPrincipal}` : "Direção inicial",
+            justification: "Resultado gratuito baseado no seu perfil.",
+            salary: "Em definicao",
+            examDate: "Em definicao",
+            workplaces: [],
+            workRoutine: "Relatorio completo detalha o porquê e cargos compatíveis.",
+            subjects: [],
+            examFrequency: "Em definicao",
+          }
+        : {
+            careerName: `Plano recomendado para perfil ${riasecPayload?.top1}`,
+            justification: "Baseado nas suas respostas RIASEC.",
+            salary: "Em definicao",
+            examDate: "Em definicao",
+            workplaces: [],
+            workRoutine: "Plano inicial alinhado ao seu perfil.",
+            subjects: [],
+            examFrequency: "Em definicao",
+            riasec: riasecPayload || undefined,
+          };
 
       setRecommendation(localRecommendation);
       setQuizResponseId(data?.id);
@@ -186,27 +249,34 @@ const Index = () => {
     } catch (error) {
       console.error("Error generating recommendation:", error);
       const fallbackRiasec =
-        riasecPayload ||
-        calculateRiasecScores(
-          quizAnswers.reduce<Record<string, string>>((acc, cur, idx) => {
-            const questionId = cur.id || quizQuestions[idx]?.id || `q${idx}`;
-            acc[questionId] = cur.answer;
-            return acc;
-          }, {}),
-          quizQuestions
-        );
+        quizVersion === "v1"
+          ? riasecPayload || calculateRiasecScores(answersRecord, activeQuestions)
+          : null;
+      const fallbackMacro =
+        quizVersion === "v2" ? macroAreaPayload || calculateMacroArea(answersRecord, activeQuestions) : null;
 
-      const fallbackRecommendation: CareerRecommendation = {
-        careerName: `Plano recomendado para perfil ${fallbackRiasec.top1}`,
-        justification: "Baseado nas suas respostas, criamos um plano preliminar enquanto geramos o relatorio completo.",
-        salary: "Em definicao",
-        examDate: "Em definicao",
-        workplaces: [],
-        workRoutine: "Rotina flexivel alinhada ao seu perfil.",
-        subjects: [],
-        examFrequency: "Em definicao",
-        riasec: fallbackRiasec,
-      };
+      const fallbackRecommendation: CareerRecommendation = quizVersion === "v2"
+        ? {
+            careerName: fallbackMacro ? `Direção inicial: ${fallbackMacro.areaPrincipal}` : "Direção inicial",
+            justification: "Resultado preliminar enquanto geramos o relatorio completo.",
+            salary: "Em definicao",
+            examDate: "Em definicao",
+            workplaces: [],
+            workRoutine: "Relatorio completo detalha o porquê e cargos compatíveis.",
+            subjects: [],
+            examFrequency: "Em definicao",
+          }
+        : {
+            careerName: `Plano recomendado para perfil ${fallbackRiasec?.top1}`,
+            justification: "Baseado nas suas respostas, criamos um plano preliminar enquanto geramos o relatorio completo.",
+            salary: "Em definicao",
+            examDate: "Em definicao",
+            workplaces: [],
+            workRoutine: "Rotina flexivel alinhada ao seu perfil.",
+            subjects: [],
+            examFrequency: "Em definicao",
+            riasec: fallbackRiasec || undefined,
+          };
 
       setRecommendation(fallbackRecommendation);
       setQuizResponseId(undefined);
@@ -246,7 +316,13 @@ const Index = () => {
     <>
       {currentStep === "landing" && <Landing onStart={handleStartQuiz} variant={homeVariant} />}
       {currentStep === "preparation" && <PreparationScreen onStart={handlePrepareQuiz} />}
-      {currentStep === "quiz" && <Quiz onComplete={handleQuizComplete} onBack={handleBackToLanding} />}
+      {currentStep === "quiz" && (
+        <Quiz
+          onComplete={handleQuizComplete}
+          onBack={handleBackToLanding}
+          quizVersion={quizVersion}
+        />
+      )}
       {currentStep === "email" && <EmailCapture onSubmit={handleEmailSubmit} />}
       {currentStep === "error" && <ErrorPage onRetry={handleRetry} />}
       {currentStep === "results" && recommendation && (
@@ -256,6 +332,8 @@ const Index = () => {
           userEmail={userEmail}
           quizResponseId={quizResponseId}
           riasecFallback={riasecResult || undefined}
+          macroAreaResult={macroAreaResult || undefined}
+          mode={quizVersion === "v2" ? "free-v2" : "free-v1"}
         />
       )}
     </>

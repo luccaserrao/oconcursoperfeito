@@ -1,33 +1,42 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react";
-import { quizQuestions } from "@/data/quizQuestions";
-import { QuizAnswer, RiasecResult } from "@/types/quiz";
+import { quizQuestionsV1, quizQuestionsV2 } from "@/data/quizQuestions";
+import { MacroAreaResult, QuizAnswer, RiasecResult } from "@/types/quiz";
 import { trackEvent } from "@/lib/analytics";
 import { calculateRiasecScores } from "@/lib/riasec";
+import { calculateMacroArea } from "@/lib/calculateMacroArea";
 import { Clock3, ShieldCheck, Sparkles, Target } from "lucide-react";
 
+interface QuizCompletePayload {
+  answers: QuizAnswer[];
+  riasecResult?: RiasecResult;
+  macroAreaResult?: MacroAreaResult;
+}
+
 interface QuizProps {
-  onComplete: (answers: QuizAnswer[], riasecResult: RiasecResult) => void;
+  quizVersion: "v1" | "v2";
+  onComplete: (payload: QuizCompletePayload) => void;
   onBack: () => void;
 }
 
-export const Quiz = ({ onComplete }: QuizProps) => {
+export const Quiz = ({ onComplete, quizVersion }: QuizProps) => {
+  const questions = quizVersion === "v2" ? quizQuestionsV2 : quizQuestionsV1;
   const pageSize = 3;
-  const totalPages = Math.ceil(quizQuestions.length / pageSize);
+  const totalPages = Math.ceil(questions.length / pageSize);
   const [currentPage, setCurrentPage] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const questionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const secondsPerQuestion = 12;
 
   const answeredCount = useMemo(() => Object.keys(answers).length, [answers]);
-  const progress = (answeredCount / quizQuestions.length) * 100;
-  const remainingQuestions = Math.max(quizQuestions.length - answeredCount, 0);
+  const progress = (answeredCount / questions.length) * 100;
+  const remainingQuestions = Math.max(questions.length - answeredCount, 0);
   const estimatedSecondsRemaining = remainingQuestions * secondsPerQuestion;
   const estimatedMinutesRemaining = estimatedSecondsRemaining === 0 ? 0 : Math.max(1, Math.ceil(estimatedSecondsRemaining / 60));
 
   const visibleQuestions = useMemo(() => {
     const start = currentPage * pageSize;
-    return quizQuestions.slice(start, start + pageSize);
-  }, [currentPage, pageSize]);
+    return questions.slice(start, start + pageSize);
+  }, [currentPage, pageSize, questions]);
 
   // Para textos livres, nÃ£o bloquear avanÃ§o se o usuÃ¡rio nÃ£o digitar (opcional),
   // mas preferimos usar o valor se fornecido.
@@ -37,7 +46,7 @@ export const Quiz = ({ onComplete }: QuizProps) => {
   });
   const isLastPage = currentPage === totalPages - 1;
 
-  const microBanners = [
+  const microBannersV1 = [
     {
       title: "Plano completo liberado no final",
       description: "Depois do diagnóstico grátis, destrave opcionalmente o plano completo + checklist de edital por R$25.",
@@ -54,22 +63,50 @@ export const Quiz = ({ onComplete }: QuizProps) => {
     },
     {
       title: "Roteiro personalizado",
-      description: "Seu perfil RIASEC vira um plano de estudos com priorização do que rende mais.",
+      description: "Seu perfil vira um plano de estudos com priorizacao do que rende mais.",
       pill: "Benefício",
       cta: "Quero meu roteiro",
       event: "quiz_microbanner_click_route",
     },
   ];
+  const microBannersV2 = [
+    {
+      title: "Direção gratuita primeiro",
+      description: "Você recebe a macroárea ideal antes da oferta paga.",
+      pill: "grátis primeiro",
+      cta: "Ver como funciona",
+      event: "quiz_microbanner_click_free_first",
+    },
+    {
+      title: "Relatório completo explica o porquê",
+      description: "Após o resultado, destrave a explicação detalhada e os cargos compatíveis por R$25.",
+      pill: "Bonus pago",
+      cta: "Quero o relatório completo",
+      event: "quiz_microbanner_click_full_plan",
+    },
+    {
+      title: "Comparação de áreas",
+      description: "Receba a comparação entre até 3 áreas e um mapa visual para decidir com segurança.",
+      pill: "Benefício",
+      cta: "Quero ver a comparação",
+      event: "quiz_microbanner_click_route",
+    },
+  ];
+  const microBanners = quizVersion === "v2" ? microBannersV2 : microBannersV1;
   const currentBanner = microBanners[currentPage % microBanners.length];
 
   useEffect(() => {
-    console.log(`[Quiz] Total de perguntas no quiz: ${quizQuestions.length}`);
+    console.log(`[Quiz] Total de perguntas no quiz: ${questions.length}`);
     const saved = localStorage.getItem("quiz_progress");
     if (saved) {
       try {
-        const { answers: savedA } = JSON.parse(saved);
-        if (savedA && typeof savedA === "object") {
-          setAnswers(savedA);
+        const parsed = JSON.parse(saved);
+        const savedVersion = parsed?.version;
+        const savedAnswers = parsed?.answers;
+        if (savedVersion && savedVersion !== quizVersion) return;
+        if (!savedVersion && quizVersion === "v2") return;
+        if (savedAnswers && typeof savedAnswers === "object") {
+          setAnswers(savedAnswers);
         }
       } catch (e) {
         console.error("[Quiz] Falha ao carregar progresso salvo:", e);
@@ -77,11 +114,14 @@ export const Quiz = ({ onComplete }: QuizProps) => {
       }
     }
     trackEvent("quiz_started");
-  }, []);
+    if (quizVersion === "v2") {
+      trackEvent("quiz_started_v2");
+    }
+  }, [quizVersion, questions.length]);
 
   useEffect(() => {
-    localStorage.setItem("quiz_progress", JSON.stringify({ answers }));
-  }, [answers]);
+    localStorage.setItem("quiz_progress", JSON.stringify({ answers, version: quizVersion }));
+  }, [answers, quizVersion]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -113,9 +153,7 @@ export const Quiz = ({ onComplete }: QuizProps) => {
       return;
     }
 
-    const riasecResult = calculateRiasecScores(answers, quizQuestions);
-
-    const normalizedAnswers: QuizAnswer[] = quizQuestions.map((q) => ({
+    const normalizedAnswers: QuizAnswer[] = questions.map((q) => ({
       id: q.id,
       question: q.question,
       answer: answers[q.id],
@@ -124,7 +162,15 @@ export const Quiz = ({ onComplete }: QuizProps) => {
 
     localStorage.removeItem("quiz_progress");
     trackEvent("quiz_completed");
-    onComplete(normalizedAnswers, riasecResult);
+    if (quizVersion === "v2") {
+      trackEvent("quiz_completed_v2");
+      const macroAreaResult = calculateMacroArea(answers, questions);
+      onComplete({ answers: normalizedAnswers, macroAreaResult });
+      return;
+    }
+
+    const riasecResult = calculateRiasecScores(answers, questions);
+    onComplete({ answers: normalizedAnswers, riasecResult });
   };
 
   const buttonLabel = isLastPage ? "Finalizar" : "próxima";
@@ -136,7 +182,7 @@ export const Quiz = ({ onComplete }: QuizProps) => {
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>Pagina {currentPage + 1} de {totalPages}</span>
             <span className="font-medium">
-              Respondidas {answeredCount}/{quizQuestions.length} Â· {progress.toFixed(0)}%
+              Respondidas {answeredCount}/{questions.length} Â· {progress.toFixed(0)}%
             </span>
           </div>
           <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
@@ -266,4 +312,5 @@ export const Quiz = ({ onComplete }: QuizProps) => {
     </div>
   );
 };
+
 

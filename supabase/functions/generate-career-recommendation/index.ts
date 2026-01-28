@@ -13,6 +13,8 @@ const requestSchema = z.object({
   email: z.string().trim().email().max(255),
   answers: z.array(z.any()).nonempty("answers obrigatorio"),
   riasec: z.any().optional(),
+  quiz_version: z.enum(["v1", "v2"]).optional(),
+  macro_area_result: z.any().optional().nullable(),
   whatsapp: z.string().trim().optional().nullable(),
   clickedUpsell: z.boolean().optional(),
 });
@@ -40,7 +42,7 @@ serve(async (req) => {
       );
     }
 
-    const { name, email, answers, riasec, whatsapp } = parsed.data;
+    const { name, email, answers, riasec, quiz_version, macro_area_result, whatsapp } = parsed.data;
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -63,6 +65,8 @@ serve(async (req) => {
 
     const safeWhatsapp = typeof whatsapp === "string" ? whatsapp.trim() : "";
     if (safeWhatsapp) insertPayload.whatsapp = safeWhatsapp;
+    if (quiz_version) insertPayload.quiz_version = quiz_version;
+    if (macro_area_result !== undefined) insertPayload.macro_area_result = macro_area_result;
     const { data, error } = await supabase
       .from("quiz_responses")
       .insert(insertPayload)

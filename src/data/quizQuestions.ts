@@ -59,7 +59,7 @@ const likertQuestions: QuizQuestion[] = riasecQuestions.map((q) => ({
   options: LIKERT_OPTIONS,
 }));
 
-export const quizQuestions: QuizQuestion[] = [
+export const quizQuestionsV1: QuizQuestion[] = [
   // ===== PARTE 1: Perfil RIASEC (30 perguntas - LIKERT) =====
   ...likertQuestions,
 
@@ -108,4 +108,195 @@ export const quizQuestions: QuizQuestion[] = [
     placeholder: "Ex: salário alto e benefícios / menor concorrência / qualidade de vida",
     helperText: "Usuários escrevem: 'menor concorrência', 'salário alto + benefícios', 'equilíbrio trabalho-vida'.",
   },
+];
+
+const macroLikertQuestions: QuizQuestion[] = [
+  {
+    id: "v2_q1",
+    type: "likert",
+    question: "Prefiro rotina previsível, processos claros e organização.",
+    options: LIKERT_OPTIONS,
+    areaWeights: {
+      ADMINISTRATIVO: 2,
+      TRIBUNAIS: 1,
+      POLICIAL: -1,
+      FISCAL: 1,
+    },
+  },
+  {
+    id: "v2_q2",
+    type: "likert",
+    question: "Tenho interesse em análises de números, auditoria e controle de gastos.",
+    options: LIKERT_OPTIONS,
+    areaWeights: {
+      ADMINISTRATIVO: 0,
+      TRIBUNAIS: 0,
+      POLICIAL: -1,
+      FISCAL: 2,
+    },
+  },
+  {
+    id: "v2_q3",
+    type: "likert",
+    question: "Gosto de interpretar normas e revisar documentos com atenção.",
+    options: LIKERT_OPTIONS,
+    areaWeights: {
+      ADMINISTRATIVO: 1,
+      TRIBUNAIS: 2,
+      POLICIAL: 0,
+      FISCAL: 1,
+    },
+  },
+  {
+    id: "v2_q4",
+    type: "likert",
+    question: "Me sinto bem em ambientes com ação, disciplina e resposta rápida.",
+    options: LIKERT_OPTIONS,
+    areaWeights: {
+      ADMINISTRATIVO: -1,
+      TRIBUNAIS: 0,
+      POLICIAL: 2,
+      FISCAL: -1,
+    },
+  },
+  {
+    id: "v2_q5",
+    type: "likert",
+    question: "Fiscalizar, checar conformidade e apontar irregularidades me atrai.",
+    options: LIKERT_OPTIONS,
+    areaWeights: {
+      ADMINISTRATIVO: 0,
+      TRIBUNAIS: 1,
+      POLICIAL: 1,
+      FISCAL: 2,
+    },
+  },
+];
+
+const macroMultipleChoiceQuestions: QuizQuestion[] = [
+  {
+    id: "v2_q6",
+    type: "multiple-choice",
+    question: "Qual ambiente te parece mais compatível?",
+    options: [
+      "Escritório administrativo e processos internos",
+      "Tribunais e análise jurídica",
+      "Fiscalização e auditoria",
+      "Operações e segurança",
+    ],
+    optionAreas: {
+      "Escritório administrativo e processos internos": "ADMINISTRATIVO",
+      "Tribunais e análise jurídica": "TRIBUNAIS",
+      "Fiscalização e auditoria": "FISCAL",
+      "Operações e segurança": "POLICIAL",
+    },
+    areaWeights: {
+      ADMINISTRATIVO: 2,
+      TRIBUNAIS: 2,
+      POLICIAL: 2,
+      FISCAL: 2,
+    },
+  },
+  {
+    id: "v2_q7",
+    type: "multiple-choice",
+    question: "Qual tipo de rotina te atrai mais?",
+    options: [
+      "Atividades organizacionais e suporte",
+      "Leitura e interpretação de normas",
+      "Análise de dados e controle",
+      "Ação em campo",
+    ],
+    optionAreas: {
+      "Atividades organizacionais e suporte": "ADMINISTRATIVO",
+      "Leitura e interpretação de normas": "TRIBUNAIS",
+      "Análise de dados e controle": "FISCAL",
+      "Ação em campo": "POLICIAL",
+    },
+    areaWeights: {
+      ADMINISTRATIVO: 2,
+      TRIBUNAIS: 2,
+      POLICIAL: 2,
+      FISCAL: 2,
+    },
+  },
+  {
+    id: "v2_q8",
+    type: "multiple-choice",
+    question: "O que te motiva mais em um concurso?",
+    options: [
+      "Organizar e manter processos funcionando",
+      "Contribuir para decisões justas",
+      "Combater desperdícios e fraudes",
+      "Proteger pessoas e patrimônio",
+    ],
+    optionAreas: {
+      "Organizar e manter processos funcionando": "ADMINISTRATIVO",
+      "Contribuir para decisões justas": "TRIBUNAIS",
+      "Combater desperdícios e fraudes": "FISCAL",
+      "Proteger pessoas e patrimônio": "POLICIAL",
+    },
+    areaWeights: {
+      ADMINISTRATIVO: 2,
+      TRIBUNAIS: 2,
+      POLICIAL: 2,
+      FISCAL: 2,
+    },
+  },
+  {
+    id: "v2_q9",
+    type: "multiple-choice",
+    question: "Qual cenário te parece mais interessante?",
+    options: [
+      "Gestão administrativa e suporte interno",
+      "Gabinetes e análise de processos",
+      "Auditorias e fiscalização externa",
+      "Operações e rotina operacional",
+    ],
+    optionAreas: {
+      "Gestão administrativa e suporte interno": "ADMINISTRATIVO",
+      "Gabinetes e análise de processos": "TRIBUNAIS",
+      "Auditorias e fiscalização externa": "FISCAL",
+      "Operações e rotina operacional": "POLICIAL",
+    },
+    areaWeights: {
+      ADMINISTRATIVO: 2,
+      TRIBUNAIS: 2,
+      POLICIAL: 2,
+      FISCAL: 2,
+    },
+  },
+  {
+    id: "v2_q10",
+    type: "multiple-choice",
+    question: "Qual atividade parece mais natural para você?",
+    options: [
+      "Organizar documentos e fluxos",
+      "Analisar processos e provas",
+      "Examinar números e apontar inconsistências",
+      "Atuar em ocorrências",
+    ],
+    optionAreas: {
+      "Organizar documentos e fluxos": "ADMINISTRATIVO",
+      "Analisar processos e provas": "TRIBUNAIS",
+      "Examinar números e apontar inconsistências": "FISCAL",
+      "Atuar em ocorrências": "POLICIAL",
+    },
+    areaWeights: {
+      ADMINISTRATIVO: 2,
+      TRIBUNAIS: 2,
+      POLICIAL: 2,
+      FISCAL: 2,
+    },
+  },
+];
+
+export const quizQuestionsV2: QuizQuestion[] = [
+  ...macroLikertQuestions,
+  ...macroMultipleChoiceQuestions,
+];
+
+export const allQuizQuestions: QuizQuestion[] = [
+  ...quizQuestionsV1,
+  ...quizQuestionsV2,
 ];
