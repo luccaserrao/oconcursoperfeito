@@ -33,6 +33,15 @@ export default async function handler(req, res) {
     const quizVersion = body.quiz_version || body.quizVersion || null;
     const macroAreaResult = body.macro_area_result || body.macroAreaResult || null;
     const clickedUpsell = body.clickedUpsell ?? body.clicked_upsell;
+    const quizSessionId = body.quiz_session_id || null;
+    const source = body.source || null;
+    const utmSource = body.utm_source || null;
+    const utmMedium = body.utm_medium || null;
+    const utmCampaign = body.utm_campaign || null;
+    const utmContent = body.utm_content || null;
+    const utmTerm = body.utm_term || null;
+    const referrer = body.referrer || null;
+    const landingPath = body.landing_path || null;
 
     if (!name || !email) {
       res.status(400).json({ error: "Nome e email obrigatorios." });
@@ -53,6 +62,15 @@ export default async function handler(req, res) {
         riasec_json: riasec,
         ...(quizVersion ? { quiz_version: quizVersion } : {}),
         ...(macroAreaResult != null ? { macro_area_result: macroAreaResult } : {}),
+        ...(quizSessionId ? { quiz_session_id: quizSessionId } : {}),
+        ...(source ? { source } : {}),
+        ...(utmSource ? { utm_source: utmSource } : {}),
+        ...(utmMedium ? { utm_medium: utmMedium } : {}),
+        ...(utmCampaign ? { utm_campaign: utmCampaign } : {}),
+        ...(utmContent ? { utm_content: utmContent } : {}),
+        ...(utmTerm ? { utm_term: utmTerm } : {}),
+        ...(referrer ? { referrer } : {}),
+        ...(landingPath ? { landing_path: landingPath } : {}),
         ...(whatsapp ? { whatsapp } : {}),
         ...(typeof clickedUpsell === "boolean" ? { clicked_upsell: clickedUpsell } : {}),
       })

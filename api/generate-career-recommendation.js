@@ -40,6 +40,15 @@ export default async function handler(req, res) {
       riasec: parsed.riasec || parsed.riasec_json || null,
       quiz_version: parsed.quiz_version,
       macro_area_result: parsed.macro_area_result,
+      quiz_session_id: parsed.quiz_session_id,
+      source: parsed.source,
+      utm_source: parsed.utm_source,
+      utm_medium: parsed.utm_medium,
+      utm_campaign: parsed.utm_campaign,
+      utm_content: parsed.utm_content,
+      utm_term: parsed.utm_term,
+      referrer: parsed.referrer,
+      landing_path: parsed.landing_path,
       ...(parsed.whatsapp ? { whatsapp: parsed.whatsapp } : {}),
     };
 

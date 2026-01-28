@@ -68,10 +68,10 @@ export const Results = ({
   const isV2 = mode === "free-v2";
   const quizVersion = isV2 ? "v2" : "v1";
   const macroAreaLabels: Record<CONCURSO_AREA, string> = {
-    ADMINISTRATIVO: "Area Administrativa",
-    TRIBUNAIS: "Area de Tribunais",
-    POLICIAL: "Area Policial",
-    FISCAL: "Area Fiscal",
+    ADMINISTRATIVO: "Área Administrativa",
+    TRIBUNAIS: "Área de Tribunais",
+    POLICIAL: "Área Policial",
+    FISCAL: "Área Fiscal",
   };
   const macroResult: MacroAreaResult = macroAreaResult || {
     areaPrincipal: "ADMINISTRATIVO",
@@ -79,7 +79,7 @@ export const Results = ({
     areaEvitar: "POLICIAL",
   };
   const macroAreaPrincipal = macroResult.areaPrincipal;
-  const formatMacroArea = (area: CONCURSO_AREA) => macroAreaLabels[area] || "Area Administrativa";
+  const formatMacroArea = (area: CONCURSO_AREA) => macroAreaLabels[area] || "Área Administrativa";
   const [showFloatingCta, setShowFloatingCta] = useState(false);
   const [showScrollCta, setShowScrollCta] = useState(false);
   const [ctaVariant] = useState<'A' | 'B'>(() => {
@@ -104,7 +104,7 @@ export const Results = ({
   const shortJustification = (recommendation.justification?.split(".")[0] || "").trim();
   const top1Score = riasecData.scores?.[riasecData.top1] ?? 90;
   const top2Score = riasecData.scores?.[riasecData.top2] ?? 78;
-  const heroCopy = riasecData.descricao_personalizada || "Se este recorte gratuito ja faz sentido, o plano completo (R$25) explica o PORQUE, compara areas e mostra cargos compativeis.";
+  const heroCopy = riasecData.descricao_personalizada || "Se este recorte gratuito já faz sentido, o plano completo (R$25) explica o PORQUÊ, compara áreas e mostra cargos compatíveis.";
 
   // Track page view
   useEffect(() => {
@@ -194,11 +194,11 @@ export const Results = ({
                   resultado gratuito pronto
                 </div>
                 <h1 className="text-3xl md:text-5xl font-bold leading-tight">
-                  {firstName}, sua direcao inicial e:{" "}
+                  {firstName}, sua direção inicial é:{" "}
                   <span className="text-primary">{formatMacroArea(macroResult.areaPrincipal)}</span>
                 </h1>
                 <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                  Esse resultado mostra a DIRECAO. O relatorio completo mostra o PORQUE e quais cargos priorizar.
+                  Esse resultado mostra a DIREÇÃO. O relatório completo mostra o PORQUÊ e quais cargos priorizar.
                 </p>
               </div>
 
@@ -206,7 +206,7 @@ export const Results = ({
                 <Card className="p-6 bg-card border-2 border-primary/20">
                   <div className="flex items-center gap-2 mb-3">
                     <Target className="w-5 h-5 text-primary" />
-                    <h3 className="font-bold text-lg">Area principal</h3>
+                    <h3 className="font-bold text-lg">Área principal</h3>
                   </div>
                   <p className="text-xl font-semibold">{formatMacroArea(macroResult.areaPrincipal)}</p>
                   <p className="text-sm text-muted-foreground">Maior compatibilidade com seu perfil.</p>
@@ -215,7 +215,7 @@ export const Results = ({
                 <Card className="p-6 bg-card border-2 border-primary/10">
                   <div className="flex items-center gap-2 mb-3">
                     <Lightbulb className="w-5 h-5 text-primary" />
-                    <h3 className="font-bold text-lg">Area possivel</h3>
+                    <h3 className="font-bold text-lg">Área possível</h3>
                   </div>
                   <p className="text-xl font-semibold">{formatMacroArea(macroResult.areaPossivel)}</p>
                   <p className="text-sm text-muted-foreground">Pode funcionar com ajustes.</p>
@@ -224,7 +224,7 @@ export const Results = ({
                 <Card className="p-6 bg-card border-2 border-destructive/20">
                   <div className="flex items-center gap-2 mb-3">
                     <AlertTriangle className="w-5 h-5 text-destructive" />
-                    <h3 className="font-bold text-lg">Area a evitar</h3>
+                    <h3 className="font-bold text-lg">Área a evitar</h3>
                   </div>
                   <p className="text-xl font-semibold">{formatMacroArea(macroResult.areaEvitar)}</p>
                   <p className="text-sm text-muted-foreground">Tende a gerar desgaste.</p>
@@ -240,14 +240,14 @@ export const Results = ({
                     </div>
                     <p className="text-xl font-bold">Plano completo por R$25</p>
                     <p className="text-sm text-muted-foreground max-w-2xl">
-                      O relatorio completo explica o PORQUE da area indicada, mostra o perfil psicologico RIASEC completo, compara ate 3 areas e lista cargos compativeis com alertas de erro.
+                      O relatório completo explica o PORQUÊ da área indicada, mostra o perfil psicológico RIASEC completo, compara até 3 áreas e lista cargos compatíveis com alertas de erro.
                     </p>
                     <div className="flex flex-wrap gap-2 text-xs text-foreground">
                       <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary inline-flex items-center gap-2">
                         <Lock className="w-3.5 h-3.5" />
                         Pagamento seguro via Mercado Pago + criptografia
                       </Badge>
-                      <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Bonus: checklist de erros</Badge>
+                      <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Bônus: checklist de erros</Badge>
                       <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Mapa visual + plano 7 dias</Badge>
                     </div>
                     <MercadoPagoButton
@@ -370,7 +370,7 @@ export const Results = ({
                   </div>
                 </div>
                 <div className="mt-4 text-xs text-muted-foreground">
-                  Este e o aperitivo gratuito. O upgrade entrega o PORQUE da area indicada, perfil psicologico completo, comparacao de areas e cargos compativeis.
+                  Este é o aperitivo gratuito. O upgrade entrega o PORQUÊ da área indicada, perfil psicológico completo, comparação de áreas e cargos compatíveis.
                 </div>
               </Card>
             </div>
@@ -384,14 +384,14 @@ export const Results = ({
                   </div>
                   <p className="text-xl font-bold">Plano completo por R$25</p>
                   <p className="text-sm text-muted-foreground max-w-2xl">
-                    O relatorio completo explica o PORQUE da area indicada, mostra o perfil psicologico RIASEC completo, compara ate 3 areas e lista cargos compativeis com alertas de erro.
+                    O relatório completo explica o PORQUÊ da área indicada, mostra o perfil psicológico RIASEC completo, compara até 3 áreas e lista cargos compatíveis com alertas de erro.
                   </p>
                   <div className="flex flex-wrap gap-2 text-xs text-foreground">
                     <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary inline-flex items-center gap-2">
                       <Lock className="w-3.5 h-3.5" />
                       Pagamento seguro · Mercado Pago + criptografia
                     </Badge>
-                    <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Bonus: checklist de erros</Badge>
+                    <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Bônus: checklist de erros</Badge>
                     <Badge variant="outline" className="bg-white/40 border-primary/30 text-primary">Mapa visual + plano 7 dias</Badge>
                   </div>
                   <MercadoPagoButton
@@ -414,10 +414,10 @@ export const Results = ({
             </>
           )}
 
-          {/* ============= 2?? PROVA SOCIAL (DEPOIMENTOS REAIS) ============= */}
+          {/* ============= 2. PROVA SOCIAL (DEPOIMENTOS REAIS) ============= */}
           <div className="mb-12 animate-fade-in">
             <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
-              ?? Quem já fez o upgrade, descobriu o caminho certo!
+              Quem já fez o upgrade, descobriu o caminho certo!
             </h2>
             
               <div className="grid md:grid-cols-3 gap-6">
@@ -427,21 +427,21 @@ export const Results = ({
                   location: "SP",
                   course: "cursando administração (4º período)",
                   date: "06/11/25",
-                  text: "O relatório liberou 'area administrativa' pra mim. Vi salário, rotina e um plano de 30 dias que fez sentido. Não precisei ficar adivinhando edital."
+                  text: "O relatório liberou 'área administrativa' pra mim. Vi salário, rotina e um plano de 30 dias que fez sentido. Não precisei ficar adivinhando edital."
                 },
                 {
                   name: "Lucas Andrade",
                   location: "MG",
                   course: "formado em direito",
                   date: "21/09/25",
-                  text: "Eu tinha medo de estar mirando errado. O upgrade mostrou 'area de tribunais', justificou com meu perfil Investigativo/Social e já trouxe matérias mais cobradas. Paguei 25 e parei de perder tempo."
+                  text: "Eu tinha medo de estar mirando errado. O upgrade mostrou 'área de tribunais', justificou com meu perfil Investigativo/Social e já trouxe matérias mais cobradas. Paguei 25 e parei de perder tempo."
                 },
                 {
                   name: "Amanda Souza",
                   location: "PE",
                   course: "estudante de enfermagem",
                   date: "11/08/25",
-                  text: "Ele indicou 'area de saude' com faixa salarial e frequência de edital. O plano veio mastigado, só segui. Valeu mais que uma pizza."
+                  text: "Ele indicou 'área de saúde' com faixa salarial e frequência de edital. O plano veio mastigado, só segui. Valeu mais que uma pizza."
                 }
               ].map((testimonial, index) => (
                 <Card key={index} className="p-6 border-2 border-primary/10 animate-fade-in hover:shadow-lg transition-shadow">
@@ -461,66 +461,66 @@ export const Results = ({
             </div>
           </div>
 
-          {/* ============= ?? POR QUE ESTE TESTE VALE R$25 ============= */}
+          {/* ============= POR QUE ESTE TESTE VALE R$25 ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-amber-500/10 border-2 border-amber-500/30">
               <div className="flex items-center gap-3 mb-6">
                 <Lightbulb className="w-8 h-8 text-amber-500" />
                 <h2 className="text-2xl md:text-3xl font-bold">
-                  ?? Por que este teste vale R$25?
+                  Por que este teste vale R$25?
                 </h2>
               </div>
               
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  Estudar para o concurso errado custa anos. Aqui voce recebe uma explicacao clara do PORQUE da area indicada e compara ate 3 caminhos para decidir com seguranca.
+                  Estudar para o concurso errado custa anos. Aqui você recebe uma explicação clara do PORQUÊ da área indicada e compara até 3 caminhos para decidir com segurança.
                 </p>
                 <p>
-                  O perfil psicologico RIASEC completo e os alertas de erro mostram onde pessoas com o seu perfil costumam se frustrar.
+                  O perfil psicológico RIASEC completo e os alertas de erro mostram onde pessoas com o seu perfil costumam se frustrar.
                 </p>
                 <p className="font-semibold text-foreground">
-                  Por R$25, voce elimina a incerteza e ganha checklist de erros, mapa visual das areas e um plano inicial de 7 dias.
+                  Por R$25, você elimina a incerteza e ganha checklist de erros, mapa visual das áreas e um plano inicial de 7 dias.
                 </p>
               </div>
             </Card>
           </div>
 
-          {/* ============= ?? O QUE FAZ DIFERENTE DOS OUTROS ============= */}
+          {/* ============= O QUE FAZ DIFERENTE DOS OUTROS ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-blue-500/10 border-2 border-blue-500/30">
               <div className="flex items-center gap-3 mb-6">
                 <Scale className="w-8 h-8 text-blue-500" />
                 <h2 className="text-2xl md:text-3xl font-bold">
-                  ?? O que faz diferente dos outros
+                  O que faz diferente dos outros
                 </h2>
               </div>
               
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  Nosso diferencial e cruzar seu perfil psicologico (RIASEC completo) com macroareas de concurso. Isso mostra quais areas fazem sentido, compara ate 3 caminhos e evita escolhas erradas.
+                  Nosso diferencial é cruzar seu perfil psicológico (RIASEC completo) com macroáreas de concurso. Isso mostra quais áreas fazem sentido, compara até 3 caminhos e evita escolhas erradas.
                 </p>
                 <div className="bg-primary/10 rounded-lg p-6 border-l-4 border-primary">
                   <p className="font-semibold text-foreground mb-2">
-                    ?? Contexto do Mercado Brasileiro
+                    Contexto do Mercado Brasileiro
                   </p>
                   <p>
-                    No Brasil existem mais de <span className="font-bold text-foreground">10 mil concursos píblicos</span> realizados todos os anos, em níveis municipal, estadual e federal.
+                    No Brasil existem mais de <span className="font-bold text-foreground">10 mil concursos públicos</span> realizados todos os anos, em níveis municipal, estadual e federal.
                   </p>
                 </div>
                 <p>
-                  Escolher a area certa, alinhada ao seu perfil, evita meses de estudo perdido. O relatorio mostra cargos compativeis e alertas de erro para voce decidir com clareza.
+                  Escolher a área certa, alinhada ao seu perfil, evita meses de estudo perdido. O relatório mostra cargos compatíveis e alertas de erro para você decidir com clareza.
                 </p>
               </div>
             </Card>
           </div>
 
-          {/* ============= ?? SOBRE O MÉTODO RIASEC ============= */}
+          {/* ============= SOBRE O MÉTODO RIASEC ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-purple-500/10 via-indigo-500/5 to-purple-500/10 border-2 border-purple-500/30">
               <div className="flex items-center gap-3 mb-6">
                 <Dna className="w-8 h-8 text-purple-500" />
                 <h2 className="text-2xl md:text-3xl font-bold">
-                  ?? Sobre o método
+                  Sobre o método
                 </h2>
               </div>
               
@@ -539,28 +539,28 @@ export const Results = ({
                   O RIASEC identifica seus principais interesses profissionais e mostra onde você tende a ter melhor desempenho.
                 </p>
                 <p className="font-semibold text-foreground">
-                  Nosso sistema aprimora esse método cruzando seus resultados com carreiras píblicas brasileiras e com o perfil dos cargos que mais aparecem nos concursos com os melhores salários e estabilidade de emprego.
+                  Nosso sistema aprimora esse método cruzando seus resultados com carreiras públicas brasileiras e com o perfil dos cargos que mais aparecem nos concursos com os melhores salários e estabilidade de emprego.
                 </p>
               </div>
             </Card>
           </div>
 
-          {/* ============= ?? DIFERENCIAIS EXCLUSIVOS ============= */}
+          {/* ============= DIFERENCIAIS EXCLUSIVOS ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-primary/10 to-accent/10 border-2 border-primary/30">
               <div className="text-center mb-8">
                 <h2 className="text-2xl md:text-3xl font-bold mb-2">
-                  ?? Diferenciais Exclusivos
+                  Diferenciais Exclusivos
                 </h2>
                 <p className="text-muted-foreground">
-                  Recursos ínicos que transformam seu resultado em ação
+                  Recursos únicos que transformam seu resultado em ação
                 </p>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   { icon: Award, title: "Base científica validada", desc: "Método RIASEC internacional" },
-                  { icon: Target, title: "Personalizado para BR", desc: "Foco em concursos píblicos" },
+                  { icon: Target, title: "Personalizado para BR", desc: "Foco em concursos públicos" },
                   { icon: Brain, title: "Cruzamento inteligente", desc: "Perfil + oportunidades reais" },
                   { icon: DollarSign, title: "Faixas salariais", desc: "Médias atualizadas do mercado" },
                   { icon: Calendar, title: "Plano 30/60/90 dias", desc: "Cronograma estruturado" },
@@ -582,13 +582,13 @@ export const Results = ({
             </Card>
           </div>
 
-          {/* ============= ?? INVESTIMENTO E BENEFÍCIO ============= */}
+          {/* ============= INVESTIMENTO E BENEFÍCIO ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-yellow-500/10 via-amber-500/5 to-yellow-500/10 border-2 border-yellow-500/30">
               <div className="flex items-center gap-3 mb-6">
                 <Coins className="w-8 h-8 text-yellow-600" />
                 <h2 className="text-2xl md:text-3xl font-bold">
-                  ?? Investimento e Benefício
+                  Investimento e Benefício
                 </h2>
               </div>
               
@@ -610,7 +610,7 @@ export const Results = ({
                   </div>
                   <div className="text-center p-3 bg-muted/30 rounded-lg opacity-60">
                     <p className="text-2xl font-bold">R$30</p>
-                    <p className="text-xs">Hambírguer</p>
+                    <p className="text-xs">Hambúrguer</p>
                   </div>
                   <div className="text-center p-3 bg-muted/30 rounded-lg opacity-60">
                     <p className="text-2xl font-bold">R$40</p>
@@ -621,11 +621,11 @@ export const Results = ({
             </Card>
           </div>
 
-          {/* ============= ?? COMPARATIVO COM OUTROS TESTES ============= */}
+          {/* ============= COMPARATIVO COM OUTROS TESTES ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-card border-2 border-primary/20">
               <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
-                ?? Comparativo com outros testes
+                Comparativo com outros testes
               </h2>
               
               {/* Versão Desktop - Tabela */}
@@ -654,7 +654,7 @@ export const Results = ({
                     </TableRow>
                     <TableRow className="bg-primary/10 border-2 border-primary font-bold">
                       <TableCell className="font-bold text-primary">RIASEC + Concursos (nosso)</TableCell>
-                      <TableCell className="text-primary">Carreira píblica</TableCell>
+                      <TableCell className="text-primary">Carreira pública</TableCell>
                       <TableCell className="text-primary">Cargo ideal + cronograma + plano de ação</TableCell>
                       <TableCell className="text-primary">Totalmente personalizado</TableCell>
                     </TableRow>
@@ -683,9 +683,9 @@ export const Results = ({
                 </div>
                 
                 <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary">
-                  <p className="font-bold text-primary mb-2">? RIASEC + Concursos (nosso)</p>
+                  <p className="font-bold text-primary mb-2">RIASEC + Concursos (nosso)</p>
                   <div className="text-sm space-y-1">
-                    <p><span className="font-semibold">Foco:</span> Carreira píblica</p>
+                    <p><span className="font-semibold">Foco:</span> Carreira pública</p>
                     <p><span className="font-semibold">Resultado:</span> Cargo + cronograma + plano</p>
                     <p><span className="font-semibold">Personalização:</span> <span className="text-primary font-bold">Totalmente personalizado</span></p>
                   </div>
@@ -694,15 +694,15 @@ export const Results = ({
             </Card>
           </div>
 
-          {/* ============= 3?? PRÉVIA VISUAL DO RELATÓRIO COMPLETO (COM BLUR) ============= */}
+          {/* ============= 3. PRÉVIA VISUAL DO RELATÓRIO COMPLETO (COM BLUR) ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-primary/30 relative overflow-hidden">
               <div className="text-center mb-8">
                 <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                  ?? Prévia do Relatório Profissional Completo
+                  Prévia do Relatório Profissional Completo
                 </h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
-                  Desbloqueie o Relatorio Profissional Completo e veja o PORQUE da area indicada, comparacao entre areas e cargos compativeis.
+                  Desbloqueie o Relatório Profissional Completo e veja o PORQUÊ da área indicada, comparação entre áreas e cargos compatíveis.
                 </p>
               </div>
 
@@ -744,19 +744,19 @@ export const Results = ({
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-w-2xl">
                     <Badge className="bg-primary/90 text-primary-foreground px-3 py-2">
                       <Target className="w-4 h-4 mr-1" />
-                      Porque da area indicada
+                      Porquê da área indicada
                     </Badge>
                     <Badge className="bg-primary/90 text-primary-foreground px-3 py-2">
                       <DollarSign className="w-4 h-4 mr-1" />
-                      Perfil psicologico RIASEC
+                      Perfil psicológico RIASEC
                     </Badge>
                     <Badge className="bg-primary/90 text-primary-foreground px-3 py-2">
                       <Calendar className="w-4 h-4 mr-1" />
-                      Comparacao de 3 areas
+                      Comparação de 3 áreas
                     </Badge>
                     <Badge className="bg-primary/90 text-primary-foreground px-3 py-2">
                       <BookOpen className="w-4 h-4 mr-1" />
-                      Cargos compativeis
+                      Cargos compatíveis
                     </Badge>
                     <Badge className="bg-primary/90 text-primary-foreground px-3 py-2">
                       <Sparkles className="w-4 h-4 mr-1" />
@@ -772,7 +772,7 @@ export const Results = ({
             </Card>
           </div>
 
-          {/* ============= 4?? OFERTA (UPSELL NATURAL) ============= */}
+          {/* ============= 4. OFERTA (UPSELL NATURAL) ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-amber-500/5 to-orange-500/5 border-2 border-primary/30">
               <div className="text-center mb-8 space-y-2">
@@ -784,19 +784,19 @@ export const Results = ({
                 </p>
                 <div className="inline-flex items-center gap-2 text-xs uppercase tracking-wide text-primary font-semibold bg-primary/10 border border-primary/30 px-3 py-1 rounded-full">
                   <Sparkles className="w-4 h-4" />
-                  Bonus: checklist de erros + mapa visual + plano 7 dias
+                  Bônus: checklist de erros + mapa visual + plano 7 dias
                 </div>
               </div>
 
-              {/* Lista de beneficios */}
+              {/* Lista de benefícios */}
               <div className="grid md:grid-cols-2 gap-4 mb-8">
                 {[
-                  { icon: Target, text: "Explicacao detalhada do PORQUE da area indicada" },
-                  { icon: Dna, text: "Perfil psicologico RIASEC completo" },
-                  { icon: Scale, text: "Comparacao entre ate 3 areas de concurso" },
-                  { icon: Award, text: "Lista de cargos compativeis" },
+                  { icon: Target, text: "Explicação detalhada do PORQUÊ da área indicada" },
+                  { icon: Dna, text: "Perfil psicológico RIASEC completo" },
+                  { icon: Scale, text: "Comparação entre até 3 áreas de concurso" },
+                  { icon: Award, text: "Lista de cargos compatíveis" },
                   { icon: AlertTriangle, text: "Alertas de erro (onde pessoas com esse perfil quebram)" },
-                  { icon: Sparkles, text: "Bonus: checklist de erros + mapa visual + plano 7 dias" }
+                  { icon: Sparkles, text: "Bônus: checklist de erros + mapa visual + plano 7 dias" }
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-start gap-3 p-3 bg-background/50 rounded-lg">
                     <item.icon className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
@@ -805,12 +805,12 @@ export const Results = ({
                 ))}
               </div>
 
-              {/* Preco, ancoragem e garantia */}
+              {/* Preço, ancoragem e garantia */}
               <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-lg p-6 mb-6 text-center border-2 border-amber-500/20 space-y-3">
                 <p className="text-4xl font-bold text-amber-600">
                   R$ 25<span className="text-xl">,00</span>
                 </p>
-                <p className="text-sm text-muted-foreground">(pagamento unico · acesso imediato)</p>
+                <p className="text-sm text-muted-foreground">(pagamento único · acesso imediato)</p>
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 text-green-600 rounded-full text-sm font-bold">
                   <Shield className="w-4 h-4" />
                   Garantia 7 dias ou seu dinheiro de volta
@@ -842,7 +842,7 @@ export const Results = ({
                     </div>
                     <div className="flex-1 rounded-lg border bg-background/60 p-3">
                       <div className="flex items-center gap-2 text-primary font-semibold text-xs">
-                        <Sparkles className="w-4 h-4" /> Diego, area policial
+                        <Sparkles className="w-4 h-4" /> Diego, área policial
                       </div>
                       <p className="text-muted-foreground mt-1">"Valeu mais que 1 mês de cursinho. Checklist e cronograma em minutos."</p>
                     </div>
@@ -859,14 +859,14 @@ export const Results = ({
                     quizVersion={quizVersion}
                   />
                   <p className="text-xs text-muted-foreground text-center">
-                    Pix, cartao ou saldo Mercado Pago · conexão segura com criptografia.
+                    Pix, cartão ou saldo Mercado Pago · conexão segura com criptografia.
                   </p>
                 </div>
               </div>
             </Card>
           </div>
 
-          {/* ============= BANNER CTA APOS 60% DE SCROLL ============= */}
+          {/* ============= BANNER CTA APÓS 60% DE SCROLL ============= */}
           {showScrollCta && (
             <div className="mb-12 animate-fade-in">
               <Card className="p-6 bg-gradient-to-r from-primary to-accent text-primary-foreground">
@@ -888,11 +888,11 @@ export const Results = ({
             </div>
           )}
 
-          {/* ============= 5?? FAQ (RESPOSTAS CURTAS) ============= */}
+          {/* ============= 5. FAQ (RESPOSTAS CURTAS) ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-card">
               <h2 className="text-2xl font-bold text-center mb-8">
-                ? Perguntas Frequentes
+                Perguntas Frequentes
               </h2>
               
               <Accordion type="single" collapsible className="w-full">
@@ -912,11 +912,11 @@ export const Results = ({
                   <AccordionTrigger className="text-left">
                     <span className="flex items-center gap-2">
                       <MessageCircle className="w-5 h-5 text-primary" />
-                      O método e confiavel?
+                      O método é confiável?
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    Sim. Baseado na teoria RIASEC, criada por John L. Holland e usada em universidades e orgaos de RH no mundo todo há decadas. Nosso diferencial e adaptar isso para o mercado de concursos públicos brasileiros.
+                    Sim. Baseado na teoria RIASEC, criada por John L. Holland e usada em universidades e órgãos de RH no mundo todo há décadas. Nosso diferencial é adaptar isso para o mercado de concursos públicos brasileiros.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -948,7 +948,7 @@ export const Results = ({
                   <AccordionTrigger className="text-left">
                     <span className="flex items-center gap-2">
                       <MessageCircle className="w-5 h-5 text-primary" />
-                      Isso e melhor que teste gratuito?
+                      Isso é melhor que teste gratuito?
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
@@ -971,7 +971,7 @@ export const Results = ({
             </Card>
           </div>
 
-          {/* ============= 6?? CTA SECUNDÁRIO + DESCONTO VIA WHATSAPP ============= */}
+          {/* ============= 6. CTA SECUNDÁRIO + DESCONTO VIA WHATSAPP ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-br from-green-500/5 to-emerald-500/5 border-2 border-green-500/20 text-center">
               <h3 className="text-xl font-bold mb-4">Prefere conversar antes?</h3>
@@ -990,12 +990,12 @@ export const Results = ({
               </Button>
               
               <p className="text-xs text-destructive font-semibold">
-                ? Cupom válido por 24h, após isso o desconto expira.
+                Cupom válido por 24h, após isso o desconto expira.
               </p>
             </Card>
           </div>
 
-          {/* ============= ?? COMPARATIVO INTERNACIONAL ============= */}
+          {/* ============= COMPARATIVO INTERNACIONAL ============= */}
           <div className="mb-12 animate-fade-in">
             <Card className="p-6 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 border border-blue-500/20">
               <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -1003,7 +1003,7 @@ export const Results = ({
                   <Globe className="w-6 h-6 text-blue-500 flex-shrink-0" />
                   <div>
                     <p className="font-bold text-sm md:text-base">
-                      ?? Comparativo Internacional
+                      Comparativo Internacional
                     </p>
                     <p className="text-xs md:text-sm text-muted-foreground">
                       Testes internacionais RIASEC custam US$20 (~R$110). O nosso: <span className="font-bold text-primary">R$25</span>
@@ -1023,7 +1023,7 @@ export const Results = ({
           <div className="mb-12 animate-fade-in">
             <Card className="p-8 bg-gradient-to-r from-primary/10 to-accent/10 border-2 border-primary text-center">
               <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                ?? Seu futuro começa com uma decisão de R$25
+                Seu futuro começa com uma decisão de R$25
               </h2>
               <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
                 Você já deu o primeiro passo fazendo este teste. Agora é hora de transformar esse resultado em um plano de ação concreto.
@@ -1039,7 +1039,7 @@ export const Results = ({
               />
               
               <p className="text-sm text-muted-foreground mt-4">
-                ? Junte-se a centenas de pessoas que já descobriram seu caminho!
+                Junte-se a centenas de pessoas que já descobriram seu caminho!
               </p>
             </Card>
           </div>

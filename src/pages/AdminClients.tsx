@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,13 +15,13 @@ type Order = {
   amount: number;
   payment_status: string;
   created_at: string;
-  paid_at?: string | null;
+  paid_at: string | null;
   product_id?: string | null;
   quiz_response_id?: string | null;
   mp_preference_id?: string | null;
   mercado_pago_payment_id?: string | null;
   stripe_session_id?: string | null;
-  updated_at?: string | null;
+  updated_at: string | null;
 };
 
 const formatDate = (value?: string | null) => {
@@ -193,7 +193,7 @@ const AdminClients = () => {
           Desbloquear
         </Button>
         <p className="text-xs text-muted-foreground text-center">
-          Usamos apenas este token para validar que voce e o dono.
+          Usamos apenas este token para validar que você é o dono.
         </p>
       </form>
     </Card>
@@ -377,3 +377,5 @@ const AdminClients = () => {
 };
 
 export default AdminClients;
+
+

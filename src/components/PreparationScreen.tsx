@@ -22,7 +22,7 @@ export const PreparationScreen = ({ onStart }: PreparationScreenProps) => {
 
           <div className="space-y-6 text-center mb-8">
             <p className="text-lg md:text-xl text-muted-foreground">
-              Feito para quem quer estabilidade sem se expor. O teste entrega uma direcao gratuita na hora e voce decide se quer destravar o plano completo por R$25.
+              Feito para quem quer estabilidade sem se expor. O teste entrega uma direção gratuita na hora e você decide se quer destravar o plano completo por R$25.
             </p>
 
             <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 text-left">
@@ -31,9 +31,9 @@ export const PreparationScreen = ({ onStart }: PreparationScreenProps) => {
                   <div className="flex items-start gap-3">
                     <Target className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
                     <div>
-                      <h3 className="font-semibold text-lg mb-2">Por que este teste e diferente?</h3>
+                      <h3 className="font-semibold text-lg mb-2">Por que este teste é diferente?</h3>
                       <p className="text-sm text-muted-foreground">
-                        O teste cruza seu perfil com macroareas de concurso para evitar que voce estude para o edital errado.
+                        O teste cruza seu perfil com macroáreas de concurso para evitar que você estude para o edital errado.
                       </p>
                     </div>
                   </div>

@@ -2,6 +2,7 @@
 import { quizQuestionsV1, quizQuestionsV2 } from "@/data/quizQuestions";
 import { MacroAreaResult, QuizAnswer, RiasecResult } from "@/types/quiz";
 import { trackEvent } from "@/lib/analytics";
+import { trackQuizStart } from "@/lib/quizTracking";
 import { calculateRiasecScores } from "@/lib/riasec";
 import { calculateMacroArea } from "@/lib/calculateMacroArea";
 import { Clock3, ShieldCheck, Sparkles, Target } from "lucide-react";
@@ -38,7 +39,7 @@ export const Quiz = ({ onComplete, quizVersion }: QuizProps) => {
     return questions.slice(start, start + pageSize);
   }, [currentPage, pageSize, questions]);
 
-  // Para textos livres, nÃ£o bloquear avanÃ§o se o usuÃ¡rio nÃ£o digitar (opcional),
+  // Para textos livres, não bloquear avanço se o usuário não digitar (opcional),
   // mas preferimos usar o valor se fornecido.
   const pageComplete = visibleQuestions.every((q) => {
     if (q.type === "text") return true;
@@ -50,7 +51,7 @@ export const Quiz = ({ onComplete, quizVersion }: QuizProps) => {
     {
       title: "Plano completo liberado no final",
       description: "Depois do diagnóstico grátis, destrave opcionalmente o plano completo + checklist de edital por R$25.",
-      pill: "Bonus pago",
+      pill: "Bônus pago",
       cta: "Quero ver o plano completo",
       event: "quiz_microbanner_click_full_plan",
     },
@@ -63,7 +64,7 @@ export const Quiz = ({ onComplete, quizVersion }: QuizProps) => {
     },
     {
       title: "Roteiro personalizado",
-      description: "Seu perfil vira um plano de estudos com priorizacao do que rende mais.",
+      description: "Seu perfil vira um plano de estudos com priorização do que rende mais.",
       pill: "Benefício",
       cta: "Quero meu roteiro",
       event: "quiz_microbanner_click_route",
@@ -80,7 +81,7 @@ export const Quiz = ({ onComplete, quizVersion }: QuizProps) => {
     {
       title: "Relatório completo explica o porquê",
       description: "Após o resultado, destrave a explicação detalhada e os cargos compatíveis por R$25.",
-      pill: "Bonus pago",
+      pill: "Bônus pago",
       cta: "Quero o relatório completo",
       event: "quiz_microbanner_click_full_plan",
     },
@@ -114,6 +115,7 @@ export const Quiz = ({ onComplete, quizVersion }: QuizProps) => {
       }
     }
     trackEvent("quiz_started");
+    trackQuizStart(quizVersion);
     if (quizVersion === "v2") {
       trackEvent("quiz_started_v2");
     }
@@ -182,7 +184,7 @@ export const Quiz = ({ onComplete, quizVersion }: QuizProps) => {
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>Pagina {currentPage + 1} de {totalPages}</span>
             <span className="font-medium">
-              Respondidas {answeredCount}/{questions.length} Â· {progress.toFixed(0)}%
+              Respondidas {answeredCount}/{questions.length} · {progress.toFixed(0)}%
             </span>
           </div>
           <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
@@ -312,5 +314,6 @@ export const Quiz = ({ onComplete, quizVersion }: QuizProps) => {
     </div>
   );
 };
+
 
 

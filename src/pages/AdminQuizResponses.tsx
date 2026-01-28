@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { AlertTriangle, CheckCircle2, Loader2, Lock, RefreshCcw, Shield } from "lucide-react";
 
 type QuizAnswer = {
+  id?: string;
   question?: string;
   answer?: string;
 };
@@ -31,7 +32,16 @@ type QuizResponse = {
   raw_answers?: unknown;
   ai_recommendation?: Record<string, unknown> | null;
   clicked_upsell?: boolean | null;
-  upsell_clicked_at?: string | null;
+  upsell_clicked_at: string | null;
+  quiz_session_id?: string | null;
+  source?: string | null;
+  utm_source?: string | null;
+  utm_medium?: string | null;
+  utm_campaign?: string | null;
+  utm_content?: string | null;
+  utm_term?: string | null;
+  referrer?: string | null;
+  landing_path?: string | null;
   riasec_top1?: string | null;
   riasec_top2?: string | null;
   riasec?: Record<string, unknown> | null;
@@ -42,6 +52,25 @@ type QuizResponse = {
     paid_at: string | null;
     amount: number | null;
     order_id: string | null;
+  };
+};
+
+type QuizAnalytics = {
+  period_days: number;
+  totals: {
+    starts: number;
+    completions: number;
+    completion_rate: number;
+  };
+  daily: Array<{
+    date: string;
+    starts: number;
+    completions: number;
+    completion_rate: number;
+  }>;
+  sources: {
+    starts: Array<{ source: string; count: number }>;
+    completions: Array<{ source: string; count: number }>;
   };
 };
 
@@ -56,13 +85,39 @@ const questionTextMap: Record<string, string> = allQuizQuestions.reduce((acc, q)
   return acc;
 }, {} as Record<string, string>);
 
+const textQuestionIds = new Set(
+  allQuizQuestions.filter((q) => q.type === "text").map((q) => q.id)
+);
+
+const getReferrerHost = (value?: string | null) => {
+  if (!value) return "";
+  try {
+    const url = new URL(value);
+    return url.hostname.replace(/^www\./, "");
+  } catch {
+    return value;
+  }
+};
+
+const resolveResponseSource = (item: QuizResponse) => {
+  const explicit = item.source || item.utm_source;
+  if (explicit) return explicit;
+  return getReferrerHost(item.referrer) || "direto";
+};
+
+const formatPercent = (value: number) => {
+  if (!Number.isFinite(value)) return "0%";
+  return `${Math.round(value * 100)}%`;
+};
+
 const AdminQuizResponses = () => {
   const [token, setToken] = useState("");
   const [inputToken, setInputToken] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [onlyWithAnswers, setOnlyWithAnswers] = useState(false);
-  const [onlyRecent, setOnlyRecent] = useState(false); // ?ltimas 24h
+  const [onlyRecent, setOnlyRecent] = useState(false); // Últimas 24h
   const [expandedAnswers, setExpandedAnswers] = useState<Record<string, boolean>>({});
+  const [analyticsDays, setAnalyticsDays] = useState(30);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -87,7 +142,7 @@ const AdminQuizResponses = () => {
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       if (!supabaseUrl) {
-        throw new Error("VITE_SUPABASE_URL nao configurada");
+        throw new Error("VITE_SUPABASE_URL não configurada");
       }
 
       const url = `${supabaseUrl}/functions/v1/list-quiz-responses?limit=200`;
@@ -104,7 +159,7 @@ const AdminQuizResponses = () => {
           throw new Error("401: token invalido");
         }
         if (response.status >= 500) {
-          const detail = body?.message || body?.error || body?.details || JSON.stringify(body) || "erro interno da funcao";
+          const detail = body?.message || body?.error || body?.details || JSON.stringify(body) || "erro interno da função";
           throw new Error(`500: ${detail}`);
         }
         const message = body?.error || "Erro ao buscar respostas";
@@ -119,12 +174,18 @@ const AdminQuizResponses = () => {
         let normalizedAnswers: QuizAnswer[] = [];
 
         if (Array.isArray(answersRaw)) {
-          normalizedAnswers = answersRaw.map((a: any) => ({
-            question: questionTextMap[a?.question] || a?.question || "",
-            answer: a?.answer ?? "",
-          }));
+          normalizedAnswers = answersRaw.map((a: any) => {
+            const rawId = typeof a?.id === "string" ? a.id : typeof a?.question === "string" ? a.question : "";
+            const normalizedId = typeof a?.id === "string" ? a.id : textQuestionIds.has(rawId) ? rawId : undefined;
+            return {
+              id: normalizedId,
+              question: questionTextMap[rawId] || a?.question || "",
+              answer: a?.answer ?? "",
+            };
+          });
         } else if (answersRaw && typeof answersRaw === "object") {
           normalizedAnswers = Object.entries(answersRaw).map(([key, value]) => ({
+            id: key,
             question: questionTextMap[key] || String(key),
             answer: value != null ? String(value) : "",
           }));
@@ -141,6 +202,15 @@ const AdminQuizResponses = () => {
           ai_recommendation: item.ai_recommendation || null,
           clicked_upsell: item.clicked_upsell ?? null,
           upsell_clicked_at: item.upsell_clicked_at ?? null,
+          quiz_session_id: item.quiz_session_id ?? null,
+          source: item.source ?? null,
+          utm_source: item.utm_source ?? null,
+          utm_medium: item.utm_medium ?? null,
+          utm_campaign: item.utm_campaign ?? null,
+          utm_content: item.utm_content ?? null,
+          utm_term: item.utm_term ?? null,
+          referrer: item.referrer ?? null,
+          landing_path: item.landing_path ?? null,
           riasec_top1: item.riasec_top1 || item.riasec?.top1 || null,
           riasec_top2: item.riasec_top2 || item.riasec?.top2 || null,
           riasec: item.riasec || item.ai_recommendation || null,
@@ -151,6 +221,49 @@ const AdminQuizResponses = () => {
       });
     },
   });
+
+  const {
+    data: analytics,
+    isFetching: isFetchingAnalytics,
+    error: analyticsError,
+    refetch: refetchAnalytics,
+  } = useQuery<QuizAnalytics, Error>({
+    queryKey: ["quiz-analytics", token, analyticsDays],
+    enabled: Boolean(token),
+    queryFn: async () => {
+      if (!token) {
+        return {
+          period_days: analyticsDays,
+          totals: { starts: 0, completions: 0, completion_rate: 0 },
+          daily: [],
+          sources: { starts: [], completions: [] },
+        };
+      }
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (!supabaseUrl) {
+        throw new Error("VITE_SUPABASE_URL nao configurada");
+      }
+
+      const url = `${supabaseUrl}/functions/v1/get-quiz-analytics?days=${analyticsDays}`;
+      const response = await fetch(url, {
+        headers: {
+          "x-admin-token": token,
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        const message = body?.error || "Erro ao buscar analytics";
+        throw new Error(message);
+      }
+
+      return response.json();
+    },
+  });
+
+  const isRefreshing = isFetching || isFetchingAnalytics;
 
   const handleSaveToken = (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,6 +299,29 @@ const AdminQuizResponses = () => {
     return { total, upsells, topProfiles };
   }, [data]);
 
+  const analyticsSummary = useMemo(() => {
+    if (!analytics) {
+      return { starts: 0, completions: 0, completionRate: 0, daily: [], sources: { starts: [], completions: [] } };
+    }
+    const completionRate =
+      analytics.totals?.completion_rate ??
+      (analytics.totals?.starts ? analytics.totals.completions / analytics.totals.starts : 0);
+    const daily = analytics.daily || [];
+    return {
+      starts: analytics.totals?.starts || 0,
+      completions: analytics.totals?.completions || 0,
+      completionRate,
+      daily,
+      sources: analytics.sources || { starts: [], completions: [] },
+    };
+  }, [analytics]);
+
+  const recentDailyRows = useMemo(() => {
+    const rows = analyticsSummary.daily || [];
+    if (rows.length <= 10) return [...rows].reverse();
+    return rows.slice(-10).reverse();
+  }, [analyticsSummary]);
+
   const filteredData = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     const now = new Date().getTime();
@@ -219,6 +355,15 @@ const AdminQuizResponses = () => {
       name: item.name,
       email: item.email,
       created_at: item.created_at,
+      quiz_session_id: item.quiz_session_id || null,
+      source: item.source || null,
+      utm_source: item.utm_source || null,
+      utm_medium: item.utm_medium || null,
+      utm_campaign: item.utm_campaign || null,
+      utm_content: item.utm_content || null,
+      utm_term: item.utm_term || null,
+      referrer: item.referrer || null,
+      landing_path: item.landing_path || null,
       answers: item.answers && item.answers.length ? item.answers : item.raw_answers || [],
       raw_answers: item.raw_answers || [],
       riasec: item.riasec || item.ai_recommendation || null,
@@ -244,6 +389,15 @@ const AdminQuizResponses = () => {
       macro_area_principal: (item.macro_area_result as any)?.areaPrincipal || "",
       macro_area_possivel: (item.macro_area_result as any)?.areaPossivel || "",
       macro_area_evitar: (item.macro_area_result as any)?.areaEvitar || "",
+      source: item.source || "",
+      utm_source: item.utm_source || "",
+      utm_medium: item.utm_medium || "",
+      utm_campaign: item.utm_campaign || "",
+      utm_content: item.utm_content || "",
+      utm_term: item.utm_term || "",
+      referrer: item.referrer || "",
+      landing_path: item.landing_path || "",
+      quiz_session_id: item.quiz_session_id || "",
       clicked_upsell: item.clicked_upsell ? "yes" : "no",
     }));
 
@@ -259,6 +413,15 @@ const AdminQuizResponses = () => {
       macro_area_principal: "",
       macro_area_possivel: "",
       macro_area_evitar: "",
+      source: "",
+      utm_source: "",
+      utm_medium: "",
+      utm_campaign: "",
+      utm_content: "",
+      utm_term: "",
+      referrer: "",
+      landing_path: "",
+      quiz_session_id: "",
       clicked_upsell: "",
     });
 
@@ -311,7 +474,7 @@ const AdminQuizResponses = () => {
           Desbloquear
         </Button>
         <p className="text-xs text-muted-foreground text-center">
-          Usamos apenas este token para validar que voc? ? o dono. Nenhum dado sens?vel ? gravado no navegador.
+          Usamos apenas este token para validar que você é o dono. Nenhum dado sensível é gravado no navegador.
         </p>
       </form>
     </Card>
@@ -327,8 +490,8 @@ const AdminQuizResponses = () => {
 
   const unauthorized =
     error?.message?.startsWith("401") ||
-    error?.message?.toLowerCase().includes("nao autorizado") ||
-    error?.message?.toLowerCase().includes("n?o autorizado") ||
+    error?.message?.toLowerCase().includes("não autorizado") ||
+    error?.message?.toLowerCase().includes("não autorizado") ||
     error?.message?.toLowerCase().includes("token");
   const serverError = error?.message?.startsWith("500");
 
@@ -347,8 +510,15 @@ const AdminQuizResponses = () => {
               <Button variant="outline" onClick={handleLogout}>
                 Trocar token
               </Button>
-              <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
-                {isFetching ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCcw className="w-4 h-4 mr-2" />}
+              <Button
+                variant="outline"
+                onClick={() => {
+                  refetch();
+                  refetchAnalytics();
+                }}
+                disabled={isRefreshing}
+              >
+                {isRefreshing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCcw className="w-4 h-4 mr-2" />}
                 Atualizar
               </Button>
               <Button variant="outline" onClick={handleExportCsv} disabled={!filteredData.length}>
@@ -385,7 +555,7 @@ const AdminQuizResponses = () => {
                   onClick={() => setOnlyRecent((v) => !v)}
                   className="text-sm"
                 >
-                  ?ltimas 24h
+                  Últimas 24h
                 </Button>
               </div>
             </div>
@@ -397,7 +567,7 @@ const AdminQuizResponses = () => {
             <div className="flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-destructive mt-0.5" />
               <div>
-                <p className="font-semibold">Token inv?lido</p>
+                <p className="font-semibold">Token inválido</p>
                 <p className="text-sm text-muted-foreground">
                   Confirme o token ADMIN_DASHBOARD_TOKEN configurado na API e cole novamente.
                 </p>
@@ -419,6 +589,116 @@ const AdminQuizResponses = () => {
             </div>
           </Card>
         )}
+
+        {analyticsError && (
+          <Card className="border-orange-300/60 bg-orange-100/30">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-orange-500 mt-0.5" />
+              <div>
+                <p className="font-semibold">Erro ao carregar analytics</p>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {analyticsError.message}
+                </p>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        <Card className="p-4 space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+              <p className="text-sm text-muted-foreground">Fluxo do quiz</p>
+              <p className="text-xs text-muted-foreground">Ultimos {analytics?.period_days ?? analyticsDays} dias</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="analytics-days">Periodo (dias)</Label>
+              <Input
+                id="analytics-days"
+                type="number"
+                min={1}
+                max={365}
+                value={analyticsDays}
+                onChange={(e) => {
+                  const next = Number(e.target.value || 1);
+                  setAnalyticsDays(Math.min(365, Math.max(1, next)));
+                }}
+                className="w-24"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 rounded-lg border bg-muted/40">
+              <p className="text-sm text-muted-foreground">Inicios do quiz</p>
+              <p className="text-2xl font-bold">{analyticsSummary.starts}</p>
+            </div>
+            <div className="p-4 rounded-lg border bg-muted/40">
+              <p className="text-sm text-muted-foreground">Finalizacoes</p>
+              <p className="text-2xl font-bold">{analyticsSummary.completions}</p>
+            </div>
+            <div className="p-4 rounded-lg border bg-muted/40">
+              <p className="text-sm text-muted-foreground">Taxa de conclusao</p>
+              <p className="text-2xl font-bold">{formatPercent(analyticsSummary.completionRate)}</p>
+            </div>
+          </div>
+
+          <Separator />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <p className="text-sm font-semibold">Por dia (ultimos 10 dias com dados)</p>
+              {recentDailyRows.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Sem dados no periodo.</p>
+              ) : (
+                <div className="space-y-2 text-sm">
+                  <div className="grid grid-cols-4 text-xs text-muted-foreground">
+                    <span>Data</span>
+                    <span>Inicios</span>
+                    <span>Finalizacoes</span>
+                    <span>Taxa</span>
+                  </div>
+                  {recentDailyRows.map((row) => (
+                    <div key={row.date} className="grid grid-cols-4">
+                      <span>{row.date}</span>
+                      <span>{row.starts}</span>
+                      <span>{row.completions}</span>
+                      <span>{formatPercent(row.completion_rate)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <p className="text-sm font-semibold">Origens (inicios)</p>
+                <div className="flex flex-wrap gap-2">
+                  {analyticsSummary.sources.starts.length === 0 && (
+                    <span className="text-sm text-muted-foreground">N/A</span>
+                  )}
+                  {analyticsSummary.sources.starts.map((source) => (
+                    <Badge key={`start-${source.source}`} variant="outline">
+                      {source.source} ({source.count})
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-semibold">Origens (finalizacoes)</p>
+                <div className="flex flex-wrap gap-2">
+                  {analyticsSummary.sources.completions.length === 0 && (
+                    <span className="text-sm text-muted-foreground">N/A</span>
+                  )}
+                  {analyticsSummary.sources.completions.map((source) => (
+                    <Badge key={`complete-${source.source}`} variant="outline">
+                      {source.source} ({source.count})
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
 
         <Card>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -480,9 +760,14 @@ const AdminQuizResponses = () => {
               const riasecDesc = (item.riasec as any)?.descricao_personalizada || "";
               const riasecHabs = (item.riasec as any)?.habilidades || [];
               const answers = item.answers || [];
+              const textAnswers = answers.filter(
+                (answer) => answer.id && textQuestionIds.has(answer.id) && String(answer.answer || "").trim().length > 0
+              );
               const isExpanded = expandedAnswers[item.id];
               const answersToShow = isExpanded ? answers : answers.slice(0, 5);
               const hiddenCount = Math.max(0, answers.length - answersToShow.length);
+              const sourceLabel = resolveResponseSource(item);
+              const referrerHost = getReferrerHost(item.referrer);
 
               return (
                 <Card key={item.id} className="overflow-hidden border-border/70 shadow-sm">
@@ -513,6 +798,9 @@ const AdminQuizResponses = () => {
                           <span>Recebido em {formatDate(item.created_at)}</span>
                           <span>ID: {item.id}</span>
                           {item.paid?.paid_at && <span>Pago em {formatDate(item.paid.paid_at)}</span>}
+                          {sourceLabel && <span>Origem: {sourceLabel}</span>}
+                          {item.utm_campaign && <span>Campanha: {item.utm_campaign}</span>}
+                          {referrerHost && <span>Referrer: {referrerHost}</span>}
                         </div>
                         <div className="flex flex-wrap gap-2">
                           <Button size="sm" variant="outline" onClick={() => handleCopyEmail(item.email)}>
@@ -528,14 +816,14 @@ const AdminQuizResponses = () => {
                         <Card className="p-4 bg-gradient-to-br from-primary/5 via-background to-accent/5 border border-primary/20 space-y-3">
                           {quizVersion === "v2" ? (
                             <div className="space-y-3">
-                              <p className="text-xs uppercase text-primary font-semibold">Resultado macroarea</p>
+                              <p className="text-xs uppercase text-primary font-semibold">Resultado macroárea</p>
                               <div className="space-y-2 text-sm">
                                 <div className="flex items-center justify-between">
                                   <span className="text-xs text-muted-foreground">Principal</span>
                                   <Badge className="bg-primary text-white">{macroPrincipal || "N/A"}</Badge>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                  <span className="text-xs text-muted-foreground">Possivel</span>
+                                  <span className="text-xs text-muted-foreground">Possível</span>
                                   <Badge variant="outline" className="border-primary text-primary">{macroPossivel || "N/A"}</Badge>
                                 </div>
                                 <div className="flex items-center justify-between">
@@ -544,7 +832,7 @@ const AdminQuizResponses = () => {
                                 </div>
                               </div>
                               <p className="text-xs text-muted-foreground">
-                                Resultado resumido do quiz v2 (macroareas).
+                                Resultado resumido do quiz v2 (macroáreas).
                               </p>
                             </div>
                           ) : (
@@ -585,7 +873,7 @@ const AdminQuizResponses = () => {
                           <p className="text-xs text-muted-foreground leading-relaxed">
                             {riasecDesc
                               ? String(riasecDesc).slice(0, 220) + (String(riasecDesc).length > 220 ? "..." : "")
-                              : "Resumo de personalidade baseado nas respostas do usu?rio."}
+                              : "Resumo de personalidade baseado nas respostas do usuário."}
                           </p>
                           {riasecHabs?.length ? (
                             <div className="flex flex-wrap gap-2">
@@ -600,6 +888,33 @@ const AdminQuizResponses = () => {
                           )}
                         </Card>
                       </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-3">
+                      <p className="font-semibold text-sm text-foreground">Respostas escritas ({textAnswers.length})</p>
+                      {textAnswers.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">Sem respostas escritas.</p>
+                      ) : (
+                        <div className="grid gap-3">
+                          {textAnswers.map((answer, index) => (
+                            <Card key={`${item.id}-text-${index}`} className="border border-border/80 bg-card/60">
+                              <div className="p-4 space-y-2">
+                                <div className="flex items-start justify-between gap-3">
+                                  <p className="text-sm font-semibold text-foreground">
+                                    {answer.question || "Pergunta"}
+                                  </p>
+                                  <Badge variant="outline" className="text-xs">Texto</Badge>
+                                </div>
+                                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                                  {answer.answer || "Sem resposta"}
+                                </p>
+                              </div>
+                            </Card>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     <Separator />
@@ -631,7 +946,7 @@ const AdminQuizResponses = () => {
                                     <p className="text-sm font-semibold text-foreground">
                                       Q{index + 1}: {answer.question || "Pergunta"}
                                     </p>
-                                    <Badge variant="outline" className="text-xs">Resposta do usu?rio</Badge>
+                                    <Badge variant="outline" className="text-xs">Resposta do usuário</Badge>
                                   </div>
                                   <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                                     {answer.answer || "Sem resposta"}
@@ -660,4 +975,5 @@ const AdminQuizResponses = () => {
 };
 
 export default AdminQuizResponses;
+
 

@@ -86,10 +86,10 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
 
             <div className="pt-4 space-y-2">
               <p className="text-sm font-semibold text-foreground">
-                📊 Este teste compara seu perfil com macroareas de concurso
+                📊 Este teste compara seu perfil com macroáreas de concurso
               </p>
               <p className="text-xs text-muted-foreground max-w-lg mx-auto">
-                Suas respostas estao sendo analisadas com cuidado para entregar uma direcao inicial clara.
+                Suas respostas estão sendo analisadas com cuidado para entregar uma direção inicial clara.
               </p>
             </div>
           </div>

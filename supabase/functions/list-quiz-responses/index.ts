@@ -53,7 +53,9 @@ serve(async (req) => {
     // Seleciona apenas as colunas reais existentes
     const { data, error } = await supabase
       .from("quiz_responses")
-      .select("id, created_at, user_name, user_email, answers_json, riasec_json, quiz_version, macro_area_result")
+      .select(
+        "id, created_at, user_name, user_email, answers_json, riasec_json, quiz_version, macro_area_result, whatsapp, clicked_upsell, upsell_clicked_at, quiz_session_id, source, utm_source, utm_medium, utm_campaign, utm_content, utm_term, referrer, landing_path",
+      )
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -119,6 +121,16 @@ serve(async (req) => {
         answers,
         ai_recommendation: riasec,
         clicked_upsell: (row as any).clicked_upsell ?? null, // pode não existir; retornamos null
+        upsell_clicked_at: (row as any).upsell_clicked_at ?? null,
+        quiz_session_id: (row as any).quiz_session_id ?? null,
+        source: (row as any).source ?? null,
+        utm_source: (row as any).utm_source ?? null,
+        utm_medium: (row as any).utm_medium ?? null,
+        utm_campaign: (row as any).utm_campaign ?? null,
+        utm_content: (row as any).utm_content ?? null,
+        utm_term: (row as any).utm_term ?? null,
+        referrer: (row as any).referrer ?? null,
+        landing_path: (row as any).landing_path ?? null,
         riasec,
         riasec_top1: riasec?.top1 || null,
         riasec_top2: riasec?.top2 || null,

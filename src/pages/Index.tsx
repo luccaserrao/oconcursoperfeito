@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { Landing } from "@/components/Landing";
 import { PreparationScreen } from "@/components/PreparationScreen";
 import { Quiz } from "@/components/Quiz";
@@ -8,6 +8,7 @@ import ErrorPage from "./ErrorPage";
 import { QuizAnswer, CareerRecommendation, MacroAreaResult, RiasecResult } from "@/types/quiz";
 import { toast } from "sonner";
 import { getHomeVariant, setGAUserProperties, trackEvent } from "@/lib/analytics";
+import { getQuizTrackingContext } from "@/lib/quizTracking";
 import { calculateRiasecScores } from "@/lib/riasec";
 import { calculateMacroArea } from "@/lib/calculateMacroArea";
 import { quizQuestionsV1, quizQuestionsV2 } from "@/data/quizQuestions";
@@ -172,6 +173,18 @@ const Index = () => {
 
     setUserName(safeName);
     setUserEmail(trimmedEmail);
+    const tracking = getQuizTrackingContext();
+    const trackingPayload = {
+      quiz_session_id: tracking.quiz_session_id || undefined,
+      source: tracking.source || undefined,
+      utm_source: tracking.utm_source || undefined,
+      utm_medium: tracking.utm_medium || undefined,
+      utm_campaign: tracking.utm_campaign || undefined,
+      utm_content: tracking.utm_content || undefined,
+      utm_term: tracking.utm_term || undefined,
+      referrer: tracking.referrer || undefined,
+      landing_path: tracking.landing_path || undefined,
+    };
     trackEvent("email_captured", { home_variant: getHomeVariant() });
 
     try {
@@ -191,6 +204,7 @@ const Index = () => {
           whatsapp: "",
           quiz_version: quizVersion,
           macro_area_result: macroAreaPayload,
+          ...trackingPayload,
         }),
       });
 
@@ -208,7 +222,7 @@ const Index = () => {
             salary: "Em definicao",
             examDate: "Em definicao",
             workplaces: [],
-            workRoutine: "Relatorio completo detalha o porquê e cargos compatíveis.",
+            workRoutine: "Relatório completo detalha o porquê e cargos compatíveis.",
             subjects: [],
             examFrequency: "Em definicao",
           }
@@ -258,17 +272,17 @@ const Index = () => {
       const fallbackRecommendation: CareerRecommendation = quizVersion === "v2"
         ? {
             careerName: fallbackMacro ? `Direção inicial: ${fallbackMacro.areaPrincipal}` : "Direção inicial",
-            justification: "Resultado preliminar enquanto geramos o relatorio completo.",
+            justification: "Resultado preliminar enquanto geramos o relatório completo.",
             salary: "Em definicao",
             examDate: "Em definicao",
             workplaces: [],
-            workRoutine: "Relatorio completo detalha o porquê e cargos compatíveis.",
+            workRoutine: "Relatório completo detalha o porquê e cargos compatíveis.",
             subjects: [],
             examFrequency: "Em definicao",
           }
         : {
             careerName: `Plano recomendado para perfil ${fallbackRiasec?.top1}`,
-            justification: "Baseado nas suas respostas, criamos um plano preliminar enquanto geramos o relatorio completo.",
+            justification: "Baseado nas suas respostas, criamos um plano preliminar enquanto geramos o relatório completo.",
             salary: "Em definicao",
             examDate: "Em definicao",
             workplaces: [],
@@ -281,7 +295,7 @@ const Index = () => {
       setRecommendation(fallbackRecommendation);
       setQuizResponseId(undefined);
       setCurrentStep("results");
-      toast.warning("Nao conseguimos gerar o relatorio completo agora. Mostramos um resultado parcial.");
+      toast.warning("Não conseguimos gerar o relatório completo agora. Mostramos um resultado parcial.");
     }
   };
 
@@ -341,5 +355,7 @@ const Index = () => {
 };
 
 export default Index;
+
+
 
 
