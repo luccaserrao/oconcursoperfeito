@@ -20,6 +20,24 @@ const toDateKey = (value: string) => {
 
 const normalizeSource = (value: string) => value.trim().toLowerCase();
 
+const normalizeVersion = (value: unknown) => {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (normalized === "v1" || normalized === "v2") return normalized;
+  return normalized || "desconhecido";
+};
+
+const toDateMs = (value: unknown) => {
+  const date = new Date(String(value ?? ""));
+  const time = date.getTime();
+  return Number.isNaN(time) ? null : time;
+};
+
+const getSessionId = (row: Record<string, unknown>) => {
+  const raw = row.quiz_session_id;
+  if (typeof raw !== "string") return "";
+  return raw.trim();
+};
+
 const resolveSource = (row: Record<string, unknown>) => {
   const explicit = (row.source as string | undefined) || (row.utm_source as string | undefined);
   if (explicit && explicit.trim()) {
@@ -46,6 +64,21 @@ const countSources = (rows: Array<Record<string, unknown>>) => {
   return Object.entries(counts)
     .map(([source, count]) => ({ source, count }))
     .sort((a, b) => b.count - a.count);
+};
+
+const average = (values: number[]) => {
+  if (!values.length) return 0;
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+};
+
+const median = (values: number[]) => {
+  if (!values.length) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  if (sorted.length % 2 === 0) {
+    return (sorted[mid - 1] + sorted[mid]) / 2;
+  }
+  return sorted[mid];
 };
 
 serve(async (req) => {
@@ -94,11 +127,11 @@ serve(async (req) => {
     const [startsResult, completionsResult] = await Promise.all([
       supabase
         .from("quiz_starts")
-        .select("created_at, source, utm_source, referrer")
+        .select("created_at, source, utm_source, referrer, quiz_session_id, quiz_version")
         .gte("created_at", sinceIso),
       supabase
         .from("quiz_responses")
-        .select("created_at, source, utm_source, referrer")
+        .select("created_at, source, utm_source, referrer, quiz_session_id, quiz_version")
         .gte("created_at", sinceIso),
     ]);
 
@@ -141,6 +174,82 @@ serve(async (req) => {
       completion_rate: startsRows.length ? completionsRows.length / startsRows.length : 0,
     };
 
+    const startsBySession: Record<string, Record<string, unknown>> = {};
+    startsRows.forEach((row) => {
+      const session = getSessionId(row);
+      if (!session) return;
+      const createdAt = toDateMs(row.created_at);
+      const existing = startsBySession[session];
+      if (!existing) {
+        startsBySession[session] = row;
+        return;
+      }
+      const existingTime = toDateMs(existing.created_at);
+      if (createdAt !== null && (existingTime === null || createdAt < existingTime)) {
+        startsBySession[session] = row;
+      }
+    });
+
+    const completionsBySession: Record<string, Record<string, unknown>> = {};
+    completionsRows.forEach((row) => {
+      const session = getSessionId(row);
+      if (!session) return;
+      const createdAt = toDateMs(row.created_at);
+      const existing = completionsBySession[session];
+      if (!existing) {
+        completionsBySession[session] = row;
+        return;
+      }
+      const existingTime = toDateMs(existing.created_at);
+      if (createdAt !== null && (existingTime === null || createdAt < existingTime)) {
+        completionsBySession[session] = row;
+      }
+    });
+
+    const versionStats: Record<
+      string,
+      { starts: number; completions: number; durations: number[] }
+    > = {};
+
+    Object.values(startsBySession).forEach((row) => {
+      const version = normalizeVersion(row.quiz_version);
+      if (!versionStats[version]) {
+        versionStats[version] = { starts: 0, completions: 0, durations: [] };
+      }
+      versionStats[version].starts += 1;
+    });
+
+    const completionDurations: number[] = [];
+    Object.entries(completionsBySession).forEach(([session, completionRow]) => {
+      const startRow = startsBySession[session];
+      if (!startRow) return;
+      const version = normalizeVersion(completionRow.quiz_version || startRow.quiz_version);
+      if (!versionStats[version]) {
+        versionStats[version] = { starts: 0, completions: 0, durations: [] };
+      }
+      versionStats[version].completions += 1;
+      const startTime = toDateMs(startRow.created_at);
+      const completionTime = toDateMs(completionRow.created_at);
+      if (startTime === null || completionTime === null) return;
+      const minutes = Math.max(0, (completionTime - startTime) / 60000);
+      completionDurations.push(minutes);
+      versionStats[version].durations.push(minutes);
+    });
+
+    const trackedStarts = Object.keys(startsBySession).length;
+    const trackedCompletions = Object.keys(completionsBySession).filter((session) => startsBySession[session]).length;
+
+    const byVersion = Object.entries(versionStats)
+      .map(([version, values]) => ({
+        version,
+        starts: values.starts,
+        completions: values.completions,
+        completion_rate: values.starts ? values.completions / values.starts : 0,
+        avg_completion_minutes: average(values.durations),
+        median_completion_minutes: median(values.durations),
+      }))
+      .sort((a, b) => b.starts - a.starts);
+
     const sources = {
       starts: countSources(startsRows).slice(0, 10),
       completions: countSources(completionsRows).slice(0, 10),
@@ -152,6 +261,14 @@ serve(async (req) => {
         totals,
         daily,
         sources,
+        funnel: {
+          tracked_starts: trackedStarts,
+          tracked_completions: trackedCompletions,
+          completion_rate: trackedStarts ? trackedCompletions / trackedStarts : 0,
+          avg_completion_minutes: average(completionDurations),
+          median_completion_minutes: median(completionDurations),
+        },
+        by_version: byVersion,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );

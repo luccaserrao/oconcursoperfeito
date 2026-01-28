@@ -62,6 +62,13 @@ type QuizAnalytics = {
     completions: number;
     completion_rate: number;
   };
+  funnel?: {
+    tracked_starts: number;
+    tracked_completions: number;
+    completion_rate: number;
+    avg_completion_minutes: number;
+    median_completion_minutes: number;
+  };
   daily: Array<{
     date: string;
     starts: number;
@@ -72,6 +79,14 @@ type QuizAnalytics = {
     starts: Array<{ source: string; count: number }>;
     completions: Array<{ source: string; count: number }>;
   };
+  by_version?: Array<{
+    version: string;
+    starts: number;
+    completions: number;
+    completion_rate: number;
+    avg_completion_minutes: number;
+    median_completion_minutes: number;
+  }>;
 };
 
 const formatDate = (value: string) => {
@@ -108,6 +123,13 @@ const resolveResponseSource = (item: QuizResponse) => {
 const formatPercent = (value: number) => {
   if (!Number.isFinite(value)) return "0%";
   return `${Math.round(value * 100)}%`;
+};
+
+const formatMinutes = (value: number) => {
+  if (!Number.isFinite(value) || value <= 0) return "—";
+  if (value < 1) return "<1 min";
+  if (value >= 60) return `${(value / 60).toFixed(1)} h`;
+  return `${Math.round(value)} min`;
 };
 
 const AdminQuizResponses = () => {
@@ -301,18 +323,37 @@ const AdminQuizResponses = () => {
 
   const analyticsSummary = useMemo(() => {
     if (!analytics) {
-      return { starts: 0, completions: 0, completionRate: 0, daily: [], sources: { starts: [], completions: [] } };
+      return {
+        starts: 0,
+        completions: 0,
+        completionRate: 0,
+        trackedStarts: 0,
+        trackedCompletions: 0,
+        trackedCompletionRate: 0,
+        avgCompletionMinutes: 0,
+        medianCompletionMinutes: 0,
+        daily: [],
+        sources: { starts: [], completions: [] },
+        byVersion: [],
+      };
     }
     const completionRate =
       analytics.totals?.completion_rate ??
       (analytics.totals?.starts ? analytics.totals.completions / analytics.totals.starts : 0);
     const daily = analytics.daily || [];
+    const funnel = analytics.funnel;
     return {
       starts: analytics.totals?.starts || 0,
       completions: analytics.totals?.completions || 0,
       completionRate,
+      trackedStarts: funnel?.tracked_starts || 0,
+      trackedCompletions: funnel?.tracked_completions || 0,
+      trackedCompletionRate: funnel?.completion_rate || 0,
+      avgCompletionMinutes: funnel?.avg_completion_minutes || 0,
+      medianCompletionMinutes: funnel?.median_completion_minutes || 0,
       daily,
       sources: analytics.sources || { starts: [], completions: [] },
+      byVersion: analytics.by_version || [],
     };
   }, [analytics]);
 
@@ -627,7 +668,7 @@ const AdminQuizResponses = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="p-4 rounded-lg border bg-muted/40">
               <p className="text-sm text-muted-foreground">Inicios do quiz</p>
               <p className="text-2xl font-bold">{analyticsSummary.starts}</p>
@@ -639,6 +680,33 @@ const AdminQuizResponses = () => {
             <div className="p-4 rounded-lg border bg-muted/40">
               <p className="text-sm text-muted-foreground">Taxa de conclusao</p>
               <p className="text-2xl font-bold">{formatPercent(analyticsSummary.completionRate)}</p>
+            </div>
+            <div className="p-4 rounded-lg border bg-muted/40">
+              <p className="text-sm text-muted-foreground">Tempo medio p/ concluir</p>
+              <p className="text-2xl font-bold">{formatMinutes(analyticsSummary.avgCompletionMinutes)}</p>
+              <p className="text-xs text-muted-foreground">Base: sessoes rastreadas</p>
+            </div>
+          </div>
+
+          <Separator />
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="p-4 rounded-lg border bg-muted/40">
+              <p className="text-sm text-muted-foreground">Inicios rastreados</p>
+              <p className="text-2xl font-bold">{analyticsSummary.trackedStarts}</p>
+            </div>
+            <div className="p-4 rounded-lg border bg-muted/40">
+              <p className="text-sm text-muted-foreground">Finalizacoes rastreadas</p>
+              <p className="text-2xl font-bold">{analyticsSummary.trackedCompletions}</p>
+            </div>
+            <div className="p-4 rounded-lg border bg-muted/40">
+              <p className="text-sm text-muted-foreground">Taxa rastreada</p>
+              <p className="text-2xl font-bold">{formatPercent(analyticsSummary.trackedCompletionRate)}</p>
+            </div>
+            <div className="p-4 rounded-lg border bg-muted/40">
+              <p className="text-sm text-muted-foreground">Mediana p/ concluir</p>
+              <p className="text-2xl font-bold">{formatMinutes(analyticsSummary.medianCompletionMinutes)}</p>
+              <p className="text-xs text-muted-foreground">Base: sessoes rastreadas</p>
             </div>
           </div>
 
@@ -692,6 +760,19 @@ const AdminQuizResponses = () => {
                   {analyticsSummary.sources.completions.map((source) => (
                     <Badge key={`complete-${source.source}`} variant="outline">
                       {source.source} ({source.count})
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-semibold">Conversao por versao (rastreados)</p>
+                <div className="flex flex-wrap gap-2">
+                  {analyticsSummary.byVersion.length === 0 && (
+                    <span className="text-sm text-muted-foreground">N/A</span>
+                  )}
+                  {analyticsSummary.byVersion.map((row) => (
+                    <Badge key={`version-${row.version}`} variant="outline">
+                      {row.version.toUpperCase()} {row.completions}/{row.starts} ({formatPercent(row.completion_rate)})
                     </Badge>
                   ))}
                 </div>
