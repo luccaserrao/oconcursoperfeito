@@ -108,6 +108,20 @@ export const quizQuestionsV1: QuizQuestion[] = [
     placeholder: "Ex: salário alto e benefícios / menor concorrência / qualidade de vida",
     helperText: "Usuários escrevem: 'menor concorrência', 'salário alto + benefícios', 'equilíbrio trabalho-vida'.",
   },
+  {
+    id: "q6",
+    type: "text",
+    question: "Em quais estados devemos buscar concursos públicos para você?",
+    placeholder: "Ex: Pará e São Paulo (capital e interior)",
+    helperText: "Liste todos os estados/locais que você aceitaria (pode separar por vírgula).",
+  },
+  {
+    id: "q7",
+    type: "text",
+    question: "Conte sua experiência com concursos, sua escolaridade e onde trabalha hoje.",
+    placeholder: "Ex: estudo há 6 meses, ensino superior completo, trabalho no setor privado",
+    helperText: "Pode citar tempo de estudo, concursos já feitos e sua ocupação atual.",
+  },
 ];
 
 const macroLikertQuestions: QuizQuestion[] = [
@@ -294,6 +308,20 @@ const macroMultipleChoiceQuestions: QuizQuestion[] = [
 export const quizQuestionsV2: QuizQuestion[] = [
   ...macroLikertQuestions,
   ...macroMultipleChoiceQuestions,
+  {
+    id: "v2_q11",
+    type: "text",
+    question: "Em quais estados devemos buscar concursos públicos para você?",
+    placeholder: "Ex: Paraná e Minas Gerais (capital e interior)",
+    helperText: "Liste todos os estados/locais que você aceitaria (pode separar por vírgula).",
+  },
+  {
+    id: "v2_q12",
+    type: "text",
+    question: "Conte sua experiência com concursos, sua escolaridade e onde trabalha hoje.",
+    placeholder: "Ex: 1 ano estudando, ensino médio completo, trabalho no comércio",
+    helperText: "Pode citar tempo de estudo, concursos já feitos e sua ocupação atual.",
+  },
 ];
 
 export const allQuizQuestions: QuizQuestion[] = [
