@@ -943,6 +943,8 @@ const AdminQuizResponses = () => {
                 const macroPrincipal = macroArea?.areaPrincipal || "";
                 const macroPossivel = macroArea?.areaPossivel || "";
                 const macroEvitar = macroArea?.areaEvitar || "";
+                const sourceLabel = resolveResponseSource(item);
+                const referrerHost = getReferrerHost(item.referrer);
 
                 return (
                   <Card key={`completed-${item.id}`} className="border border-border/70">
@@ -951,6 +953,15 @@ const AdminQuizResponses = () => {
                         <p className="font-semibold">{item.name || "Sem nome"}</p>
                         <Badge variant="secondary" className="text-xs">{item.email}</Badge>
                         <Badge variant="outline" className="text-xs">Quiz {quizVersion.toUpperCase()}</Badge>
+                        <Button size="sm" variant="outline" onClick={() => handleCopyAnswers(item)}>
+                          Copiar dados
+                        </Button>
+                      </div>
+                      <div className="text-sm text-muted-foreground flex flex-wrap gap-4">
+                        <span>Recebido em {formatDate(item.created_at)}</span>
+                        {sourceLabel && <span>Origem: {sourceLabel}</span>}
+                        {item.utm_campaign && <span>Campanha: {item.utm_campaign}</span>}
+                        {referrerHost && <span>Referrer: {referrerHost}</span>}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {quizVersion === "v2" ? (
