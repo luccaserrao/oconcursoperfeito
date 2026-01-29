@@ -137,6 +137,16 @@ const resolveResponseSource = (item: QuizResponse) => {
   return getReferrerHost(item.referrer) || "direto";
 };
 
+const getTextAnswers = (answers: QuizAnswer[]) =>
+  answers.filter((answer) => {
+    const answerText = String(answer.answer || "").trim();
+    if (!answerText) return false;
+    const hasTextId = Boolean(answer.id && textQuestionIds.has(answer.id));
+    if (hasTextId) return true;
+    const questionText = String(answer.question || "").trim().toLowerCase();
+    return questionText ? textQuestionTexts.has(questionText) : false;
+  });
+
 const formatPercent = (value: number) => {
   if (!Number.isFinite(value)) return "0%";
   return `${Math.round(value * 100)}%`;
@@ -444,6 +454,45 @@ const AdminQuizResponses = () => {
     navigator.clipboard?.writeText(JSON.stringify(payload, null, 2)).catch(() => {});
   };
 
+  const handleCopyPdfData = () => {
+    if (!filteredData.length) return;
+    const blocks = filteredData.map((item, idx) => {
+      const answers = item.answers || [];
+      const textAnswers = getTextAnswers(answers);
+      const quizVersion = item.quiz_version ? item.quiz_version.toUpperCase() : "N/A";
+      const sourceLabel = resolveResponseSource(item);
+      const riasecTop = item.riasec_top1 || item.riasec_top2;
+      const riasecSecondary = item.riasec_top2 || item.riasec_top1;
+      const macroArea = item.macro_area_result as any;
+      const macroPrincipal = macroArea?.areaPrincipal || "";
+      const macroPossivel = macroArea?.areaPossivel || "";
+      const macroEvitar = macroArea?.areaEvitar || "";
+
+      const lines = [
+        `#${idx + 1} - ${item.name || "Sem nome"}`,
+        `Email: ${item.email || "—"}`,
+        item.whatsapp ? `WhatsApp: ${item.whatsapp}` : null,
+        `Data: ${formatDate(item.created_at)}`,
+        `Versao do quiz: ${quizVersion}`,
+        sourceLabel ? `Origem: ${sourceLabel}` : null,
+        item.utm_campaign ? `Campanha: ${item.utm_campaign}` : null,
+        item.quiz_version === "v2"
+          ? `Macroarea: Principal ${macroPrincipal || "N/A"} | Possivel ${macroPossivel || "N/A"} | Evitar ${macroEvitar || "N/A"}`
+          : `Perfil RIASEC: ${riasecTop || "N/A"}${riasecSecondary ? ` / ${riasecSecondary}` : ""}`,
+        "",
+        "Respostas escritas:",
+        textAnswers.length
+          ? textAnswers.map((answer) => `- ${answer.question || "Pergunta"}: ${answer.answer || "Sem resposta"}`).join("\n")
+          : "- (nenhuma resposta escrita)",
+      ].filter(Boolean);
+
+      return lines.join("\n");
+    });
+
+    const payload = blocks.join("\n\n------------------------\n\n");
+    navigator.clipboard?.writeText(payload).catch(() => {});
+  };
+
   const toggleAnswersVisibility = (id: string) => {
     setExpandedAnswers((prev) => ({ ...prev, [id]: !prev[id] }));
   };
@@ -591,6 +640,9 @@ const AdminQuizResponses = () => {
               >
                 {isRefreshing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCcw className="w-4 h-4 mr-2" />}
                 Atualizar
+              </Button>
+              <Button variant="outline" onClick={handleCopyPdfData} disabled={!filteredData.length}>
+                Copiar dados (PDF)
               </Button>
               <Button variant="outline" onClick={handleExportCsv} disabled={!filteredData.length}>
                 Exportar CSV
@@ -889,14 +941,7 @@ const AdminQuizResponses = () => {
               const riasecDesc = (item.riasec as any)?.descricao_personalizada || "";
               const riasecHabs = (item.riasec as any)?.habilidades || [];
               const answers = item.answers || [];
-              const textAnswers = answers.filter((answer) => {
-                const answerText = String(answer.answer || "").trim();
-                if (!answerText) return false;
-                const hasTextId = Boolean(answer.id && textQuestionIds.has(answer.id));
-                if (hasTextId) return true;
-                const questionText = String(answer.question || "").trim().toLowerCase();
-                return questionText ? textQuestionTexts.has(questionText) : false;
-              });
+              const textAnswers = getTextAnswers(answers);
               const isExpanded = expandedAnswers[item.id];
               const answersToShow = isExpanded ? answers : answers.slice(0, 5);
               const hiddenCount = Math.max(0, answers.length - answersToShow.length);
