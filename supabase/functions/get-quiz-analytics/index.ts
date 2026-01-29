@@ -239,6 +239,49 @@ serve(async (req) => {
     const trackedStarts = Object.keys(startsBySession).length;
     const trackedCompletions = Object.keys(completionsBySession).filter((session) => startsBySession[session]).length;
 
+    const dailyTrackedMap: Record<string, { starts: number; completions: number }> = {};
+    Object.entries(startsBySession).forEach(([session, startRow]) => {
+      const dateKey = toDateKey(String(startRow.created_at || ""));
+      if (!dailyTrackedMap[dateKey]) {
+        dailyTrackedMap[dateKey] = { starts: 0, completions: 0 };
+      }
+      dailyTrackedMap[dateKey].starts += 1;
+      if (completionsBySession[session]) {
+        dailyTrackedMap[dateKey].completions += 1;
+      }
+    });
+
+    const dailyTracked = Object.entries(dailyTrackedMap)
+      .map(([date, values]) => ({
+        date,
+        starts: values.starts,
+        completions: values.completions,
+        completion_rate: values.starts ? values.completions / values.starts : 0,
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    const conversionBySourceMap: Record<string, { starts: number; completions: number }> = {};
+    Object.entries(startsBySession).forEach(([session, startRow]) => {
+      const source = resolveSource(startRow);
+      if (!conversionBySourceMap[source]) {
+        conversionBySourceMap[source] = { starts: 0, completions: 0 };
+      }
+      conversionBySourceMap[source].starts += 1;
+      if (completionsBySession[session]) {
+        conversionBySourceMap[source].completions += 1;
+      }
+    });
+
+    const conversionBySource = Object.entries(conversionBySourceMap)
+      .map(([source, values]) => ({
+        source,
+        starts: values.starts,
+        completions: values.completions,
+        completion_rate: values.starts ? values.completions / values.starts : 0,
+      }))
+      .sort((a, b) => b.starts - a.starts)
+      .slice(0, 10);
+
     const byVersion = Object.entries(versionStats)
       .map(([version, values]) => ({
         version,
@@ -260,6 +303,7 @@ serve(async (req) => {
         period_days: days,
         totals,
         daily,
+        daily_tracked: dailyTracked,
         sources,
         funnel: {
           tracked_starts: trackedStarts,
@@ -269,6 +313,7 @@ serve(async (req) => {
           median_completion_minutes: median(completionDurations),
         },
         by_version: byVersion,
+        conversion_by_source: conversionBySource,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );

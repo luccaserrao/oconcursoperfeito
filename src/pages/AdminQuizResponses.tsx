@@ -75,6 +75,12 @@ type QuizAnalytics = {
     completions: number;
     completion_rate: number;
   }>;
+  daily_tracked?: Array<{
+    date: string;
+    starts: number;
+    completions: number;
+    completion_rate: number;
+  }>;
   sources: {
     starts: Array<{ source: string; count: number }>;
     completions: Array<{ source: string; count: number }>;
@@ -86,6 +92,12 @@ type QuizAnalytics = {
     completion_rate: number;
     avg_completion_minutes: number;
     median_completion_minutes: number;
+  }>;
+  conversion_by_source?: Array<{
+    source: string;
+    starts: number;
+    completions: number;
+    completion_rate: number;
   }>;
 };
 
@@ -102,6 +114,11 @@ const questionTextMap: Record<string, string> = allQuizQuestions.reduce((acc, q)
 
 const textQuestionIds = new Set(
   allQuizQuestions.filter((q) => q.type === "text").map((q) => q.id)
+);
+const textQuestionTexts = new Set(
+  allQuizQuestions
+    .filter((q) => q.type === "text")
+    .map((q) => q.question.trim().toLowerCase())
 );
 
 const getReferrerHost = (value?: string | null) => {
@@ -333,14 +350,17 @@ const AdminQuizResponses = () => {
         avgCompletionMinutes: 0,
         medianCompletionMinutes: 0,
         daily: [],
+        dailyTracked: [],
         sources: { starts: [], completions: [] },
         byVersion: [],
+        conversionBySource: [],
       };
     }
     const completionRate =
       analytics.totals?.completion_rate ??
       (analytics.totals?.starts ? analytics.totals.completions / analytics.totals.starts : 0);
     const daily = analytics.daily || [];
+    const dailyTracked = analytics.daily_tracked || [];
     const funnel = analytics.funnel;
     return {
       starts: analytics.totals?.starts || 0,
@@ -352,16 +372,26 @@ const AdminQuizResponses = () => {
       avgCompletionMinutes: funnel?.avg_completion_minutes || 0,
       medianCompletionMinutes: funnel?.median_completion_minutes || 0,
       daily,
+      dailyTracked,
       sources: analytics.sources || { starts: [], completions: [] },
       byVersion: analytics.by_version || [],
+      conversionBySource: analytics.conversion_by_source || [],
     };
   }, [analytics]);
 
   const recentDailyRows = useMemo(() => {
-    const rows = analyticsSummary.daily || [];
+    const rows = analyticsSummary.dailyTracked.length ? analyticsSummary.dailyTracked : analyticsSummary.daily;
     if (rows.length <= 10) return [...rows].reverse();
     return rows.slice(-10).reverse();
   }, [analyticsSummary]);
+  const usingTrackedDaily = analyticsSummary.dailyTracked.length > 0;
+
+  const primaryStarts = analyticsSummary.trackedStarts || analyticsSummary.starts;
+  const primaryCompletions = analyticsSummary.trackedCompletions || analyticsSummary.completions;
+  const primaryRate = analyticsSummary.trackedStarts
+    ? analyticsSummary.trackedCompletionRate
+    : analyticsSummary.completionRate;
+  const primaryLabel = analyticsSummary.trackedStarts ? "rastreados" : "totais";
 
   const filteredData = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -671,15 +701,18 @@ const AdminQuizResponses = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="p-4 rounded-lg border bg-muted/40">
               <p className="text-sm text-muted-foreground">Inicios do quiz</p>
-              <p className="text-2xl font-bold">{analyticsSummary.starts}</p>
+              <p className="text-2xl font-bold">{primaryStarts}</p>
+              <p className="text-xs text-muted-foreground">Base: {primaryLabel}</p>
             </div>
             <div className="p-4 rounded-lg border bg-muted/40">
               <p className="text-sm text-muted-foreground">Finalizacoes</p>
-              <p className="text-2xl font-bold">{analyticsSummary.completions}</p>
+              <p className="text-2xl font-bold">{primaryCompletions}</p>
+              <p className="text-xs text-muted-foreground">Base: {primaryLabel}</p>
             </div>
             <div className="p-4 rounded-lg border bg-muted/40">
               <p className="text-sm text-muted-foreground">Taxa de conclusao</p>
-              <p className="text-2xl font-bold">{formatPercent(analyticsSummary.completionRate)}</p>
+              <p className="text-2xl font-bold">{formatPercent(primaryRate)}</p>
+              <p className="text-xs text-muted-foreground">Base: {primaryLabel}</p>
             </div>
             <div className="p-4 rounded-lg border bg-muted/40">
               <p className="text-sm text-muted-foreground">Tempo medio p/ concluir</p>
@@ -714,7 +747,9 @@ const AdminQuizResponses = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <p className="text-sm font-semibold">Por dia (ultimos 10 dias com dados)</p>
+              <p className="text-sm font-semibold">
+                Por dia ({usingTrackedDaily ? "rastreados" : "totais"} - ultimos 10 dias com dados)
+              </p>
               {recentDailyRows.length === 0 ? (
                 <p className="text-sm text-muted-foreground">Sem dados no periodo.</p>
               ) : (
@@ -760,6 +795,19 @@ const AdminQuizResponses = () => {
                   {analyticsSummary.sources.completions.map((source) => (
                     <Badge key={`complete-${source.source}`} variant="outline">
                       {source.source} ({source.count})
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-semibold">Conversao por origem (rastreados)</p>
+                <div className="flex flex-wrap gap-2">
+                  {analyticsSummary.conversionBySource.length === 0 && (
+                    <span className="text-sm text-muted-foreground">N/A</span>
+                  )}
+                  {analyticsSummary.conversionBySource.map((row) => (
+                    <Badge key={`source-conv-${row.source}`} variant="outline">
+                      {row.source} {row.completions}/{row.starts} ({formatPercent(row.completion_rate)})
                     </Badge>
                   ))}
                 </div>
@@ -841,9 +889,14 @@ const AdminQuizResponses = () => {
               const riasecDesc = (item.riasec as any)?.descricao_personalizada || "";
               const riasecHabs = (item.riasec as any)?.habilidades || [];
               const answers = item.answers || [];
-              const textAnswers = answers.filter(
-                (answer) => answer.id && textQuestionIds.has(answer.id) && String(answer.answer || "").trim().length > 0
-              );
+              const textAnswers = answers.filter((answer) => {
+                const answerText = String(answer.answer || "").trim();
+                if (!answerText) return false;
+                const hasTextId = Boolean(answer.id && textQuestionIds.has(answer.id));
+                if (hasTextId) return true;
+                const questionText = String(answer.question || "").trim().toLowerCase();
+                return questionText ? textQuestionTexts.has(questionText) : false;
+              });
               const isExpanded = expandedAnswers[item.id];
               const answersToShow = isExpanded ? answers : answers.slice(0, 5);
               const hiddenCount = Math.max(0, answers.length - answersToShow.length);
