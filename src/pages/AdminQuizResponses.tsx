@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { allQuizQuestions } from "@/data/quizQuestions";
+import { allQuizQuestions, quizQuestionsV1, quizQuestionsV2 } from "@/data/quizQuestions";
 import {
   Accordion,
   AccordionContent,
@@ -146,6 +146,11 @@ const getTextAnswers = (answers: QuizAnswer[]) =>
     const questionText = String(answer.question || "").trim().toLowerCase();
     return questionText ? textQuestionTexts.has(questionText) : false;
   });
+
+const getExpectedAnswerCount = (version?: "v1" | "v2" | null) => {
+  if (version === "v2") return quizQuestionsV2.length;
+  return quizQuestionsV1.length;
+};
 
 const formatPercent = (value: number) => {
   if (!Number.isFinite(value)) return "0%";
@@ -424,6 +429,15 @@ const AdminQuizResponses = () => {
       return matchesTerm && matchesAnswers && matchesRecent;
     });
   }, [data, searchTerm, onlyWithAnswers, onlyRecent]);
+
+  const completedData = useMemo(() => {
+    const items = filteredData || [];
+    return items.filter((item) => {
+      const expected = getExpectedAnswerCount(item.quiz_version || "v1");
+      const count = (item.answers || []).length;
+      return count >= expected;
+    });
+  }, [filteredData]);
 
   const handleCopyEmail = (email: string) => {
     if (!email) return;
@@ -905,6 +919,72 @@ const AdminQuizResponses = () => {
               </div>
             </div>
           </div>
+        </Card>
+
+        <Card className="p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Concluíram o quiz</p>
+              <p className="text-xs text-muted-foreground">Baseado no total de perguntas por versão</p>
+            </div>
+            <Badge variant="outline">Total: {completedData.length}</Badge>
+          </div>
+          {completedData.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Nenhuma resposta completa no período filtrado.</p>
+          ) : (
+            <div className="space-y-3">
+              {completedData.map((item) => {
+                const quizVersion = item.quiz_version || "v1";
+                const answers = item.answers || [];
+                const textAnswers = getTextAnswers(answers);
+                const riasecTop = item.riasec_top1 || item.riasec_top2;
+                const riasecSecondary = item.riasec_top2 || item.riasec_top1;
+                const macroArea = item.macro_area_result as any;
+                const macroPrincipal = macroArea?.areaPrincipal || "";
+                const macroPossivel = macroArea?.areaPossivel || "";
+                const macroEvitar = macroArea?.areaEvitar || "";
+
+                return (
+                  <Card key={`completed-${item.id}`} className="border border-border/70">
+                    <div className="p-4 space-y-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-semibold">{item.name || "Sem nome"}</p>
+                        <Badge variant="secondary" className="text-xs">{item.email}</Badge>
+                        <Badge variant="outline" className="text-xs">Quiz {quizVersion.toUpperCase()}</Badge>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {quizVersion === "v2" ? (
+                          <span>
+                            Macroárea: Principal {macroPrincipal || "N/A"} | Possível {macroPossivel || "N/A"} | Evitar {macroEvitar || "N/A"}
+                          </span>
+                        ) : (
+                          <span>
+                            Perfil RIASEC: {riasecTop || "N/A"}
+                            {riasecSecondary ? ` / ${riasecSecondary}` : ""}
+                          </span>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-sm font-semibold">Respostas escritas</p>
+                        {textAnswers.length === 0 ? (
+                          <p className="text-sm text-muted-foreground">Sem respostas escritas.</p>
+                        ) : (
+                          <div className="grid gap-2">
+                            {textAnswers.map((answer, idx) => (
+                              <div key={`${item.id}-completed-text-${idx}`} className="text-sm">
+                                <span className="font-medium">{answer.question || "Pergunta"}:</span>{" "}
+                                <span className="text-muted-foreground">{answer.answer || "Sem resposta"}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
         </Card>
 
         {isLoading && (
