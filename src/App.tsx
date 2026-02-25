@@ -7,6 +7,7 @@ import { Helmet } from "react-helmet";
 import { useEffect } from "react";
 import { ThemeProvider } from "@/components/theme-provider";
 import Index from "./pages/Index";
+import TesteVocacional from "./pages/TesteVocacional";
 import { PaidContent } from "./pages/PaidContent";
 import AdminPayments from "./pages/AdminPayments";
 import AdminUsers from "./pages/AdminUsers";
@@ -55,6 +56,7 @@ const App = () => (
           <CanonicalLink />
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/testevocacional" element={<TesteVocacional />} />
             <Route path="/paid-content" element={<PaidContent />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />

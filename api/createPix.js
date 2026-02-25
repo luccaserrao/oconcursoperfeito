@@ -40,78 +40,65 @@ export default async function handler(req, res) {
       ? webhookBase
       : `${webhookBase.replace(/\/$/, "")}/api/pixWebhook`;
 
-    // 1) Cria ou reaproveita pedido pendente no Supabase
+    // 1) Cria pedido unico por tentativa (nao reutiliza), mas evita gerar PIX se ja estiver pago
     let orderRecord = null;
     if (!supabase) {
       console.error("Supabase client not configured; skipping order insert for PIX");
     } else {
       try {
-        let existing = null;
+        let paidOrder = null;
 
         if (quizResponseId) {
           const { data: rows, error: fetchErr } = await supabase
             .from("orders")
             .select("id, payment_status")
             .eq("quiz_response_id", quizResponseId)
+            .eq("payment_status", "paid")
             .order("created_at", { ascending: false })
             .limit(1);
           if (fetchErr && fetchErr.code !== "PGRST116") {
-            console.error("Erro ao buscar pedido existente (quiz_response_id):", fetchErr);
+            console.error("Erro ao buscar pedido pago (quiz_response_id):", fetchErr);
           }
-          if (rows && rows.length) existing = rows[0];
+          if (rows && rows.length) paidOrder = rows[0];
         }
 
-        if (!existing && userEmail) {
+        if (!paidOrder && userEmail) {
           const { data: rows, error: fetchErr } = await supabase
             .from("orders")
             .select("id, payment_status")
             .eq("user_email", userEmail)
-            .not("payment_status", "eq", "paid")
+            .eq("payment_status", "paid")
             .order("created_at", { ascending: false })
             .limit(1);
           if (fetchErr && fetchErr.code !== "PGRST116") {
-            console.error("Erro ao buscar pedido existente (email):", fetchErr);
+            console.error("Erro ao buscar pedido pago (email):", fetchErr);
           }
-          if (rows && rows.length) existing = rows[0];
+          if (rows && rows.length) paidOrder = rows[0];
         }
 
-        if (existing) {
-          const { data: updated, error: updateErr } = await supabase
-            .from("orders")
-            .update({
-              user_email: userEmail,
-              user_name: userName,
-              quiz_response_id: quizResponseId || null,
-              amount: valueInCents,
-              payment_status: "pending",
-            })
-            .eq("id", existing.id)
-            .select()
-            .single();
-          if (updateErr) {
-            console.error("Erro ao atualizar pedido existente:", updateErr);
-          } else {
-            orderRecord = updated;
-          }
+        if (paidOrder) {
+          return res.status(200).json({
+            already_paid: true,
+            order_id: paidOrder.id,
+            payment_status: "paid",
+          });
         }
 
-        if (!orderRecord) {
-          const { data: inserted, error: insertErr } = await supabase
-            .from("orders")
-            .insert({
-              user_email: userEmail,
-              user_name: userName,
-              quiz_response_id: quizResponseId || null,
-              amount: valueInCents,
-              payment_status: "pending",
-            })
-            .select()
-            .single();
-          if (insertErr) {
-            console.error("Erro ao criar pedido para PIX:", insertErr);
-          } else {
-            orderRecord = inserted;
-          }
+        const { data: inserted, error: insertErr } = await supabase
+          .from("orders")
+          .insert({
+            user_email: userEmail,
+            user_name: userName,
+            quiz_response_id: quizResponseId || null,
+            amount: valueInCents,
+            payment_status: "pending",
+          })
+          .select()
+          .single();
+        if (insertErr) {
+          console.error("Erro ao criar pedido para PIX:", insertErr);
+        } else {
+          orderRecord = inserted;
         }
       } catch (dbErr) {
         console.error("Erro inesperado ao preparar pedido PIX:", dbErr);

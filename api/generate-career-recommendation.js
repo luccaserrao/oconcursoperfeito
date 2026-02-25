@@ -33,6 +33,12 @@ export default async function handler(req, res) {
       parsed = {};
     }
 
+    const skipEmailSequence =
+      parsed.skip_email_sequence === true ||
+      parsed.skip_email_sequence === "true" ||
+      parsed.skipEmailSequence === true ||
+      parsed.skipEmailSequence === "true";
+
     const payload = {
       name: parsed.name || parsed.user_name || "",
       email: parsed.email || parsed.user_email || "",
@@ -80,7 +86,7 @@ export default async function handler(req, res) {
     }
 
     // Schedule follow-up email sequence (fire-and-forget)
-    if (data?.id && payload.email && payload.name) {
+    if (!skipEmailSequence && data?.id && payload.email && payload.name) {
       const scheduleUrl = `${supabaseUrl.replace(/\/$/, "")}/functions/v1/schedule-email-sequence`;
       try {
         await fetch(scheduleUrl, {

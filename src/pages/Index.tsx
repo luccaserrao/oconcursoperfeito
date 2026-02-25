@@ -8,7 +8,7 @@ import ErrorPage from "./ErrorPage";
 import { QuizAnswer, CareerRecommendation, MacroAreaResult, RiasecResult } from "@/types/quiz";
 import { toast } from "sonner";
 import { getHomeVariant, setGAUserProperties, trackEvent } from "@/lib/analytics";
-import { getQuizTrackingContext } from "@/lib/quizTracking";
+import { getQuizTrackingContext, trackJourneyStep } from "@/lib/quizTracking";
 import { calculateRiasecScores } from "@/lib/riasec";
 import { calculateMacroArea } from "@/lib/calculateMacroArea";
 import { quizQuestionsV1, quizQuestionsV2 } from "@/data/quizQuestions";
@@ -121,6 +121,30 @@ const Index = () => {
     hasTrackedHomeView.current = true;
   }, [currentStep, homeVariant]);
 
+  useEffect(() => {
+    if (currentStep === "landing") {
+      trackJourneyStep({
+        step: "landing_viewed",
+        quiz_version: quizVersion,
+        home_variant: homeVariant,
+      });
+    }
+    if (currentStep === "preparation") {
+      trackJourneyStep({
+        step: "preparation_viewed",
+        quiz_version: quizVersion,
+        home_variant: homeVariant,
+      });
+    }
+    if (currentStep === "quiz") {
+      trackJourneyStep({
+        step: "quiz_started",
+        quiz_version: quizVersion,
+        home_variant: homeVariant,
+      });
+    }
+  }, [currentStep, quizVersion, homeVariant]);
+
   const handleStartQuiz = () => {
     trackEvent("quiz_start_clicked");
     setCurrentStep("preparation");
@@ -143,6 +167,11 @@ const Index = () => {
     setQuizAnswers(answers);
     setRiasecResult(riasecScore || null);
     setMacroAreaResult(macroResult || null);
+    trackJourneyStep({
+      step: "quiz_completed",
+      quiz_version: quizVersion,
+      home_variant: homeVariant,
+    });
     trackEvent("email_form_viewed");
     setCurrentStep("email");
   };
@@ -240,22 +269,32 @@ const Index = () => {
 
       setRecommendation(localRecommendation);
       setQuizResponseId(data?.id);
+      trackJourneyStep({
+        step: "email_submitted",
+        quiz_version: quizVersion,
+        home_variant: homeVariant,
+        quiz_response_id: data?.id || null,
+      });
 
       // Send welcome email (do not block flow if it fails)
-      try {
-        await fetch("/api/send-welcome-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userName: safeName,
-            userEmail: trimmedEmail,
-          }),
-        });
-        console.log("Welcome email sent successfully");
-      } catch (emailError) {
-        console.error("Error sending welcome email:", emailError);
+      if (data?.id) {
+        try {
+          await fetch("/api/send-welcome-email", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: safeName,
+              email: trimmedEmail,
+              quizResponseId: data.id,
+              careerName: localRecommendation.careerName,
+            }),
+          });
+          console.log("Welcome email sent successfully");
+        } catch (emailError) {
+          console.error("Error sending welcome email:", emailError);
+        }
       }
 
       setCurrentStep("results");
@@ -294,12 +333,53 @@ const Index = () => {
 
       setRecommendation(fallbackRecommendation);
       setQuizResponseId(undefined);
+
+      // Fallback: tentar salvar o quiz mesmo se a recomendacao falhar
+      try {
+        const saveResp = await fetch("/api/saveQuiz", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            answers: quizAnswers,
+            name: safeName,
+            email: trimmedEmail,
+            riasec: fallbackRiasec,
+            whatsapp: "",
+            quiz_version: quizVersion,
+            macro_area_result: fallbackMacro,
+            ...trackingPayload,
+          }),
+        });
+
+        if (saveResp.ok) {
+          const saveData = await saveResp.json();
+          if (saveData?.id) {
+            setQuizResponseId(saveData.id);
+            trackJourneyStep({
+              step: "email_submitted",
+              quiz_version: quizVersion,
+              home_variant: homeVariant,
+              quiz_response_id: saveData.id,
+            });
+          }
+        }
+      } catch (saveError) {
+        console.error("Erro ao salvar quiz (fallback):", saveError);
+      }
       setCurrentStep("results");
       toast.warning("Não conseguimos gerar o relatório completo agora. Mostramos um resultado parcial.");
     }
   };
 
   const handleUpsellClick = async () => {
+    trackJourneyStep({
+      step: "upsell_clicked",
+      quiz_version: quizVersion,
+      home_variant: homeVariant,
+      quiz_response_id: quizResponseId || null,
+    });
     try {
       await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/track-upsell-click`, {
         method: "POST",

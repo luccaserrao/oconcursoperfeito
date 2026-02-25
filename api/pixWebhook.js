@@ -1,4 +1,5 @@
 import { supabase } from "./supabaseClient.js";
+import { deliverPaidResult } from "./lib/deliverPaidResult.js";
 
 const parseBody = (payload) => {
   if (!payload) return {};
@@ -232,6 +233,9 @@ export default async function handler(req, res) {
     if (normalizedStatus === "paid" && order.payment_status !== "paid") {
       updates.payment_status = "paid";
       updates.paid_at = new Date().toISOString();
+      if (!order.result_email_sent_at && !order.result_email_status) {
+        updates.result_email_status = "pending";
+      }
     } else if (normalizedStatus === "rejected" && order.payment_status !== "paid") {
       updates.payment_status = "rejected";
     }
@@ -250,6 +254,30 @@ export default async function handler(req, res) {
     }
 
     await logWebhook("pix_webhook", body, null);
+
+    const finalOrder = updated || order;
+    const isPaid = (finalOrder?.payment_status || "").toLowerCase() === "paid";
+
+    if (isPaid && finalOrder?.quiz_response_id && supabase) {
+      try {
+        await supabase
+          .from("quiz_responses")
+          .update({
+            result_status: "paid",
+            paid_at: new Date().toISOString(),
+          })
+          .eq("id", finalOrder.quiz_response_id);
+      } catch (quizUpdateError) {
+        console.error("Erro ao atualizar quiz_responses pago:", quizUpdateError);
+      }
+    }
+
+    if (isPaid) {
+      const delivery = await deliverPaidResult({ orderId: finalOrder.id, source: "pix_webhook" });
+      if (!delivery?.ok) {
+        console.error("Falha ao enviar resultado pago (webhook):", delivery?.error || "unknown");
+      }
+    }
 
     return res.status(200).json({
       ok: true,

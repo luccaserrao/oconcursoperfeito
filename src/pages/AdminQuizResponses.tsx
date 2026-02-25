@@ -101,6 +101,51 @@ type QuizAnalytics = {
   }>;
 };
 
+type JourneyStepSummary = {
+  step: string;
+  label: string;
+  reached: number;
+  sequential: number;
+  conversion_rate: number;
+};
+
+type JourneyRow = {
+  session_id: string;
+  first_seen: string | null;
+  last_seen: string | null;
+  source?: string | null;
+  quiz_version?: string | null;
+  email?: string | null;
+  quiz_response_id?: string | null;
+  order_id?: string | null;
+  paid_at?: string | null;
+  amount?: number | null;
+  steps: Record<string, string>;
+};
+
+type JourneyAnalytics = {
+  period_days: number;
+  steps: JourneyStepSummary[];
+  funnel: {
+    total_sessions: number;
+    completed_sessions: number;
+    completion_rate: number;
+  };
+  journeys: JourneyRow[];
+};
+
+const journeyStepDefinitions = [
+  { step: "landing_viewed", label: "Landing" },
+  { step: "preparation_viewed", label: "Preparacao" },
+  { step: "quiz_started", label: "Inicio do quiz" },
+  { step: "quiz_completed", label: "Conclusao do quiz" },
+  { step: "email_submitted", label: "Email enviado" },
+  { step: "results_viewed", label: "Resultado visto" },
+  { step: "upsell_clicked", label: "Clique no upsell" },
+  { step: "checkout_started", label: "Checkout iniciado" },
+  { step: "payment_confirmed", label: "Pagamento confirmado" },
+];
+
 const formatDate = (value: string) => {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
@@ -162,6 +207,11 @@ const formatMinutes = (value: number) => {
   if (value < 1) return "<1 min";
   if (value >= 60) return `${(value / 60).toFixed(1)} h`;
   return `${Math.round(value)} min`;
+};
+
+const shortId = (value?: string | null) => {
+  if (!value) return "";
+  return value.slice(0, 8);
 };
 
 const AdminQuizResponses = () => {
@@ -317,7 +367,48 @@ const AdminQuizResponses = () => {
     },
   });
 
-  const isRefreshing = isFetching || isFetchingAnalytics;
+  const {
+    data: journeyAnalytics,
+    isFetching: isFetchingJourney,
+    error: journeyError,
+    refetch: refetchJourney,
+  } = useQuery<JourneyAnalytics, Error>({
+    queryKey: ["journey-analytics", token, analyticsDays],
+    enabled: Boolean(token),
+    queryFn: async () => {
+      if (!token) {
+        return {
+          period_days: analyticsDays,
+          steps: [],
+          funnel: { total_sessions: 0, completed_sessions: 0, completion_rate: 0 },
+          journeys: [],
+        };
+      }
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (!supabaseUrl) {
+        throw new Error("VITE_SUPABASE_URL nao configurada");
+      }
+
+      const url = `${supabaseUrl}/functions/v1/get-journey-analytics?days=${analyticsDays}`;
+      const response = await fetch(url, {
+        headers: {
+          "x-admin-token": token,
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        const message = body?.error || "Erro ao buscar jornada";
+        throw new Error(message);
+      }
+
+      return response.json();
+    },
+  });
+
+  const isRefreshing = isFetching || isFetchingAnalytics || isFetchingJourney;
 
   const handleSaveToken = (e: React.FormEvent) => {
     e.preventDefault();
@@ -393,6 +484,34 @@ const AdminQuizResponses = () => {
       conversionBySource: analytics.conversion_by_source || [],
     };
   }, [analytics]);
+
+  const journeySummary = useMemo(() => {
+    if (!journeyAnalytics) {
+      return {
+        periodDays: analyticsDays,
+        steps: [] as JourneyStepSummary[],
+        funnel: { total_sessions: 0, completed_sessions: 0, completion_rate: 0 },
+        journeys: [] as JourneyRow[],
+      };
+    }
+    return {
+      periodDays: journeyAnalytics.period_days || analyticsDays,
+      steps: journeyAnalytics.steps || [],
+      funnel: journeyAnalytics.funnel || { total_sessions: 0, completed_sessions: 0, completion_rate: 0 },
+      journeys: journeyAnalytics.journeys || [],
+    };
+  }, [journeyAnalytics, analyticsDays]);
+
+  const journeySteps = journeySummary.steps.length
+    ? journeySummary.steps
+    : journeyStepDefinitions.map((def) => ({
+        step: def.step,
+        label: def.label,
+        reached: 0,
+        sequential: 0,
+        conversion_rate: 0,
+      }));
+  const journeyBase = journeySteps[0]?.sequential || 0;
 
   const recentDailyRows = useMemo(() => {
     const rows = analyticsSummary.dailyTracked.length ? analyticsSummary.dailyTracked : analyticsSummary.daily;
@@ -649,6 +768,7 @@ const AdminQuizResponses = () => {
                 onClick={() => {
                   refetch();
                   refetchAnalytics();
+                  refetchJourney();
                 }}
                 disabled={isRefreshing}
               >
@@ -740,6 +860,105 @@ const AdminQuizResponses = () => {
             </div>
           </Card>
         )}
+
+        {journeyError && (
+          <Card className="border-orange-300/60 bg-orange-100/30">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-orange-500 mt-0.5" />
+              <div>
+                <p className="font-semibold">Erro ao carregar funil completo</p>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {journeyError.message}
+                </p>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        <Card className="p-4 space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+              <p className="text-sm text-muted-foreground">Funil completo</p>
+              <p className="text-xs text-muted-foreground">
+                Ultimos {journeySummary.periodDays} dias
+              </p>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Total de sessoes: {journeySummary.funnel.total_sessions} | Concluiram tudo: {journeySummary.funnel.completed_sessions} | Taxa: {formatPercent(journeySummary.funnel.completion_rate)}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {journeySteps.map((step, index) => (
+              <div key={`journey-step-${step.step}`} className="p-4 rounded-lg border bg-muted/40">
+                <p className="text-sm text-muted-foreground">{step.label}</p>
+                <p className="text-2xl font-bold">{step.sequential}</p>
+                <p className="text-xs text-muted-foreground">
+                  {index === 0 ? "Base total" : `Conversao: ${formatPercent(step.conversion_rate)}`}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <Separator />
+
+          <div className="space-y-3">
+            {journeySteps.map((step) => {
+              const width = journeyBase ? Math.max(4, Math.round((step.sequential / journeyBase) * 100)) : 0;
+              return (
+                <div key={`journey-bar-${step.step}`} className="space-y-1">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{step.label}</span>
+                    <span>{step.sequential}</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-muted/60 overflow-hidden">
+                    <div className="h-full bg-primary" style={{ width: `${width}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <Separator />
+
+          <div className="space-y-3">
+            <p className="text-sm font-semibold">Jornadas recentes</p>
+            {journeySummary.journeys.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Sem dados de jornadas no periodo.</p>
+            ) : (
+              <div className="w-full overflow-x-auto">
+                <div className="min-w-[1200px] space-y-2">
+                  <div className="grid grid-cols-15 gap-2 text-xs text-muted-foreground">
+                    <span>Sessao</span>
+                    <span>Primeiro</span>
+                    <span>Ultimo</span>
+                    <span>Origem</span>
+                    <span>Versao</span>
+                    <span>Email</span>
+                    {journeyStepDefinitions.map((step) => (
+                      <span key={`journey-header-${step.step}`}>{step.label}</span>
+                    ))}
+                  </div>
+                  {journeySummary.journeys.map((journey) => (
+                    <div key={`journey-${journey.session_id}`} className="grid grid-cols-15 gap-2 text-xs">
+                      <span className="font-mono">{shortId(journey.session_id)}</span>
+                      <span>{journey.first_seen ? formatDate(journey.first_seen) : "—"}</span>
+                      <span>{journey.last_seen ? formatDate(journey.last_seen) : "—"}</span>
+                      <span>{journey.source || "direto"}</span>
+                      <span>{journey.quiz_version ? journey.quiz_version.toUpperCase() : "—"}</span>
+                      <span className="truncate">{journey.email || "—"}</span>
+                      {journeyStepDefinitions.map((step) => (
+                        <span key={`journey-${journey.session_id}-${step.step}`}>
+                          {journey.steps?.[step.step] ? formatDate(journey.steps[step.step]) : "—"}
+                        </span>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
 
         <Card className="p-4 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">

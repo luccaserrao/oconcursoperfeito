@@ -42,6 +42,11 @@ export default async function handler(req, res) {
     const utmTerm = body.utm_term || null;
     const referrer = body.referrer || null;
     const landingPath = body.landing_path || null;
+    const skipEmailSequence =
+      body.skip_email_sequence === true ||
+      body.skip_email_sequence === "true" ||
+      body.skipEmailSequence === true ||
+      body.skipEmailSequence === "true";
 
     if (!name || !email) {
       res.status(400).json({ error: "Nome e email obrigatorios." });
@@ -83,16 +88,18 @@ export default async function handler(req, res) {
       return;
     }
 
-    try {
-      await supabase.functions.invoke("schedule-email-sequence", {
-        body: {
-          quizResponseId: data.id,
-          userEmail: email,
-          userName: name,
-        },
-      });
-    } catch (scheduleError) {
-      console.error("Falha ao agendar sequencia de emails:", scheduleError);
+    if (!skipEmailSequence) {
+      try {
+        await supabase.functions.invoke("schedule-email-sequence", {
+          body: {
+            quizResponseId: data.id,
+            userEmail: email,
+            userName: name,
+          },
+        });
+      } catch (scheduleError) {
+        console.error("Falha ao agendar sequencia de emails:", scheduleError);
+      }
     }
 
     res.status(200).json({ success: true, id: data.id });

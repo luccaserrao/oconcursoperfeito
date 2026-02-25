@@ -1,47 +1,167 @@
-# Estratégia de otimização do funil
+# Plano de ajuste do funil do quiz (baseado em feedback real de comprador)
 
-## Resumo executivo
-Este plano aborda os gargalos identificados no funil atual (captura de lead, preparação/quiz, tela de resultado e follow-up) para aumentar conversão e fluidez. Prioriza redução de fricção, pré-venda do upsell de R$25, urgência com prova de segurança e ativação de prova social junto ao CTA pago.
+## Contexto do feedback analisado
+Feedback recebido de usuário que comprou o relatório completo:
+- Quiz percebido como claro e confiável.
+- Dúvida pontual com termos genéricos (ex.: "rotinas operacionais") para público iniciante.
+- Percepção de ausência do tema salarial no percurso do quiz.
+- Forte gatilho de compra por confiança + curiosidade sobre a origem das informações.
 
-## Metas principais
-- Aumentar taxa de captura de e-mail: +8–12% em mobile.
-- Elevar conversão para o relatório pago de R$25: +10–15% no take-rate do upsell.
-- Reduzir abandono na tela de resultado: -5–8%.
-- Ampliar receita por lead via remarketing: +5–10% de conversões tardias.
+Leitura estratégica: o funil já converte por credibilidade, mas há três oportunidades diretas de crescimento:
+1) reduzir carga cognitiva de iniciantes (clareza sem jargão);
+2) deixar a proposta salarial explícita e verificável;
+3) reforçar transparência metodológica antes do checkout.
 
-## Intervenções por etapa
-### 1) Captura de e-mail (lead)
-- **Simplificar formulário**: pedir apenas e-mail na primeira dobra; nome opcional após envio ou pré-preenchido de forma suave.
-- **LGPD sem atrito**: checkbox pré-marcado com copy de segurança ("Você pode cancelar a qualquer momento") e validação apenas no submit.
-- **Microcopy de valor**: adicionar bullet "Receba seu relatório parcial grátis agora" junto ao botão.
-- **Teste A/B de layout**: versão compacta em uma coluna vs. versão atual para mobile.
+---
 
-### 2) Preparação e quiz
-- **Pré-aquecimento do upsell**: inserir microbanners entre perguntas com promessa do plano de estudos completo ao final.
-- **Barra de progresso clara**: mostrar percentual e tempo estimado restante para reduzir abandono.
-- **Mensagem de benefício imediato**: reforçar que o diagnóstico gratuito é liberado logo após o quiz, antes da oferta paga.
+## Diagnóstico do funil completo (estado atual)
 
-### 3) Tela de resultado (paywall leve)
-- **Reformulação da urgência**: trocar o aviso de "apagar dados em 5 min" por timer de oferta com selo de pagamento seguro e garantia de satisfação.
-- **Prova social acoplada ao CTA**: mover 1–2 depoimentos + contador de usuários para abaixo do botão de pagamento (MercadoPago) e repetir selo de segurança.
-- **Ancoragem e bônus**: destacar comparação de valor ("R$25 vs 1 mês de cursinho") e bônus rápido (checklist de edital ou mini plano de estudos).
-- **CTA redundante e fixo**: manter botão flutuante, mas alinhar copy com oferta principal para evitar dispersão.
+### 1) Landing / pré-quiz
+**O que funciona hoje**
+- Promessa clara de direcionamento e redução de erro de escolha.
+- Prova social e linguagem de benefício.
 
-### 4) Pós-lead e remarketing
-- **E-mail automático para não compradores**: enviar em 24h com recorte do resultado, CTA de upgrade e cupom limitado (se permitido pela oferta).
-- **Sequência curta**: 3 e-mails em 5 dias com casos de sucesso e snippet do relatório completo.
-- **Segmentação por perfil RIASEC**: adaptar a promessa do relatório pago à persona do candidato (ex.: "Estilo Realista: roteiros de treino prático").
+**Gargalo observado pelo feedback**
+- Ainda não antecipa de forma didática que alguns termos do quiz podem parecer técnicos para iniciantes.
+- Transparência de metodologia aparece mais forte no fim do funil do que no início.
 
-## Métricas e experimentos
-- **Captura**: taxa de submissão (envios / visitas) por dispositivo; monitorar bounce em mobile.
-- **Quiz**: completion rate e tempo médio por pergunta; abandono por etapa.
-- **Paywall**: take-rate do upsell, CTR em CTAs, e rejeição no checkout.
-- **Pós-lead**: open/click/upgrade da cadência de e-mail; receita por lead.
-- **Teste A/B**: rodar por 7–14 dias com mínimo de 400 conversões por variante para significância básica.
+### 2) Quiz (respostas e experiência)
+**O que funciona hoje**
+- Estrutura direta e objetiva; percepção de clareza geral positiva.
 
-## Backlog de implementação
-1. Criar variante do formulário de captura em duas etapas com copy de segurança.
-2. Inserir microbanners de pré-venda no quiz e barra de progresso clara.
-3. Reescrever bloco de oferta na tela de resultado com garantia, prova social acoplada e ancoragem.
-4. Configurar automação de e-mail pós-lead com segmentação por perfil.
-5. Instrumentar eventos de analytics para cada etapa (captura, quiz, paywall, checkout, e-mails).
+**Gargalo observado pelo feedback**
+- Termos como "rotina operacional" podem ser ambíguos para quem está no começo.
+- Falta de glossário inline (definição curta no momento da dúvida).
+
+### 3) Resultado gratuito / tela de oferta
+**O que funciona hoje**
+- Gera confiança e desperta curiosidade para o relatório completo.
+
+**Gargalo observado pelo feedback**
+- Possível desalinhamento entre expectativa de "análise salarial" e percepção do usuário no fluxo.
+- Usuário quer entender melhor "de onde vêm as informações" antes/depois de pagar.
+
+### 4) Pós-compra / entrega do relatório
+**O que funciona hoje**
+- Usuário compra por confiança e vontade de aprofundar.
+
+**Gargalo observado pelo feedback**
+- Risco de arrependimento silencioso se o relatório não tornar visíveis:
+  - fontes de dados;
+  - lógica de recomendação;
+  - recorte salarial por carreira/faixa/região.
+
+---
+
+## Plano de ajuste (priorizado)
+
+## Fase 1 — Correções rápidas (1 a 2 semanas)
+1. **Adicionar microglossário no quiz (alto impacto, baixo esforço)**
+   - Inserir ícone de ajuda/tooltip em termos técnicos.
+   - Exemplo de definição: "Rotina operacional = atividades práticas do dia a dia, como fiscalização em campo, atendimento de ocorrência e execução de procedimentos."
+   - Objetivo: reduzir dúvidas sem aumentar o número de perguntas.
+
+2. **Reescrever alternativas com linguagem duplamente clara**
+   - Formato recomendado: termo técnico + exemplo concreto.
+   - Ex.: "Operações e rotina operacional" → "Operações práticas do dia a dia (ex.: fiscalização, patrulhamento, atendimento em campo)".
+
+3. **Sinalizar salário já no resultado gratuito**
+   - Inserir bloco "Faixa salarial média da área indicada" com observação: variação por órgão, estado e edital.
+   - Não precisa entregar tudo de graça; basta confirmar que o tema existe e será detalhado no relatório completo.
+
+4. **Adicionar bloco curto 'Como chegamos ao seu resultado' antes do CTA pago**
+   - 3 bullets:
+     - Perfil comportamental (RIASEC + respostas objetivas);
+     - Cruzamento com requisitos e rotina dos cargos;
+     - Referências públicas de editais/remuneração.
+
+## Fase 2 — Estrutura de confiança e valor (2 a 4 semanas)
+5. **Seção de metodologia expandida (acordeão) na oferta**
+   - "Quais fontes usamos" (editais, portais oficiais, séries históricas internas).
+   - "Como atualizamos" (periodicidade).
+   - "Limites da análise" (salário inicial x progressão; variação regional).
+
+6. **Reposicionar proposta salarial no funil**
+   - Landing: promessa explícita "compatibilidade + faixa salarial + realidade da rotina".
+   - Quiz: 1 pergunta de prioridade (salário, estabilidade, afinidade, qualidade de vida).
+   - Oferta: preview de faixa salarial com trava para detalhamento completo.
+
+7. **Pós-compra com onboarding orientado a confiança**
+   - Primeiro bloco do relatório: "Como interpretar este diagnóstico".
+   - Incluir "o que este relatório não promete" para calibrar expectativa.
+
+## Fase 3 — Otimização com experimentos (4 a 8 semanas)
+8. **Teste A/B de clareza de linguagem no quiz**
+   - Variante A: texto atual.
+   - Variante B: texto com exemplos e microglossário.
+   - Métrica principal: taxa de conclusão do quiz.
+
+9. **Teste A/B da transparência metodológica na oferta**
+   - Variante A: CTA direto.
+   - Variante B: CTA + bloco de fontes/metodologia acima do botão.
+   - Métrica principal: conversão para compra.
+
+10. **Teste A/B da ancoragem salarial**
+   - Variante A: salário aparece só no relatório.
+   - Variante B: preview de faixa salarial no resultado gratuito.
+   - Métrica principal: CTR no checkout e taxa de compra.
+
+---
+
+## Backlog de implementação por área
+
+### Produto/UX
+- Mapear e marcar no questionário todos os termos com potencial de ambiguidade.
+- Definir padrão de "linguagem para iniciantes": frase curta + exemplo.
+- Incluir componente de tooltip/glossário reutilizável.
+
+### Conteúdo/Cópia
+- Criar glossário com 10–20 termos recorrentes (operacional, conformidade, auditoria, etc.).
+- Reescrever promessas de salário com linguagem responsável (sem superpromessa).
+- Escrever seção "metodologia e fontes" em duas camadas: curta (antes da compra) e completa (no relatório).
+
+### Dados/Operação
+- Definir tabela de fontes salariais e rotina por cargo (com data de atualização).
+- Criar rotina de revisão mensal dos dados de remuneração e editais.
+- Adicionar campo de "confiança da recomendação" por resultado.
+
+### Analytics
+- Instrumentar eventos:
+  - `quiz_tooltip_opened`
+  - `quiz_term_clarification_used`
+  - `salary_preview_viewed`
+  - `methodology_section_opened`
+  - `methodology_section_opened_before_checkout`
+- Criar dashboard por etapa para comparar iniciantes vs. usuários experientes.
+
+---
+
+## KPIs de sucesso
+- **Clareza**: queda de dúvidas sobre termos técnicos em pesquisas qualitativas e suporte.
+- **Engajamento do quiz**: +5% a +10% na conclusão para perfis iniciantes.
+- **Confiança pré-compra**: aumento de abertura da seção de metodologia sem queda de conversão.
+- **Conversão paga**: +8% a +15% no take-rate após exposição de salário + metodologia.
+- **Qualidade pós-compra**: redução de pedidos de reembolso por desalinhamento de expectativa.
+
+---
+
+## Plano operacional sugerido (30 dias)
+- **Semana 1**: revisão de copy das perguntas + microglossário + mapeamento de termos.
+- **Semana 2**: bloco de salário no resultado grátis + resumo de metodologia antes do CTA.
+- **Semana 3**: disparo dos testes A/B (clareza e metodologia) + instrumentação de eventos.
+- **Semana 4**: leitura de dados, decisão de variantes vencedoras e rollout para 100% da base.
+
+---
+
+## Riscos e mitigação
+- **Risco:** excesso de texto reduzir ritmo do quiz.
+  - **Mitigação:** usar tooltips e exemplos curtos (conteúdo sob demanda).
+- **Risco:** foco em salário gerar expectativa irreal.
+  - **Mitigação:** comunicar faixas e condicionantes (órgão, região, progressão).
+- **Risco:** transparência técnica ficar complexa demais.
+  - **Mitigação:** arquitetura em camadas (resumo simples + detalhes expandíveis).
+
+---
+
+## Resultado esperado
+Com esses ajustes, o funil mantém o que já funciona (clareza geral e confiança), resolve a fricção de iniciantes (jargão), reforça valor percebido (salário) e aumenta credibilidade decisória (metodologia/fonte), elevando conversão com menor risco de frustração pós-compra.

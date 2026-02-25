@@ -1,0 +1,79 @@
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Metodo nao permitido" });
+    return;
+  }
+
+  const supabaseUrl =
+    process.env.SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.VITE_SUPABASE_URL ||
+    "";
+  const supabaseKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_SERVICE_KEY ||
+    process.env.SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    "";
+
+  if (!supabaseUrl || !supabaseKey) {
+    res.status(500).json({ error: "Variaveis do Supabase ausentes" });
+    return;
+  }
+
+  try {
+    const rawBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body || {});
+    let parsed;
+    try {
+      parsed = typeof rawBody === "string" ? JSON.parse(rawBody || "{}") : rawBody || {};
+    } catch {
+      parsed = {};
+    }
+
+    const payload = {
+      name: parsed.name || parsed.userName || parsed.user_name || "",
+      email: parsed.email || parsed.userEmail || parsed.user_email || "",
+      quizResponseId: parsed.quizResponseId || parsed.quiz_response_id || "",
+      careerName: parsed.careerName || parsed.career_name || "Resultado do quiz",
+    };
+
+    if (!payload.name || !payload.email || !payload.quizResponseId) {
+      res.status(400).json({ error: "name, email e quizResponseId sao obrigatorios" });
+      return;
+    }
+
+    const fnUrl = `${supabaseUrl.replace(/\/$/, "")}/functions/v1/send-welcome-email`;
+
+    const response = await fetch(fnUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const text = await response.text();
+    let data;
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      data = text;
+    }
+
+    if (!response.ok) {
+      const status = Math.max(400, response.status || 500);
+      res.status(status).json({
+        error: "Erro na funcao send-welcome-email",
+        details: data,
+      });
+      return;
+    }
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Proxy error send-welcome-email:", error);
+    res.status(500).json({ error: "Erro interno ao chamar a funcao" });
+  }
+}

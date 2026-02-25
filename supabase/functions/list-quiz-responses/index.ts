@@ -54,7 +54,7 @@ serve(async (req) => {
     const { data, error } = await supabase
       .from("quiz_responses")
       .select(
-        "id, created_at, user_name, user_email, answers_json, riasec_json, quiz_version, macro_area_result, whatsapp, clicked_upsell, upsell_clicked_at, quiz_session_id, source, utm_source, utm_medium, utm_campaign, utm_content, utm_term, referrer, landing_path",
+        "id, created_at, user_name, user_email, answers_json, riasec_json, quiz_version, macro_area_result, whatsapp, clicked_upsell, upsell_clicked_at, quiz_session_id, source, utm_source, utm_medium, utm_campaign, utm_content, utm_term, referrer, landing_path, result_status, paid_at",
       )
       .order("created_at", { ascending: false })
       .limit(limit);
@@ -136,6 +136,8 @@ serve(async (req) => {
         riasec_top2: riasec?.top2 || null,
         quiz_version: (row as any).quiz_version ?? null,
         macro_area_result: (row as any).macro_area_result ?? null,
+        result_status: (row as any).result_status ?? null,
+        paid_at: (row as any).paid_at ?? null,
         paid: paidInfo,
       };
     });

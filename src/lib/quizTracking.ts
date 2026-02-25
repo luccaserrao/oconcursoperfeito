@@ -13,6 +13,28 @@ type QuizTrackingContext = {
 const QUIZ_SESSION_KEY = "quiz_session_id";
 const QUIZ_TRACKING_KEY = "quiz_tracking_context";
 const QUIZ_START_TRACKED_KEY = "quiz_start_tracked_session";
+const JOURNEY_STEPS_TRACKED_KEY = "journey_steps_tracked";
+
+type JourneyStep =
+  | "landing_viewed"
+  | "preparation_viewed"
+  | "quiz_started"
+  | "quiz_completed"
+  | "email_submitted"
+  | "results_viewed"
+  | "upsell_clicked"
+  | "checkout_started"
+  | "payment_confirmed";
+
+type JourneyTrackPayload = {
+  step: JourneyStep;
+  page_path?: string;
+  quiz_version?: string;
+  home_variant?: string;
+  quiz_response_id?: string | null;
+  order_id?: string | null;
+  metadata?: Record<string, unknown>;
+};
 
 const getSafeString = (value: string | null | undefined) => {
   if (!value) return "";
@@ -105,3 +127,82 @@ export const trackQuizStart = async (quizVersion: "v1" | "v2") => {
 };
 
 export type { QuizTrackingContext };
+
+const getQuizVersionFromStorage = () => {
+  if (typeof window === "undefined") return "";
+  const value = window.localStorage.getItem("quiz_version");
+  return value ? String(value).trim() : "";
+};
+
+const getHomeVariantFromStorage = () => {
+  if (typeof window === "undefined") return "";
+  const value = window.localStorage.getItem("home_variant");
+  return value ? String(value).trim().toUpperCase() : "";
+};
+
+const getTrackedJourneySteps = () => {
+  if (typeof window === "undefined") return {} as Record<string, Record<string, boolean>>;
+  const raw = window.localStorage.getItem(JOURNEY_STEPS_TRACKED_KEY);
+  if (!raw) return {};
+  try {
+    return JSON.parse(raw) as Record<string, Record<string, boolean>>;
+  } catch {
+    return {};
+  }
+};
+
+const markJourneyStepTracked = (sessionId: string, step: JourneyStep) => {
+  if (typeof window === "undefined") return;
+  const stored = getTrackedJourneySteps();
+  stored[sessionId] = stored[sessionId] || {};
+  stored[sessionId][step] = true;
+  window.localStorage.setItem(JOURNEY_STEPS_TRACKED_KEY, JSON.stringify(stored));
+};
+
+const isJourneyStepTracked = (sessionId: string, step: JourneyStep) => {
+  const stored = getTrackedJourneySteps();
+  return Boolean(stored?.[sessionId]?.[step]);
+};
+
+export const trackJourneyStep = async (payload: JourneyTrackPayload) => {
+  if (typeof window === "undefined") return;
+  const context = getQuizTrackingContext();
+  if (!context.quiz_session_id) return;
+
+  const sessionId = context.quiz_session_id;
+  if (isJourneyStepTracked(sessionId, payload.step)) return;
+
+  const supabaseUrl = (import.meta as any).env?.VITE_SUPABASE_URL;
+  if (!supabaseUrl) return;
+
+  markJourneyStepTracked(sessionId, payload.step);
+
+  const pagePath =
+    payload.page_path ||
+    (typeof window !== "undefined"
+      ? `${window.location.pathname}${window.location.search}`
+      : "");
+
+  const body = {
+    ...context,
+    step: payload.step,
+    page_path: pagePath,
+    quiz_version: payload.quiz_version || getQuizVersionFromStorage(),
+    home_variant: payload.home_variant || getHomeVariantFromStorage(),
+    quiz_response_id: payload.quiz_response_id || null,
+    order_id: payload.order_id || null,
+    metadata: payload.metadata || null,
+  };
+
+  try {
+    await fetch(`${supabaseUrl}/functions/v1/track-journey-step`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    // no-op
+  }
+};

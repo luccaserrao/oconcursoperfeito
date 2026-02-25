@@ -45,6 +45,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { trackEvent, trackCupomWhatsappClick } from "@/lib/analytics";
+import { trackJourneyStep } from "@/lib/quizTracking";
 
 interface ResultsProps {
   recommendation: CareerRecommendation;
@@ -55,6 +56,8 @@ interface ResultsProps {
   mode?: "free-v1" | "free-v2";
   macroAreaResult?: MacroAreaResult;
 }
+
+type PaymentStatus = "idle" | "pending" | "paid" | "rejected" | "failed";
 
 export const Results = ({
   recommendation,
@@ -82,6 +85,9 @@ export const Results = ({
   const formatMacroArea = (area: CONCURSO_AREA) => macroAreaLabels[area] || "Área Administrativa";
   const [showFloatingCta, setShowFloatingCta] = useState(false);
   const [showScrollCta, setShowScrollCta] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("idle");
+  const [resultEmailStatus, setResultEmailStatus] = useState<string | null>(null);
+  const [paidOrderId, setPaidOrderId] = useState<string | null>(null);
   const [ctaVariant] = useState<'A' | 'B'>(() => {
     if (typeof window === "undefined") return "A";
     const stored = window.localStorage.getItem("cta_variant");
@@ -111,6 +117,11 @@ export const Results = ({
     trackEvent('results_viewed', {
       career: recommendation.careerName,
       quiz_version: mode,
+    });
+    trackJourneyStep({
+      step: "results_viewed",
+      quiz_version: mode,
+      quiz_response_id: quizResponseId || null,
     });
     if (isV2) {
       trackEvent('results_viewed_v2', {
@@ -144,6 +155,18 @@ export const Results = ({
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handlePaymentStatusChange = (status: {
+    orderId?: string | null;
+    paymentStatus: PaymentStatus;
+    resultEmailStatus?: string | null;
+  }) => {
+    setPaymentStatus(status.paymentStatus);
+    setResultEmailStatus(status.resultEmailStatus || null);
+    if (status.orderId) {
+      setPaidOrderId(status.orderId);
+    }
+  };
 
   const ctaText = ctaVariant === 'A'
     ? "Quero meu plano completo agora (R$25)"
@@ -179,6 +202,7 @@ export const Results = ({
               amount={25}
               location="floating_desktop"
               quizVersion={quizVersion}
+              onStatusChange={handlePaymentStatusChange}
             />
           </div>
         </div>
@@ -186,6 +210,41 @@ export const Results = ({
 
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 pt-20 pb-12">
         <div className="container mx-auto px-4 max-w-6xl">
+          {(paymentStatus === "paid" || paymentStatus === "pending") && (
+            <Card className="mb-8 border-2 border-primary/30 bg-primary/5 p-5">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  {paymentStatus === "paid" ? (
+                    <CheckCircle2 className="w-6 h-6 text-primary" />
+                  ) : (
+                    <Clock className="w-6 h-6 text-primary" />
+                  )}
+                  <div>
+                    <p className="font-semibold text-base">
+                      {paymentStatus === "paid"
+                        ? "Pagamento confirmado"
+                        : "Aguardando confirmacao do PIX"}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {paymentStatus === "paid"
+                        ? "Seu resultado completo sera enviado por email."
+                        : "Assim que o pagamento for aprovado, enviamos o resultado completo."}
+                    </p>
+                  </div>
+                </div>
+                {paidOrderId && (
+                  <div className="text-xs text-muted-foreground">
+                    Pedido: {paidOrderId}
+                  </div>
+                )}
+                {paymentStatus === "paid" && resultEmailStatus && (
+                  <div className="text-xs text-muted-foreground">
+                    Email: {resultEmailStatus}
+                  </div>
+                )}
+              </div>
+            </Card>
+          )}
         
           {isV2 && (
             <div className="mb-14 animate-fade-in">
@@ -257,6 +316,7 @@ export const Results = ({
                       amount={25}
                       location="hero_upgrade"
                       quizVersion={quizVersion}
+                      onStatusChange={handlePaymentStatusChange}
                     />
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Lock className="w-4 h-4 text-primary" />
@@ -401,6 +461,7 @@ export const Results = ({
                     amount={25}
                     location="hero_upgrade"
                     quizVersion={quizVersion}
+                    onStatusChange={handlePaymentStatusChange}
                   />
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Lock className="w-4 h-4 text-primary" />
@@ -857,6 +918,7 @@ export const Results = ({
                     amount={25}
                     location="main_offer"
                     quizVersion={quizVersion}
+                    onStatusChange={handlePaymentStatusChange}
                   />
                   <p className="text-xs text-muted-foreground text-center">
                     Pix, cartão ou saldo Mercado Pago · conexão segura com criptografia.
@@ -882,6 +944,7 @@ export const Results = ({
                     amount={25}
                     location="scroll_banner"
                     quizVersion={quizVersion}
+                    onStatusChange={handlePaymentStatusChange}
                   />
                 </div>
               </Card>
@@ -1036,6 +1099,7 @@ export const Results = ({
                 amount={25}
                 location="final_cta"
                 quizVersion={quizVersion}
+                onStatusChange={handlePaymentStatusChange}
               />
               
               <p className="text-sm text-muted-foreground mt-4">
@@ -1056,6 +1120,7 @@ export const Results = ({
           amount={25}
           location="sticky_mobile"
           quizVersion={quizVersion}
+          onStatusChange={handlePaymentStatusChange}
         />
       </div>
 

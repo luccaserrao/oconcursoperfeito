@@ -144,6 +144,7 @@ export default async function handler(req, res) {
   // Primary routes for the public site.
   const staticRoutes = [
     { loc: "/", priority: 1.0, lastmod: staticLastMod },
+    { loc: "/testevocacional", priority: 0.9, lastmod: staticLastMod },
     { loc: "/blog", priority: 0.8, lastmod: staticLastMod },
     { loc: "/terms", priority: 0.3, lastmod: staticLastMod },
     { loc: "/privacy", priority: 0.3, lastmod: staticLastMod },
