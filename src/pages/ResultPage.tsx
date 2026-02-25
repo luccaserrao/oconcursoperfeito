@@ -4,7 +4,8 @@ import { Helmet } from "react-helmet";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { RESULT_PAGES, ResultPage } from "@/data/resultPages";
+import { RESULT_PAGES } from "@/data/resultPages";
+import type { ResultPage as ResultPageData } from "@/data/resultPages";
 import { buildCanonicalUrl } from "@/lib/seo";
 import { trackEvent } from "@/lib/analytics";
 import { trackJourneyStep } from "@/lib/quizTracking";
@@ -23,7 +24,7 @@ const Pill = ({ children }: { children: string }) => (
   </span>
 );
 
-const ResultPageView = ({ page }: { page: ResultPage }) => {
+const ResultPageView = ({ page }: { page: ResultPageData }) => {
   const canonical = buildCanonicalUrl(`/resultado/${page.slug}`);
 
   useEffect(() => {

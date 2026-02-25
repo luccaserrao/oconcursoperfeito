@@ -5,14 +5,14 @@ import { Quiz } from "@/components/Quiz";
 import { EmailCapture } from "@/components/EmailCapture";
 import { Results } from "@/components/Results";
 import ErrorPage from "./ErrorPage";
-import { QuizAnswer, CareerRecommendation, MacroAreaResult, RiasecResult } from "@/types/quiz";
+import { QuizAnswer, CareerRecommendation, MacroAreaResult, RiasecResult, CONCURSO_AREA } from "@/types/quiz";
 import { toast } from "sonner";
 import { getHomeVariant, setGAUserProperties, trackEvent } from "@/lib/analytics";
 import { getQuizTrackingContext, trackJourneyStep } from "@/lib/quizTracking";
 import { calculateRiasecScores } from "@/lib/riasec";
 import { calculateMacroArea } from "@/lib/calculateMacroArea";
 import { quizQuestionsV1, quizQuestionsV2 } from "@/data/quizQuestions";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 type Step = "landing" | "preparation" | "quiz" | "email" | "results" | "error";
 type HomeVariant = "A" | "B";
@@ -54,6 +54,7 @@ const resolveQuizVersion = (): QuizVersion => {
 
 const Index = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<Step>("landing");
   const [quizAnswers, setQuizAnswers] = useState<QuizAnswer[]>([]);
   const [recommendation, setRecommendation] = useState<CareerRecommendation | null>(null);
@@ -80,6 +81,17 @@ const Index = () => {
     return randomVariant;
   });
   const hasTrackedHomeView = useRef(false);
+
+  const getMacroAreaSlug = (area?: MacroAreaResult["areaPrincipal"]): string | null => {
+    if (!area) return null;
+    const map: Record<CONCURSO_AREA, string> = {
+      ADMINISTRATIVO: "area-administrativa",
+      TRIBUNAIS: "area-tribunais",
+      POLICIAL: "area-policial",
+      FISCAL: "area-fiscal",
+    };
+    return map[area] || null;
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -298,6 +310,11 @@ const Index = () => {
       }
 
       setCurrentStep("results");
+      const targetSlug =
+        quizVersion === "v2" ? getMacroAreaSlug(macroAreaPayload?.areaPrincipal) : null;
+      if (quizVersion === "v2" && targetSlug) {
+        navigate(`/resultado/${targetSlug}`);
+      }
       toast.success("Resultado gerado com sucesso!");
     } catch (error) {
       console.error("Error generating recommendation:", error);
@@ -369,6 +386,13 @@ const Index = () => {
         console.error("Erro ao salvar quiz (fallback):", saveError);
       }
       setCurrentStep("results");
+      const targetSlug =
+        quizVersion === "v2"
+          ? getMacroAreaSlug((fallbackMacro || macroAreaResult || undefined)?.areaPrincipal)
+          : null;
+      if (quizVersion === "v2" && targetSlug) {
+        navigate(`/resultado/${targetSlug}`);
+      }
       toast.warning("Não conseguimos gerar o relatório completo agora. Mostramos um resultado parcial.");
     }
   };
