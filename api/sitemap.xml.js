@@ -150,9 +150,16 @@ export default async function handler(req, res) {
     { loc: "/privacy", priority: 0.3, lastmod: staticLastMod },
   ];
 
+  const resultRoutes = [
+    { loc: "/resultado/area-administrativa", priority: 0.8, lastmod: staticLastMod },
+    { loc: "/resultado/area-tribunais", priority: 0.8, lastmod: staticLastMod },
+    { loc: "/resultado/area-policial", priority: 0.8, lastmod: staticLastMod },
+    { loc: "/resultado/area-fiscal", priority: 0.8, lastmod: staticLastMod },
+  ];
+
   const blogEntries = await getBlogEntries();
 
-  const allEntries = [...staticRoutes, ...blogEntries].map((entry) => ({
+  const allEntries = [...staticRoutes, ...resultRoutes, ...blogEntries].map((entry) => ({
     ...entry,
     loc: `${baseUrl}${entry.loc}`,
   }));

@@ -7,7 +7,16 @@ const ROOT_DIR = process.cwd();
 const DIST_DIR = path.join(ROOT_DIR, "dist");
 const BLOG_DIR = path.join(ROOT_DIR, "content", "blog");
 
-const STATIC_ROUTES = ["/", "/blog", "/privacy", "/terms"];
+const STATIC_ROUTES = [
+  "/",
+  "/blog",
+  "/privacy",
+  "/terms",
+  "/resultado/area-administrativa",
+  "/resultado/area-tribunais",
+  "/resultado/area-policial",
+  "/resultado/area-fiscal",
+];
 
 const getBlogRoutes = () => {
   if (!fs.existsSync(BLOG_DIR)) return [];

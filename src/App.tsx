@@ -24,6 +24,7 @@ import Obrigado from "./pages/Obrigado";
 import BlogIndex from "./pages/blog/BlogIndex";
 import BlogPostPage from "./pages/blog/BlogPostPage";
 import { buildCanonicalUrl } from "@/lib/seo";
+import ResultPage from "./pages/ResultPage";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,7 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/obrigado" element={<Obrigado />} />
+            <Route path="/resultado/:slug" element={<ResultPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/forgot-password" element={<ForgotPassword />} />
             <Route path="/admin/reset-password" element={<ResetPassword />} />
