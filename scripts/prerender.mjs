@@ -26,7 +26,7 @@ const getBlogRoutes = () => {
   for (const entry of entries) {
     if (!entry.endsWith(".md")) continue;
     const filePath = path.join(BLOG_DIR, entry);
-    const raw = fs.readFileSync(filePath, "utf8");
+    const raw = fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, "");
     const match = raw.match(/^---\s*[\r\n]+([\s\S]*?)\r?\n---/);
     let slug = "";
 
