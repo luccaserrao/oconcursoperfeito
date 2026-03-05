@@ -250,14 +250,13 @@ export const MercadoPagoButton = ({
       }
 
       if (json?.already_paid) {
-        setPaymentStatus("paid");
-        setOrderId(json?.order_id || null);
-        persistState({ orderId: json?.order_id || null, paymentStatus: "paid" });
-        notifyStatus({ orderId: json?.order_id || null, paymentStatus: "paid" });
         toast({
-          title: "Pagamento ja confirmado",
-          description: "Seu resultado completo sera enviado por email.",
+          title: "Pagamento anterior detectado",
+          description: "Gerando um novo PIX para você. Tente novamente em instantes.",
         });
+        setPaymentStatus("idle");
+        setOrderId(null);
+        setPixData(null);
         return;
       }
 
@@ -326,17 +325,12 @@ export const MercadoPagoButton = ({
     <div className="w-full space-y-3">
       <Button
         onClick={handleClick}
-        disabled={isLoading || paymentStatus === "paid"}
+        disabled={isLoading}
         size="lg"
         aria-label={`Pagar R$ ${amount} com segurança via PIX`}
         className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white text-base md:text-lg py-5 md:py-6 disabled:opacity-50 disabled:cursor-not-allowed transition-all rounded-full shadow-[var(--shadow-elevated)]"
       >
-        {paymentStatus === "paid" ? (
-          <span className="flex items-center justify-center">
-            <Check className="mr-2 w-5 h-5 flex-shrink-0" />
-            Pagamento confirmado
-          </span>
-        ) : isLoading ? (
+        {isLoading ? (
           <span className="flex items-center justify-center">
             <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
             Processando...
