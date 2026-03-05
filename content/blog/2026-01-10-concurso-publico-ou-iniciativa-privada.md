@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Concurso público ou iniciativa privada: qual vale mais a pena?"
 description: "Compare concurso público e iniciativa privada: salário, estabilidade, pressão, crescimento e estilo de trabalho para decidir com clareza seu próximo passo."
 slug: "concurso-publico-ou-iniciativa-privada"

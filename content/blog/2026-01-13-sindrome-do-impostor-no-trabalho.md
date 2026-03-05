@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Sindrome do impostor no trabalho: o que e e como superar sem se sabotar"
 description: "Como enfrentar a síndrome do impostor no trabalho: estratégias práticas para concursos e carreira, reforçando evidências de desempenho, apoio e autoconfiança."
 slug: "sindrome-do-impostor-no-trabalho"

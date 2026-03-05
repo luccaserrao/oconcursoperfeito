@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Qual profissão combina comigo? Guia sincero para não se arrepender depois"
 description: "Entenda como alinhar personalidade, interesses e rotina para descobrir qual profissão realmente combina com você, mantendo motivação e constância nos estudos."
 slug: "qual-profissao-combina-comigo"

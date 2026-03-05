@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Qual carreira seguir? Guia completo para decidir com mais segurança em 2026"
 description: "Método prático para escolher profissão alinhando valores, rotina desejada e habilidades, evitando trocas constantes e aumentando a satisfação no trabalho."
 slug: "como-saber-qual-profissao-escolher"

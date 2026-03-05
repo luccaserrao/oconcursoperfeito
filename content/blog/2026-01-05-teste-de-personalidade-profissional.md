@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Teste de personalidade profissional: o que ele revela (e o que não revela)"
 description: "Veja como um teste de personalidade profissional revela estilo de trabalho, pontos fortes e ambientes ideais para escolher concursos com mais clareza."
 slug: "teste-de-personalidade-profissional"

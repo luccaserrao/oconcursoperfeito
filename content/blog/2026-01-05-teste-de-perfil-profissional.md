@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Teste de perfil profissional: descubra seu tipo e escolha melhor"
 description: "Entenda como um teste de perfil profissional revela seu estilo de trabalho, ajuda a escolher concursos alinhados e evita decisões baseadas só em salário."
 slug: "teste-de-perfil-profissional"

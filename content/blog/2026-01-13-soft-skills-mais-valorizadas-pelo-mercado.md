@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Soft skills mais valorizadas pelo mercado: o que realmente pesa na vida real"
 description: "Soft skills mais valorizadas: comunicação, adaptabilidade, gestão do tempo e colaboração. Saiba como desenvolvê-las para concursos e carreira pública."
 slug: "soft-skills-mais-valorizadas-pelo-mercado"

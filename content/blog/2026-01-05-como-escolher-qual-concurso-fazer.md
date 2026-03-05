@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Como escolher qual concurso fazer: passo a passo para decidir sem arrependimento"
 description: "Guia prático para escolher o concurso certo alinhando rotina, perfil e expectativas, evitando frustrações e garantindo uma decisão sustentável de aprovação."
 slug: "como-escolher-qual-concurso-fazer"

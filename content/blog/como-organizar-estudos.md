@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Como organizar seus estudos para concursos"
 description: "Guia rápido para organizar estudos de concurso: cronograma semanal, blocos de revisão, questões comentadas e métricas simples para acompanhar progresso real."
 slug: "como-organizar-estudos"

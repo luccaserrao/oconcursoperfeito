@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Qual carreira seguir? Um guia prático para decidir sem se arrepender"
 description: "Aprenda a decidir qual carreira seguir cruzando perfil, oportunidades reais e estilo de vida, com passos para testar caminhos antes de investir pesado."
 slug: "qual-carreira-seguir"

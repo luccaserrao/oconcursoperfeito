@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Qual concurso é mais fácil para iniciantes? Entenda antes de escolher errado"
 description: "Descubra quais concursos são mais fáceis para iniciantes, quais bancas priorizar e como montar um plano inicial sem se perder em matérias extras e dispersão."
 slug: "qual-concurso-e-mais-facil-para-iniciantes"

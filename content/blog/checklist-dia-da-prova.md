@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Checklist do dia da prova"
 description: "Checklist do dia da prova: o que levar, como planejar deslocamento, alimentação, sono e mindset para chegar tranquilo e focado no concurso, sem imprevistos."
 slug: "checklist-dia-da-prova"

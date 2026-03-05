@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Estou perdido profissionalmente: como entender o motivo antes de escolher qualquer caminho"
 description: "Se você está perdido profissionalmente, veja como mapear interesses, testar opções e criar um plano de ação curto e prático para ganhar direção sem paralisar."
 slug: "estou-perdido-profissionalmente"

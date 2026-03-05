@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Como saber se concurso combina comigo? Um guia honesto antes de decidir"
 description: "Checklist rápido para saber se um concurso combina com você, avaliando rotina diária, cultura do órgão, cobrança e oportunidades claras de crescimento."
 slug: "como-saber-se-concurso-combina-comigo"

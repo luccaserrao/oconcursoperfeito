@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Como escolher um concurso pelo perfil (e evitar se arrepender depois da aprovação)"
 description: "Passo a passo para escolher um concurso pelo seu perfil: rotina, nível de pressão, tipo de trabalho e estabilidade que fazem sentido para sua vida e energia."
 slug: "como-escolher-um-concurso-pelo-perfil"

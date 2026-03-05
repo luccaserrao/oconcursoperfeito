@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Como alinhar carreira com perfil e valores: decidir sem se trair no caminho"
 description: "Como alinhar carreira com perfil e valores pessoais, escolhendo ambientes, rotinas e cargos que respeitam o que importa para você sem sacrificar resultados."
 slug: "como-alinhar-carreira-com-perfil-e-valores"

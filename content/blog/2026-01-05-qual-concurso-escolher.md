@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Qual concurso escolher? Como decidir com clareza e evitar arrependimentos"
 description: "Aprenda a definir qual concurso escolher considerando ambiente, pressão e estilo de vida, não só salário, para tomar uma decisão segura e sustentável."
 slug: "qual-concurso-escolher"
