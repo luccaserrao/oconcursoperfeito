@@ -156,34 +156,16 @@ export const MercadoPagoButton = ({
     }, 4000);
   };
 
+  // Não restaurar estado salvo para evitar cair direto em "pago" sem gerar PIX.
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const storedRaw = window.localStorage.getItem(STORAGE_KEY);
-    if (!storedRaw) return;
-
-    try {
-      const stored = JSON.parse(storedRaw);
-      if (!stored?.order_id || !stored?.user_email) return;
-      if (stored.user_email !== userEmail) return;
-      if (quizResponseId && stored.quiz_response_id && stored.quiz_response_id !== quizResponseId) return;
-
-      setOrderId(stored.order_id);
-      const status = (stored.payment_status || "pending") as PaymentStatus;
-      setPaymentStatus(status);
-      setResultEmailStatus(stored.result_email_status || null);
-      notifyStatus({
-        orderId: stored.order_id,
-        paymentStatus: status,
-        resultEmailStatus: stored.result_email_status || null,
-      });
-
-      if (status !== "paid") {
-        startPolling(stored.order_id);
-      }
-    } catch {
-      // ignore parse errors
+    clearPolling();
+    setOrderId(null);
+    setPaymentStatus("idle");
+    setResultEmailStatus(null);
+    setPixData(null);
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(STORAGE_KEY);
     }
-
     return () => clearPolling();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userEmail, quizResponseId]);
@@ -201,15 +183,18 @@ export const MercadoPagoButton = ({
 
   const handleClick = async () => {
     if (isLoading) return;
-    if (paymentStatus === "paid") {
-      toast({
-        title: "Pagamento ja confirmado",
-        description: "Seu resultado completo sera enviado por email.",
-      });
-      return;
-    }
 
     try {
+      // Sempre iniciar um checkout limpo.
+      clearPolling();
+      setPixData(null);
+      setPaymentStatus("idle");
+      setOrderId(null);
+      setResultEmailStatus(null);
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem(STORAGE_KEY);
+      }
+
       setIsLoading(true);
       setCopied(false);
 
@@ -236,11 +221,12 @@ export const MercadoPagoButton = ({
         description: "Estamos criando seu QR Code e o codigo para copiar e colar.",
       });
 
-      const body: Record<string, string | number | undefined> = {
+      const body: Record<string, string | number | boolean | undefined> = {
         userName,
         userEmail,
         quizResponseId,
         amount,
+        forceNew: true,
       };
 
       const resp = await fetch("/api/createPix", {

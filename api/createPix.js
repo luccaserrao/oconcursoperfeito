@@ -23,6 +23,7 @@ export default async function handler(req, res) {
     const userName = normalizeString(reqBody.userName || reqBody.name || "Cliente");
     const userEmail = normalizeString(reqBody.userEmail || reqBody.email || "").toLowerCase();
     const quizResponseId = normalizeString(reqBody.quizResponseId || reqBody.quiz_response_id || "");
+    const forceNew = reqBody.forceNew === true || reqBody.force_new === true;
 
     if (!userEmail) {
       return res.status(400).json({ error: "Email obrigatorio" });
@@ -48,7 +49,7 @@ export default async function handler(req, res) {
       try {
         let paidOrder = null;
 
-        if (quizResponseId) {
+        if (!forceNew && quizResponseId) {
           const { data: rows, error: fetchErr } = await supabase
             .from("orders")
             .select("id, payment_status")
@@ -62,7 +63,7 @@ export default async function handler(req, res) {
           if (rows && rows.length) paidOrder = rows[0];
         }
 
-        if (!paidOrder && userEmail) {
+        if (!paidOrder && !forceNew && userEmail) {
           const { data: rows, error: fetchErr } = await supabase
             .from("orders")
             .select("id, payment_status")
@@ -76,7 +77,7 @@ export default async function handler(req, res) {
           if (rows && rows.length) paidOrder = rows[0];
         }
 
-        if (paidOrder) {
+        if (!forceNew && paidOrder) {
           return res.status(200).json({
             already_paid: true,
             order_id: paidOrder.id,
