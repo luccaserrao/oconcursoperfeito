@@ -19,6 +19,7 @@ import { getQuizTrackingContext, trackJourneyStep } from "@/lib/quizTracking";
 import { trackEvent } from "@/lib/analytics";
 import { QuizAnswer, RiasecResult } from "@/types/quiz";
 import { CheckCircle2, Clock3, ShieldCheck, Sparkles } from "lucide-react";
+import { buildCanonicalUrl } from "@/lib/seo";
 
 const faqItems = [
   {
@@ -225,6 +226,7 @@ const TesteVocacional = () => {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [quizResponseId, setQuizResponseId] = useState<string | undefined>();
+  const canonical = buildCanonicalUrl("/testevocacional");
 
   useEffect(() => {
     if (step === "landing") {
@@ -491,6 +493,8 @@ const TesteVocacional = () => {
           property="og:description"
           content="Descubra sua carreira ideal com um teste vocacional rapido, baseado em RIASEC e Inteligencias Multiplas."
         />
+        <link rel="canonical" href={canonical} />
+        <meta name="robots" content="index,follow" />
         <script type="application/ld+json">{JSON.stringify(structuredFaq)}</script>
       </Helmet>
 

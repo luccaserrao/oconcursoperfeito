@@ -1,6 +1,6 @@
----
+﻿---
 title: "Insatisfacao profissional: o que fazer quando o trabalho deixa de fazer sentido"
-description: "Insatisfacao profissional nao se resolve com frases motivacionais. Entenda as causas reais, os sinais ignorados e o que fazer de forma pratica antes de tomar decisoes erradas."
+description: "Entenda as causas da insatisfação profissional e monte um plano seguro, ajustando rotina, área de atuação e expectativas de crescimento para recuperar motivação"
 slug: "insatisfacao-profissional-o-que-fazer"
 date: "2026-01-12"
 tags: ["insatisfacao profissional", "clareza profissional", "mudanca de carreira", "vida profissional"]
@@ -208,3 +208,5 @@ Insatisfacao ignorada costuma crescer, nao sumir.
 Se voce sente insatisfacao profissional e quer entender qual caminho faz mais sentido antes de decidir qualquer mudanca, o teste do FuturoPerfeito pode ajudar a organizar essa analise, conectando perfil, rotina, pressao e longo prazo.
 
 Clareza vem antes da coragem.
+
+

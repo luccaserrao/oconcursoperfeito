@@ -1,6 +1,6 @@
----
+﻿---
 title: "Qual concurso escolher? Como decidir com clareza e evitar arrependimentos"
-description: "Veja como escolher o concurso certo analisando perfil, rotina, pressão e estilo de vida — para não se arrepender depois de passar."
+description: "Aprenda a definir qual concurso escolher considerando ambiente, pressão e estilo de vida, não só salário, para tomar uma decisão segura e sustentável."
 slug: "qual-concurso-escolher"
 date: "2026-01-05"
 tags: ["concurso publico", "carreira publica", "escolha de carreira", "perfil profissional"]
@@ -112,3 +112,4 @@ e sugerimos **3 caminhos compatíveis**, explicando prós e contras.
 
 Se quiser clareza, o teste do Futuro Perfeito pode te ajudar —  
 sem promessas mágicas, só direção.
+

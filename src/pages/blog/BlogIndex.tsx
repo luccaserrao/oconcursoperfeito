@@ -15,10 +15,10 @@ const BlogIndex = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Helmet>
-        <title>Blog | O Concurso Perfeito</title>
+        <title>Blog de Concursos | Futuro Perfeito</title>
         <meta
           name="description"
-          content="Conteúdos práticos sobre preparação para concursos: organização, rotina e o dia da prova."
+          content="Artigos práticos sobre concursos: escolha da carreira, rotina de estudos e dia da prova. Leia e descubra seu melhor caminho."
         />
         <meta name="robots" content="index,follow" />
       </Helmet>

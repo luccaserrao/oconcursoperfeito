@@ -1,6 +1,6 @@
----
+﻿---
 title: "Como alinhar carreira com perfil e valores: decidir sem se trair no caminho"
-description: "Alinhar carreira com perfil e valores evita frustracao no longo prazo. Entenda como identificar seu perfil, definir objetivos realistas e escolher ambientes compatíveis."
+description: "Como alinhar carreira com perfil e valores pessoais, escolhendo ambientes, rotinas e cargos que respeitam o que importa para você sem sacrificar resultados."
 slug: "como-alinhar-carreira-com-perfil-e-valores"
 date: "2026-01-12"
 tags: ["perfil profissional", "valores profissionais", "clareza profissional", "decisao de carreira"]
@@ -219,3 +219,4 @@ Se voce quer alinhar carreira com perfil e valores antes de tomar decisoes maior
 
 Alinhamento reduz arrependimento.
 Clareza vem antes da escolha.
+

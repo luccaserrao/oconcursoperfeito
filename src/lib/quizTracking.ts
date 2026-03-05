@@ -135,9 +135,7 @@ const getQuizVersionFromStorage = () => {
 };
 
 const getHomeVariantFromStorage = () => {
-  if (typeof window === "undefined") return "";
-  const value = window.localStorage.getItem("home_variant");
-  return value ? String(value).trim().toUpperCase() : "";
+  return "B";
 };
 
 const getTrackedJourneySteps = () => {

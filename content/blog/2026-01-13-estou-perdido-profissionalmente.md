@@ -1,6 +1,6 @@
----
+﻿---
 title: "Estou perdido profissionalmente: como entender o motivo antes de escolher qualquer caminho"
-description: "Sentir-se perdido profissionalmente não é falta de capacidade. Entenda as causas reais dessa confusão, como ela afeta sua vida e como ganhar clareza antes de tomar novas decisões."
+description: "Se você está perdido profissionalmente, veja como mapear interesses, testar opções e criar um plano de ação curto e prático para ganhar direção sem paralisar."
 slug: "estou-perdido-profissionalmente"
 date: "2026-01-12"
 tags: ["clareza profissional", "insatisfacao no trabalho", "decisao de carreira", "vida profissional"]
@@ -193,3 +193,5 @@ Cuidar da mente nao resolve tudo, mas facilita decidir.
 Se voce sente que esta confuso e quer clareza antes de decidir qualquer caminho, o teste do FuturoPerfeito pode ajudar a organizar essa decisao — conectando perfil, rotina, pressao e longo prazo, sem promessas vazias.
 
 Clareza vem antes da escolha.
+
+

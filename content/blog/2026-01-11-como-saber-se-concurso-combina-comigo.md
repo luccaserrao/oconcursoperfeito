@@ -1,6 +1,6 @@
----
+﻿---
 title: "Como saber se concurso combina comigo? Um guia honesto antes de decidir"
-description: "Antes de começar a estudar para concurso público, veja como saber se esse caminho realmente combina com seu perfil, rotina e expectativas."
+description: "Checklist rápido para saber se um concurso combina com você, avaliando rotina diária, cultura do órgão, cobrança e oportunidades claras de crescimento."
 slug: "como-saber-se-concurso-combina-comigo"
 date: "2026-02-11"
 tags: ["concurso publico", "perfil profissional", "mudanca de carreira", "estabilidade"]
@@ -212,3 +212,5 @@ Se você está em dúvida e não quer entrar em algo que não combina com você,
 Sem pressão.  
 Sem ilusão.  
 Só clareza para escolher melhor.
+
+

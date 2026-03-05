@@ -1,6 +1,6 @@
----
+﻿---
 title: "Concurso público ou iniciativa privada: qual vale mais a pena?"
-description: "Uma comparação realista entre concurso público e iniciativa privada para quem busca estabilidade, bons salários e qualidade de vida."
+description: "Compare concurso público e iniciativa privada: salário, estabilidade, pressão, crescimento e estilo de trabalho para decidir com clareza seu próximo passo."
 slug: "concurso-publico-ou-iniciativa-privada"
 date: "2026-02-08"
 tags: ["concurso publico", "iniciativa privada", "carreira", "estabilidade"]
@@ -236,3 +236,4 @@ Se quiser clarear essa escolha com mais segurança, o teste do Futuro Perfeito p
 Sem pressão.  
 Sem promessa vazia.  
 Só clareza para decidir melhor.
+

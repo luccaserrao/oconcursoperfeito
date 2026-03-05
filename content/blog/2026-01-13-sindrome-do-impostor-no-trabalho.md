@@ -1,6 +1,6 @@
----
+﻿---
 title: "Sindrome do impostor no trabalho: o que e e como superar sem se sabotar"
-description: "A sindrome do impostor faz profissionais competentes se sentirem uma fraude. Entenda o que e, quais os gatilhos e como superar de forma pratica."
+description: "Como enfrentar a síndrome do impostor no trabalho: estratégias práticas para concursos e carreira, reforçando evidências de desempenho, apoio e autoconfiança."
 slug: "sindrome-do-impostor-no-trabalho"
 date: "2026-01-12"
 tags: ["sindrome do impostor", "vida profissional", "clareza profissional", "saude mental no trabalho"]
@@ -196,3 +196,5 @@ A sindrome cresce quando voce luta contra ela do jeito errado.
 Se voce sente que a sindrome do impostor esta afetando suas decisoes profissionais, o teste do FuturoPerfeito pode ajudar a organizar seu perfil, rotina, pressao e objetivos de longo prazo.
 
 Quando a mente se organiza, o impostor perde espaco.
+
+

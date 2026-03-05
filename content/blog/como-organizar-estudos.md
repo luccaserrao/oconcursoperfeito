@@ -1,6 +1,6 @@
----
+﻿---
 title: "Como organizar seus estudos para concursos"
-description: "Passo a passo para montar um plano semanal e manter o foco até a prova."
+description: "Guia rápido para organizar estudos de concurso: cronograma semanal, blocos de revisão, questões comentadas e métricas simples para acompanhar progresso real."
 slug: "como-organizar-estudos"
 date: "2025-01-05"
 tags: ["planejamento", "rotina", "foco"]
@@ -29,3 +29,5 @@ Organizar estudos para concursos é mais fácil quando você enxerga o caminho. 
 - Registre os 5 erros mais comuns e corrija no próximo ciclo de estudos.
 
 Mantenha o plano visível (quadro, planner ou app). Ajuste semanalmente: removendo o que não funcionou e repetindo o que deu resultado.
+
+

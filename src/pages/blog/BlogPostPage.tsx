@@ -222,6 +222,16 @@ const BlogPostPage = () => {
   }
 
   const canonical = buildCanonicalUrl(`/blog/${post.slug}`);
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.description,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: { "@type": "Organization", name: "Futuro Perfeito" },
+    mainEntityOfPage: canonical,
+  };
 
   const keywords = post.tags.join(", ");
   const heroImage =
@@ -249,6 +259,7 @@ const BlogPostPage = () => {
         <meta name="twitter:title" content={post.title} />
         <meta name="twitter:description" content={post.description} />
         <meta property="article:published_time" content={post.date} />
+        <script type="application/ld+json">{JSON.stringify(articleLd)}</script>
       </Helmet>
 
       <div className="space-y-10 md:space-y-14">

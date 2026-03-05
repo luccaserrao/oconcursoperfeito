@@ -1,6 +1,6 @@
----
+﻿---
 title: "Teste de personalidade profissional: o que ele revela (e o que não revela)"
-description: "Entenda como um teste de personalidade profissional pode ajudar na escolha de carreira — sem cair na ilusão de respostas mágicas."
+description: "Veja como um teste de personalidade profissional revela estilo de trabalho, pontos fortes e ambientes ideais para escolher concursos com mais clareza."
 slug: "teste-de-personalidade-profissional"
 date: "2026-02-03"
 tags: ["perfil profissional", "personalidade", "teste vocacional", "carreira"]
@@ -218,3 +218,4 @@ o teste do Futuro Perfeito pode ajudar.
 
 Sem fórmulas mágicas.  
 Só clareza para escolher melhor.
+

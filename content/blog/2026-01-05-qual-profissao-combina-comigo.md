@@ -1,6 +1,6 @@
----
+﻿---
 title: "Qual profissão combina comigo? Guia sincero para não se arrepender depois"
-description: "Um passo a passo simples para descobrir que tipo de profissão combina com você — especialmente se você pensa em concurso público."
+description: "Entenda como alinhar personalidade, interesses e rotina para descobrir qual profissão realmente combina com você, mantendo motivação e constância nos estudos."
 slug: "qual-profissao-combina-comigo"
 date: "2026-01-05"
 tags: ["teste vocacional", "escolha de carreira", "concurso publico", "orientacao profissional"]
@@ -227,3 +227,5 @@ Não decide por você.
 Mas te dá um ponto de partida muito mais sólido.
 
 Se fizer sentido, esse pode ser seu próximo passo. 🙂
+
+

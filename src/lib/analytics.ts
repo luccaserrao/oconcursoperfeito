@@ -5,14 +5,7 @@ export const trackEvent = (eventName: string, params?: Record<string, any>) => {
 };
 
 export const getHomeVariant = (): "A" | "B" => {
-  if (typeof window === "undefined") return "A";
-  try {
-    const stored = window.localStorage.getItem("home_variant");
-    const normalized = stored ? stored.trim().toUpperCase() : "";
-    return normalized === "B" ? "B" : "A";
-  } catch {
-    return "A";
-  }
+  return "B";
 };
 
 export const setGAUserProperties = (props: Record<string, any>) => {

@@ -1,6 +1,6 @@
----
+﻿---
 title: "Qual carreira seguir? Um guia prático para decidir sem se arrepender"
-description: "Se você tem dúvidas sobre qual carreira seguir, este guia ajuda a organizar suas ideias, evitar escolhas impensadas e encontrar caminhos que realmente combinam com você."
+description: "Aprenda a decidir qual carreira seguir cruzando perfil, oportunidades reais e estilo de vida, com passos para testar caminhos antes de investir pesado."
 slug: "qual-carreira-seguir"
 date: "2026-02-05"
 tags: ["carreira", "orientacao profissional", "perfil profissional", "teste vocacional"]
@@ -236,3 +236,4 @@ o teste do Futuro Perfeito pode ajudar.
 
 Sem pressa. Sem mágica.  
 Só clareza para decidir melhor.
+

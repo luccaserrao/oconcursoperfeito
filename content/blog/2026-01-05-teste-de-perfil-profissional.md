@@ -1,6 +1,6 @@
----
+﻿---
 title: "Teste de perfil profissional: descubra seu tipo e escolha melhor"
-description: "Como um teste de perfil profissional ajuda a entender seu jeito de trabalhar, evitar escolhas erradas e encontrar caminhos que combinam com você."
+description: "Entenda como um teste de perfil profissional revela seu estilo de trabalho, ajuda a escolher concursos alinhados e evita decisões baseadas só em salário."
 slug: "teste-de-perfil-profissional"
 date: "2026-02-01"
 tags: ["perfil profissional", "orientacao profissional", "teste vocacional", "carreira"]
@@ -206,3 +206,4 @@ Se quiser dar um passo simples:
 Sem promessas milagrosas — só clareza.
 
 👉 Pode fazer o teste do Futuro Perfeito quando quiser.
+

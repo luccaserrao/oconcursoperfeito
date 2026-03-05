@@ -1,6 +1,6 @@
----
+﻿---
 title: "Qual concurso devo fazer? Veja como descobrir o que realmente combina com você"
-description: "Se você quer fazer concurso público e não sabe qual escolher, este guia mostra como analisar seu perfil, rotina desejada e áreas de concurso para decidir com mais segurança."
+description: "Guia para definir qual concurso você deve fazer considerando rotina, progressão e compatibilidade de perfil, evitando arrependimentos, retrabalho e frustrações."
 slug: "qual-concurso-devo-fazer"
 date: "2026-02-09"
 tags: ["concurso publico", "escolha de carreira", "perfil profissional", "teste vocacional"]
@@ -160,3 +160,5 @@ o teste do Futuro Perfeito pode ajudar.
 
 Sem promessas mágicas —  
 apenas clareza para tomar uma decisão melhor.
+
+

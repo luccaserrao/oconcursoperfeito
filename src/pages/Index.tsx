@@ -1,4 +1,5 @@
-﻿import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet";
 import { Landing } from "@/components/Landing";
 import { PreparationScreen } from "@/components/PreparationScreen";
 import { Quiz } from "@/components/Quiz";
@@ -7,25 +8,19 @@ import { Results } from "@/components/Results";
 import ErrorPage from "./ErrorPage";
 import { QuizAnswer, CareerRecommendation, MacroAreaResult, RiasecResult, CONCURSO_AREA } from "@/types/quiz";
 import { toast } from "sonner";
-import { getHomeVariant, setGAUserProperties, trackEvent } from "@/lib/analytics";
+import { getHomeVariant, trackEvent } from "@/lib/analytics";
 import { getQuizTrackingContext, trackJourneyStep } from "@/lib/quizTracking";
 import { calculateRiasecScores } from "@/lib/riasec";
 import { calculateMacroArea } from "@/lib/calculateMacroArea";
 import { quizQuestionsV1, quizQuestionsV2 } from "@/data/quizQuestions";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { buildCanonicalUrl } from "@/lib/seo";
 
 type Step = "landing" | "preparation" | "quiz" | "email" | "results" | "error";
 type HomeVariant = "A" | "B";
 type QuizVersion = "v1" | "v2";
 
-const HOME_VARIANT_KEY = "home_variant";
 const QUIZ_VERSION_KEY = "quiz_version";
-
-const parseHomeVariant = (value: string | null): HomeVariant | null => {
-  if (!value) return null;
-  const normalized = value.trim().toUpperCase();
-  return normalized === "A" || normalized === "B" ? normalized : null;
-};
 
 const parseQuizVersion = (value: string | null): QuizVersion | null => {
   if (!value) return null;
@@ -53,7 +48,6 @@ const resolveQuizVersion = (): QuizVersion => {
 };
 
 const Index = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<Step>("landing");
   const [quizAnswers, setQuizAnswers] = useState<QuizAnswer[]>([]);
@@ -64,22 +58,7 @@ const Index = () => {
   const [userEmail, setUserEmail] = useState("");
   const [quizResponseId, setQuizResponseId] = useState<string | undefined>();
   const [quizVersion, setQuizVersion] = useState<QuizVersion>(() => resolveQuizVersion());
-  const [homeVariant, setHomeVariant] = useState<HomeVariant>(() => {
-    if (typeof window === "undefined") return "A";
-
-    const paramVariant = parseHomeVariant(new URLSearchParams(window.location.search).get("ab"));
-    if (paramVariant) {
-      window.localStorage.setItem(HOME_VARIANT_KEY, paramVariant);
-      return paramVariant;
-    }
-
-    const storedVariant = parseHomeVariant(window.localStorage.getItem(HOME_VARIANT_KEY));
-    if (storedVariant) return storedVariant;
-
-    const randomVariant: HomeVariant = Math.random() < 0.5 ? "A" : "B";
-    window.localStorage.setItem(HOME_VARIANT_KEY, randomVariant);
-    return randomVariant;
-  });
+  const homeVariant: HomeVariant = "B";
   const hasTrackedHomeView = useRef(false);
 
   const getMacroAreaSlug = (area?: MacroAreaResult["areaPrincipal"]): string | null => {
@@ -95,36 +74,10 @@ const Index = () => {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-
-    const paramVariant = parseHomeVariant(searchParams.get("ab"));
-    if (paramVariant) {
-      window.localStorage.setItem(HOME_VARIANT_KEY, paramVariant);
-      setHomeVariant(paramVariant);
-      return;
-    }
-
-    const storedVariant = parseHomeVariant(window.localStorage.getItem(HOME_VARIANT_KEY));
-    if (storedVariant) {
-      setHomeVariant(storedVariant);
-      return;
-    }
-
-    const randomVariant: HomeVariant = Math.random() < 0.5 ? "A" : "B";
-    window.localStorage.setItem(HOME_VARIANT_KEY, randomVariant);
-    setHomeVariant(randomVariant);
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
     const resolved = resolveQuizVersion();
     window.localStorage.setItem(QUIZ_VERSION_KEY, resolved);
     setQuizVersion(resolved);
   }, []);
-
-  useEffect(() => {
-    setGAUserProperties({ home_variant: homeVariant });
-    trackEvent("home_variant_assigned", { variant: homeVariant });
-  }, [homeVariant]);
 
   useEffect(() => {
     if (currentStep !== "landing") return;
@@ -430,8 +383,30 @@ const Index = () => {
     }
   };
 
+  const canonical = buildCanonicalUrl("/");
+  const productLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: "Relatório completo Futuro Perfeito",
+    offers: {
+      "@type": "Offer",
+      price: "25",
+      priceCurrency: "BRL",
+      availability: "InStock",
+    },
+  };
+
   return (
     <>
+      <Helmet>
+        <title>Teste vocacional para concurso público | Futuro Perfeito</title>
+        <meta
+          name="description"
+          content="Teste vocacional especializado em concursos públicos. Descubra a área e cargos ideais em minutos e receba o plano inicial."
+        />
+        <link rel="canonical" href={canonical} />
+        <script type="application/ld+json">{JSON.stringify(productLd)}</script>
+      </Helmet>
       {currentStep === "landing" && <Landing onStart={handleStartQuiz} variant={homeVariant} />}
       {currentStep === "preparation" && <PreparationScreen onStart={handlePrepareQuiz} />}
       {currentStep === "quiz" && (
@@ -459,6 +434,11 @@ const Index = () => {
 };
 
 export default Index;
+
+
+
+
+
 
 
 

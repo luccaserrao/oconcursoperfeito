@@ -1,6 +1,6 @@
----
+﻿---
 title: "Como escolher um concurso pelo perfil (e evitar se arrepender depois da aprovação)"
-description: "Veja como escolher um concurso público com base no seu perfil comportamental, rotina, pressão e longo prazo — e não só por salário."
+description: "Passo a passo para escolher um concurso pelo seu perfil: rotina, nível de pressão, tipo de trabalho e estabilidade que fazem sentido para sua vida e energia."
 slug: "como-escolher-um-concurso-pelo-perfil"
 date: "2026-02-13"
 tags: ["concurso publico", "perfil profissional", "qual concurso escolher", "iniciante em concurso"]
@@ -248,3 +248,5 @@ Se você está confuso entre vários concursos e não quer errar na escolha, o t
 Sem mágica.  
 Sem achismo.  
 Só clareza.
+
+
