@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Insatisfacao profissional: o que fazer quando o trabalho deixa de fazer sentido"
 description: "Entenda as causas da insatisfação profissional e monte um plano seguro, ajustando rotina, área de atuação e expectativas de crescimento para recuperar motivação"
 slug: "insatisfacao-profissional-o-que-fazer"

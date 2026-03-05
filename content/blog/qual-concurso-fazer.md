@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Qual concurso devo fazer? Descubra o que realmente combina com você"
 description: "Descubra qual concurso fazer com base no seu perfil, rotina desejada e propósito, priorizando editais que você conseguirá sustentar até a aprovação real."
 slug: "qual-concurso-fazer"

@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Me sinto frustrado no trabalho: como entender a frustracao e recuperar clareza"
 description: "Passo a passo para lidar com frustração no trabalho: identificar gatilhos, ajustar rotina e avaliar troca de área ou concurso que combine mais com você."
 slug: "me-sinto-frustrado-no-trabalho"
