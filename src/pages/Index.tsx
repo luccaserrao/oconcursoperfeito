@@ -167,6 +167,14 @@ const Index = () => {
 
     setUserName(safeName);
     setUserEmail(trimmedEmail);
+    try {
+      window.localStorage.setItem(
+        "quiz_contact",
+        JSON.stringify({ name: safeName, email: trimmedEmail, quizResponseId: undefined })
+      );
+    } catch (e) {
+      console.warn("Não foi possível salvar quiz_contact no localStorage:", e);
+    }
     const tracking = getQuizTrackingContext();
     const trackingPayload = {
       quiz_session_id: tracking.quiz_session_id || undefined,
@@ -234,6 +242,14 @@ const Index = () => {
 
       setRecommendation(localRecommendation);
       setQuizResponseId(data?.id);
+      try {
+        window.localStorage.setItem(
+          "quiz_contact",
+          JSON.stringify({ name: safeName, email: trimmedEmail, quizResponseId: data?.id })
+        );
+      } catch (e) {
+        console.warn("Falha ao salvar quiz_contact:", e);
+      }
       trackJourneyStep({
         step: "email_submitted",
         quiz_version: quizVersion,
@@ -303,6 +319,14 @@ const Index = () => {
 
       setRecommendation(fallbackRecommendation);
       setQuizResponseId(undefined);
+      try {
+        window.localStorage.setItem(
+          "quiz_contact",
+          JSON.stringify({ name: safeName, email: trimmedEmail, quizResponseId: undefined })
+        );
+      } catch (e) {
+        console.warn("Falha ao salvar quiz_contact (fallback):", e);
+      }
 
       // Fallback: tentar salvar o quiz mesmo se a recomendacao falhar
       try {
@@ -327,6 +351,14 @@ const Index = () => {
           const saveData = await saveResp.json();
           if (saveData?.id) {
             setQuizResponseId(saveData.id);
+            try {
+              window.localStorage.setItem(
+                "quiz_contact",
+                JSON.stringify({ name: safeName, email: trimmedEmail, quizResponseId: saveData.id })
+              );
+            } catch (e) {
+              console.warn("Falha ao salvar quiz_contact (saveQuiz fallback):", e);
+            }
             trackJourneyStep({
               step: "email_submitted",
               quiz_version: quizVersion,
