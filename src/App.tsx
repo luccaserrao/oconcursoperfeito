@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 import Obrigado from "./pages/Obrigado";
 import BlogIndex from "./pages/blog/BlogIndex";
 import BlogPostPage from "./pages/blog/BlogPostPage";
+import Policial from "./pages/Policial";
 import { buildCanonicalUrl } from "@/lib/seo";
 import ResultPage from "./pages/ResultPage";
 
@@ -73,6 +74,7 @@ const App = () => (
             <Route path="/admin/clients" element={<AdminClients />} />
             <Route path="/blog" element={<BlogIndex />} />
             <Route path="/blog/:slug" element={<BlogPostPage />} />
+            <Route path="/policial" element={<Policial />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

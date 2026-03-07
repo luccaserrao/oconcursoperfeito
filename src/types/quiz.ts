@@ -10,6 +10,12 @@ export interface QuizQuestion {
   riasecType?: RiasecType;
   areaWeights?: Record<CONCURSO_AREA, number>;
   optionAreas?: Record<string, CONCURSO_AREA>;
+  /** Pontuação por corporação policial para fluxos especializados */
+  corpWeights?: Record<string, number>;
+  /** Pontuação por opção -> corporações (ex.: cada alternativa distribui pesos diferentes) */
+  optionCorpWeights?: Record<string, Record<string, number>>;
+  /** Map de alertas TAP por opção escolhida */
+  riskTags?: Record<string, string>;
   placeholder?: string;
   helperText?: string;
 }
@@ -45,6 +51,16 @@ export interface MacroAreaResult {
   areaPossivel: CONCURSO_AREA;
   areaEvitar: CONCURSO_AREA;
   scores?: Record<CONCURSO_AREA, number>;
+}
+
+export type PoliceCorp = "PF" | "PRF" | "PM" | "PC" | "PENAL";
+
+export interface PoliceResult {
+  principal: PoliceCorp;
+  secundario: PoliceCorp;
+  evitar: PoliceCorp;
+  scores: Record<PoliceCorp, number>;
+  tapAlerts: string[];
 }
 
 export interface CareerRecommendation {

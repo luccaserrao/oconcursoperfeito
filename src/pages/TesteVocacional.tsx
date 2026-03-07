@@ -9,7 +9,6 @@ import { vocationalQuestions, VocationalQuestion } from "@/data/vocationalQuesti
 import { calculateRiasecScores } from "@/lib/riasec";
 import {
   calculateMultipleIntelligences,
-  MULTIPLE_INTELLIGENCE_LABELS,
   MultipleIntelligenceResult,
 } from "@/lib/multipleIntelligences";
 import { getVocationalClusters, CareerClusterResult } from "@/data/vocationalRecommendations";
@@ -18,7 +17,7 @@ import { MercadoPagoButton } from "@/components/MercadoPagoButton";
 import { getQuizTrackingContext, trackJourneyStep } from "@/lib/quizTracking";
 import { trackEvent } from "@/lib/analytics";
 import { QuizAnswer, RiasecResult } from "@/types/quiz";
-import { CheckCircle2, Clock3, ShieldCheck, Sparkles } from "lucide-react";
+import { CheckCircle2, Clock3, ShieldCheck, Sparkles, Lock } from "lucide-react";
 import { buildCanonicalUrl } from "@/lib/seo";
 
 const faqItems = [
@@ -396,75 +395,67 @@ const TesteVocacional = () => {
   }
 
   if (step === "results" && riasecResult && miResult) {
+    const topCluster = clusters[0];
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 py-16">
-        <div className="container mx-auto px-4 max-w-6xl space-y-10">
-          <Card className="p-8 bg-card border-2 border-primary/20">
-            <div className="space-y-5">
-              <div className="inline-flex items-center gap-2 text-xs uppercase tracking-wide text-primary font-semibold bg-primary/10 border border-primary/30 px-3 py-1 rounded-full w-fit">
-                resultado gratuito
-              </div>
-              <h1 className="text-3xl md:text-4xl font-bold leading-tight">
-                Seu perfil principal: {riasecResult.top1} + {riasecResult.top2}
-              </h1>
-              <p className="text-muted-foreground text-base md:text-lg">
-                {riasecResult.descricao_personalizada}
+        <div className="container mx-auto px-4 max-w-5xl space-y-8">
+          <Card className="p-8 bg-card border-2 border-primary/20 space-y-4">
+            <div className="inline-flex items-center gap-2 text-xs uppercase tracking-wide text-primary font-semibold bg-primary/10 border border-primary/30 px-3 py-1 rounded-full w-fit">
+              resultado gratuito (prévia)
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold leading-tight">
+              Seu perfil principal: {riasecResult.top1} + {riasecResult.top2}
+            </h1>
+            <p className="text-muted-foreground text-base md:text-lg">
+              Você está vendo 20% do diagnóstico. O relatório completo traz o plano de ação e comparação de caminhos.
+            </p>
+
+            {topCluster ? (
+              <Card className="p-5 border border-primary/25 bg-primary/5">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-semibold">{topCluster.title}</p>
+                  <Badge variant="outline" className="bg-white text-primary border-primary/30">
+                    {topCluster.affinity}% afinidade
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">{topCluster.description}</p>
+                <p className="text-sm text-foreground mt-3">{topCluster.careers.slice(0, 2).join(" · ")}</p>
+                <p className="text-xs text-muted-foreground mt-2">Comparação completa e lista de carreiras estão bloqueadas.</p>
+              </Card>
+            ) : null}
+          </Card>
+
+          <Card className="p-6 border-2 border-dashed border-primary/25 relative overflow-hidden">
+            <div className="space-y-2">
+              <h3 className="text-lg font-bold">Comparação completa de clusters + plano de 30 dias</h3>
+              <p className="text-sm text-muted-foreground">
+                Inclui forças, pontos de atenção, sugestões de cursos e checklist para não errar.
               </p>
-              <div className="grid gap-4 md:grid-cols-3">
-                {clusters.map((cluster) => (
-                  <Card key={cluster.id} className="p-5 border border-border bg-background/80">
-                    <div className="flex items-center justify-between">
-                      <p className="font-semibold">{cluster.title}</p>
-                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
-                        {cluster.affinity}% afinidade
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-2">{cluster.description}</p>
-                    <div className="mt-3 text-sm text-foreground">{cluster.careers.join(" · ")}</div>
-                  </Card>
-                ))}
-              </div>
-              <div className="grid gap-3 md:grid-cols-2">
-                <div className="rounded-2xl border border-border bg-muted/40 p-4">
-                  <p className="text-xs uppercase tracking-wide text-muted-foreground">Inteligencia dominante</p>
-                  <p className="text-lg font-semibold mt-1">
-                    {MULTIPLE_INTELLIGENCE_LABELS[miResult.top1]}
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-border bg-muted/40 p-4">
-                  <p className="text-xs uppercase tracking-wide text-muted-foreground">Inteligencia secundaria</p>
-                  <p className="text-lg font-semibold mt-1">
-                    {MULTIPLE_INTELLIGENCE_LABELS[miResult.top2]}
-                  </p>
-                </div>
-              </div>
+            </div>
+            <div className="absolute inset-0 bg-background/70 backdrop-blur-sm border border-primary/20 rounded-lg flex items-center justify-center gap-2 text-primary font-semibold">
+              <Lock className="w-5 h-5" />
+              <span>Disponível no relatório completo</span>
             </div>
           </Card>
 
-          <Card className="p-8 bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-primary/20">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-              <div className="space-y-3">
-                <div className="inline-flex items-center gap-2 text-xs uppercase tracking-wide text-primary font-semibold bg-primary/10 border border-primary/30 px-3 py-1 rounded-full w-fit">
-                  Relatorio completo
-                </div>
-                <h2 className="text-2xl md:text-3xl font-bold">
-                  Quer o relatorio completo com plano de acao?
-                </h2>
-                <p className="text-muted-foreground">
-                  O relatorio completo explica o PORQUE das areas sugeridas, mostra pontos fortes, alerta armadilhas e detalha proximos passos.
-                </p>
-              </div>
-              <Button
-                onClick={() => {
-                  trackEvent("vocational_upsell_clicked");
-                  trackJourneyStep({ step: "upsell_clicked", quiz_version: "vocacional" });
-                  setStep("email");
-                }}
-                className="h-auto rounded-full px-8 py-5 text-base font-semibold"
-              >
-                Quero meu relatorio completo
-              </Button>
+          <Card className="p-8 bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-2 border-amber-500/20 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-2">
+              <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold">Relatório completo</p>
+              <h2 className="text-2xl md:text-3xl font-bold">Desbloqueie o plano completo por R$25</h2>
+              <p className="text-sm text-muted-foreground">
+                Plano de ação em 30 dias, comparação de áreas, forças e pontos de atenção detalhados.
+              </p>
             </div>
+            <Button
+              onClick={() => {
+                trackEvent("vocational_upsell_clicked");
+                trackJourneyStep({ step: "upsell_clicked", quiz_version: "vocacional" });
+                setStep("email");
+              }}
+              className="h-auto rounded-full px-6 py-4 text-base font-semibold"
+            >
+              Quero meu relatório completo
+            </Button>
           </Card>
 
           <div className="text-center">

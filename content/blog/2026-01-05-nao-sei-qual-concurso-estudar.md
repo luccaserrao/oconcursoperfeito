@@ -190,3 +190,5 @@ o teste do Futuro Perfeito pode ajudar.
 
 Sem promessas mágicas —  
 só clareza para começar do jeito certo.
+
+Se sua dúvida está entre corporações policiais (PF, PRF, PM, PC ou Polícia Penal), vá direto ao teste vocacional policial em [/policial](/policial) — prévia grátis e relatório completo por R$25.

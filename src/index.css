@@ -196,7 +196,7 @@ All colors MUST be HSL.
 
 @layer utilities {
   .landing-dot {
-    background-image: radial-gradient(hsla(261, 51%, 78%, 0.5) 1px, transparent 1px);
+    background-image: radial-gradient(hsl(var(--primary) / 0.28) 1px, transparent 1px);
     background-size: 24px 24px;
   }
 

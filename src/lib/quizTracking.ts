@@ -97,7 +97,7 @@ export const getQuizTrackingContext = (): QuizTrackingContext => {
   return context;
 };
 
-export const trackQuizStart = async (quizVersion: "v1" | "v2") => {
+export const trackQuizStart = async (quizVersion: "v1" | "v2" | "policial") => {
   if (typeof window === "undefined") return;
   const context = getQuizTrackingContext();
   if (!context.quiz_session_id) return;

@@ -113,3 +113,5 @@ e sugerimos **3 caminhos compatíveis**, explicando prós e contras.
 Se quiser clareza, o teste do Futuro Perfeito pode te ajudar —  
 sem promessas mágicas, só direção.
 
+Se você está entre PF, PRF, PM, PC ou Polícia Penal e quer validar perfil psicológico/rotina antes do TAP, faça o teste vocacional policial em [/policial](/policial) — prévia grátis e relatório completo por R$25.
+

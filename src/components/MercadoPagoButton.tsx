@@ -17,7 +17,7 @@ interface MercadoPagoButtonProps {
   quizResponseId?: string;
   amount?: number;
   location?: string;
-  quizVersion?: "v1" | "v2";
+  quizVersion?: "v1" | "v2" | "policial";
   onStatusChange?: (status: {
     orderId?: string | null;
     paymentStatus: "idle" | "pending" | "paid" | "rejected" | "failed";
@@ -198,6 +198,7 @@ export const MercadoPagoButton = ({
       setIsLoading(true);
       setCopied(false);
 
+      trackEvent("paywall_cta_click", { location, quiz_version: quizVersion });
       trackJourneyStep({
         step: "upsell_clicked",
         quiz_version: quizVersion,

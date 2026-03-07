@@ -1,26 +1,34 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react";
 import { quizQuestionsV1, quizQuestionsV2 } from "@/data/quizQuestions";
-import { MacroAreaResult, QuizAnswer, RiasecResult } from "@/types/quiz";
+import { quizQuestionsPolicial } from "@/data/quizQuestionsPolicial";
+import { MacroAreaResult, PoliceResult, QuizAnswer, RiasecResult } from "@/types/quiz";
 import { trackEvent } from "@/lib/analytics";
 import { trackQuizStart } from "@/lib/quizTracking";
 import { calculateRiasecScores } from "@/lib/riasec";
 import { calculateMacroArea } from "@/lib/calculateMacroArea";
+import { calculatePoliceProfile } from "@/lib/calculatePoliceProfile";
 import { Clock3, ShieldCheck, Sparkles, Target } from "lucide-react";
 
 interface QuizCompletePayload {
   answers: QuizAnswer[];
   riasecResult?: RiasecResult;
   macroAreaResult?: MacroAreaResult;
+  policeResult?: PoliceResult;
 }
 
 interface QuizProps {
-  quizVersion: "v1" | "v2";
+  quizVersion: "v1" | "v2" | "policial";
   onComplete: (payload: QuizCompletePayload) => void;
   onBack: () => void;
 }
 
 export const Quiz = ({ onComplete, quizVersion }: QuizProps) => {
-  const questions = quizVersion === "v2" ? quizQuestionsV2 : quizQuestionsV1;
+  const questions =
+    quizVersion === "v2"
+      ? quizQuestionsV2
+      : quizVersion === "policial"
+        ? quizQuestionsPolicial
+        : quizQuestionsV1;
   const pageSize = 3;
   const totalPages = Math.ceil(questions.length / pageSize);
   const [currentPage, setCurrentPage] = useState(0);
@@ -119,6 +127,9 @@ export const Quiz = ({ onComplete, quizVersion }: QuizProps) => {
     if (quizVersion === "v2") {
       trackEvent("quiz_started_v2");
     }
+    if (quizVersion === "policial") {
+      trackEvent("quiz_started_policial");
+    }
   }, [quizVersion, questions.length]);
 
   useEffect(() => {
@@ -168,6 +179,13 @@ export const Quiz = ({ onComplete, quizVersion }: QuizProps) => {
       trackEvent("quiz_completed_v2");
       const macroAreaResult = calculateMacroArea(answers, questions);
       onComplete({ answers: normalizedAnswers, macroAreaResult });
+      return;
+    }
+
+    if (quizVersion === "policial") {
+      trackEvent("quiz_completed_policial");
+      const policeResult = calculatePoliceProfile(answers, questions);
+      onComplete({ answers: normalizedAnswers, policeResult });
       return;
     }
 
